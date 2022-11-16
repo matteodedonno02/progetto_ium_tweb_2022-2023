@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="progetto_ium_tweb_2022-2023:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>progetto_ium_tweb_2022-2023</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="iumtweb-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="progetto_ium_tweb_2022-2023:war exploded" />
+    </root>
+  </artifact>
+</component>
