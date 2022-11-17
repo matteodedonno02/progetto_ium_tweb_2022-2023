@@ -308,6 +308,23 @@ public class DAO {
         closeConnection();
     }
 
+    public void deleteProfessor(String serialNumber) {
+        openConnection();
+
+        PreparedStatement ps = null;
+
+        try {
+            ps = conn.prepareStatement("UPDATE professor SET active = FALSE WHERE serialNUmber = ?");
+            ps.setString(1, serialNumber);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeConnection();
+    }
+
     private void registerDriver() {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
