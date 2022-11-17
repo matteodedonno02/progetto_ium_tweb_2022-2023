@@ -2,6 +2,7 @@ package org.unito.iumtweb.db;
 
 import org.unito.iumtweb.model.Course;
 import org.unito.iumtweb.model.Professor;
+import org.unito.iumtweb.model.Teaching;
 import org.unito.iumtweb.model.User;
 
 import java.sql.*;
@@ -86,7 +87,7 @@ public class DAO {
         PreparedStatement ps = null;
         int res = 1;
         try{
-            ps = conn.prepareStatement("UPDATE course SET active = 0 WHERE idCourse = ?");
+            ps = conn.prepareStatement("UPDATE course SET active = FALSE WHERE idCourse = ?");
             ps.setInt(1,idCourse);
             ps.execute();
         } catch (SQLException e) {
@@ -261,7 +262,7 @@ public class DAO {
     }
 
     public User getUserByEmail(String email){
-        User u=null;
+        User u = null;
         PreparedStatement  ps = null;
         ResultSet rs = null;
         openConnection();
@@ -350,6 +351,27 @@ public class DAO {
         closeConnection();
     }
 
+    public Professor getProfessorBySerialNumber(String serialNumber){
+        Professor p = null;
+        PreparedStatement  ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try{
+            ps=conn.prepareStatement("SELECT * FROM professor WHERE serialNumber = ?");
+            ps.setString(1, serialNumber);
+            rs = ps.executeQuery();
+            if(rs.next())
+                p=new Professor(rs.getString("serialNuber"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("active"));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return p;
+    }
+
     public void deleteProfessor(String serialNumber) {
         openConnection();
 
@@ -367,9 +389,101 @@ public class DAO {
         closeConnection();
     }
 
-/*    public int addTeaching(String serialNumber, int idCourse){
 
-    }*/
+
+    public ArrayList<Teaching> getTeachings(){
+        ArrayList<Teaching> teachings = new ArrayList<Teaching>();
+        Statement s = null;
+        ResultSet rs = null;
+        openConnection();
+
+        try{
+            String query = "SELECT * FROM teaching";
+            s = conn.createStatement();
+            rs = s.executeQuery(query);
+            while(rs.next())
+                teachings.add(new Teaching(rs.getInt("idTeaching"),getProfessorBySerialNumber(rs.getString("serialNumber")),getCourseById(rs.getInt("idCourse")),rs.getBoolean("active")));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        closeStatement(s);
+        closeResultSet(rs);
+        closeConnection();
+        return teachings;
+    }
+    public int addTeaching(String serialNumber, int idCourse){
+        openConnection();
+        PreparedStatement ps=null;
+        int res = 1;
+        try {
+            ps = conn.prepareStatement("INSERT INTO teaching (srialNumber, idCourse) VALUES (?,?)");
+            ps.setString(1, serialNumber);
+            ps.setInt(2,idCourse);
+            ps.execute();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            res = 0;
+        } catch (SQLException e) {
+            res = -1;
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
+        }
+    }
+
+    public void updateTeaching(int idTeaching, String serialNumber, int idCourse) {
+        openConnection();
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("UPDATE teaching SET serialNumber = ?, idCourse = ? WHERE idTeaching = ?");
+            ps.setString(1, serialNumber);
+            ps.setInt(2,idCourse);
+            ps.setInt(3,idTeaching);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeConnection();
+    }
+
+    public void deleteTeaching(int idTeaching) {
+        openConnection();
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("UPDATE teaching SET active = FALSE WHERE idTeaching = ?");
+            ps.setInt(1, idTeaching);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeConnection();
+    }
+   public Teaching getTeachingById(int idTeaching){
+        Teaching t = null;
+        PreparedStatement  ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try{
+            ps = conn.prepareStatement("SELECT * FROM teaching WHERE idTeaching = ?");
+            ps.setInt(1, idTeaching);
+            rs = ps.executeQuery();
+            if(rs.next())
+              t = new Teaching(rs.getInt("idTeaching"),getProfessorBySerialNumber(rs.getString("serialNumber")),getCourseById(rs.getInt("idCourse")),rs.getBoolean("active"));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return t;
+    }
 
     private void registerDriver() {
         try {
