@@ -16,6 +16,6 @@ public class InitServlet extends HttpServlet {
 
         DAO dao = new DAO(dbUrl, dbUsername, dbPassword);
         getServletContext().setAttribute("dao", dao);
-        System.out.println(dao.getProfessors().toString());
+        dao.updateProfessor("BBBB", "AAAA", "Stephen", "Gishand");
     }
 }

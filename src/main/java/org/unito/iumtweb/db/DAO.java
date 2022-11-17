@@ -287,6 +287,27 @@ public class DAO {
         return professors;
     }
 
+    public void updateProfessor(String oldSerialNumber, String newSerialNumber, String name, String surname) {
+        openConnection();
+
+        PreparedStatement ps = null;
+
+        try {
+            ps = conn.prepareStatement("UPDATE professor SET serialNumber = ?, name = ?, surname = ? WHERE serialNumber = ?");
+            ps.setString(1, newSerialNumber);
+            ps.setString(2, name);
+            ps.setString(3, surname);
+            ps.setString(4, oldSerialNumber);
+
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeConnection();
+    }
+
     private void registerDriver() {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
