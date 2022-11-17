@@ -6,9 +6,9 @@ public class Course {
     private boolean active;
 
     public Course(int idCourse, String title, boolean active){
-        this.idCourse=idCourse;
-        this.title=title;
-        this.active=active;
+        this.idCourse = idCourse;
+        this.title = title;
+        this.active = active;
     }
 
     public int getIdCourse() {

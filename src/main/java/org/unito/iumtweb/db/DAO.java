@@ -19,26 +19,26 @@ public class DAO {
         this.dbPassword = dbPassword;
         registerDriver();
     }
-
+//TODO: getById method for every model, and teaching mwethods
     public ArrayList<Course> getCourses(){
-        ArrayList<Course> courses=new ArrayList<Course>();
-        Statement s=null;
-        ResultSet rs=null;
+        ArrayList<Course> courses = new ArrayList<Course>();
+        Statement s = null;
+        ResultSet rs = null;
         openConnection();
         try{
-            String query="SELECT * FROM course";
-            s=conn.createStatement();
+            String query = "SELECT * FROM course";
+            s = conn.createStatement();
             rs = s.executeQuery(query);
             while(rs.next()) {
-                courses.add(new Course(rs.getInt("idCourse"),rs.getString("title"),rs.getBoolean("active")));
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active")));
             }
         }catch (SQLException e){
             e.printStackTrace();
         }
 
-        closeConnection();
         closeStatement(s);
         closeResultSet(rs);
+        closeConnection();
         return courses;
     }
 
@@ -56,18 +56,18 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
             closePreparedStatement(ps);
+            closeConnection();
             return res;
         }
     }
 
-    public int updateCourse(int idCourse,String title){
+    public int updateCourse(int idCourse, String title){
         openConnection();
-        PreparedStatement ps=null;
-        int res=1;
+        PreparedStatement ps = null;
+        int res = 1;
         try{
-            ps=conn.prepareStatement("UPDATE course SET title=? WHERE idCourse=?");
+            ps = conn.prepareStatement("UPDATE course SET title = ? WHERE idCourse = ?");
             ps.setString(1,title);
             ps.setInt(2,idCourse);
             ps.execute();
@@ -75,28 +75,49 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
             closePreparedStatement(ps);
+            closeConnection();
             return res;
         }
     }
 
     public int deleteCourse(int idCourse){
         openConnection();
-        PreparedStatement ps=null;
-        int res=1;
+        PreparedStatement ps = null;
+        int res = 1;
         try{
-            ps=conn.prepareStatement("UPDATE course SET active=0 WHERE idCourse=?");
+            ps = conn.prepareStatement("UPDATE course SET active = 0 WHERE idCourse = ?");
             ps.setInt(1,idCourse);
             ps.execute();
         } catch (SQLException e) {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
             closePreparedStatement(ps);
+            closeConnection();
             return res;
         }
+    }
+
+    public Course getCourseById(int idCourse){
+        Course c = null;
+        PreparedStatement  ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try{
+            ps=conn.prepareStatement("SELECT * FROM course WHERE idCourse = ?");
+            ps.setInt(1,idCourse);
+            rs = ps.executeQuery();
+            if(rs.next())
+                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active"));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return c;
     }
 
     private User login(String email, String password){
@@ -111,7 +132,7 @@ public class DAO {
             ps.setString(2,password);
             rs = ps.executeQuery();
             if(rs!=null){
-                logged = new User(rs.getString("email"),rs.getString("name"),rs.getString("surname"),rs.getString("password"),rs.getBoolean("role"), rs.getBoolean("active"));
+                logged = new User(rs.getString("email"),rs.getString("name"),rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("active"));
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -133,7 +154,7 @@ public class DAO {
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while(rs.next()){
-                users.add(new User(rs.getString("email"),rs.getString("password"),rs.getString("name"),rs.getString("surname"),rs.getBoolean("role"),rs.getBoolean("active")));
+                users.add(new User(rs.getString("email"),rs.getString("name"),rs.getString("surname"),rs.getBoolean("role"),rs.getBoolean("active")));
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -239,6 +260,27 @@ public class DAO {
 
     }
 
+    public User getUserByEmail(String email){
+        User u=null;
+        PreparedStatement  ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try{
+            ps=conn.prepareStatement("SELECT * FROM user WHERE email = ?");
+            ps.setString(1,email);
+            rs = ps.executeQuery();
+            if(rs.next())
+                u=new User(rs.getString("email"),rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("active"));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return u;
+    }
+
     public int addProfessor(String serialNumber, String name, String surname) {
         openConnection();
 
@@ -324,6 +366,10 @@ public class DAO {
         closePreparedStatement(ps);
         closeConnection();
     }
+
+/*    public int addTeaching(String serialNumber, int idCourse){
+
+    }*/
 
     private void registerDriver() {
         try {
