@@ -152,6 +152,7 @@ public class DAO {
 
         try {
             String query = "SELECT * FROM user";
+
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
