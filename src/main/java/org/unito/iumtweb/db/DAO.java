@@ -151,7 +151,7 @@ public class DAO {
         openConnection();
 
         try {
-            String query = "SELECT * FROM utente";
+            String query = "SELECT * FROM user";
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
@@ -182,10 +182,10 @@ public class DAO {
             ps.execute();
         } catch (SQLIntegrityConstraintViolationException e) {
             e.printStackTrace();
-            res = -1;
+            res = 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            res = 0;
+            res = -1;
         } finally {
             closePreparedStatement(ps);
             closeConnection();

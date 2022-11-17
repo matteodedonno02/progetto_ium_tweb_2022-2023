@@ -15,22 +15,23 @@ import java.util.ArrayList;
 public class UserServlet extends HttpServlet {
     private DAO managerDB;
 
+    //TODO: istanziare tutti i parametri della request
     @Override
     public void init() throws ServletException {
-        super.init();
         managerDB = (DAO) getServletContext().getAttribute("dao");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String operation = request.getParameter("operation");
+        System.out.println(operation);
         switch (operation) {
-            case "selectAll":
-                selectAllUsers(request, response);
-            case "selectById":
-                selectByIdUser(request, response);
+            case "select":
+                selectUser(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                break;
         }
     }
 
@@ -40,15 +41,28 @@ public class UserServlet extends HttpServlet {
         switch (operation) {
             case "add":
                 addUser(request, response);
+                break;
             case "edit":
                 editUser(request, response);
+                break;
             case "delete":
                 deleteUser(request, response);
+                break;
             case "updatePassword":
                 updatePassword(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                break;
 
+        }
+    }
+
+    private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (request.getParameter("email") != null) {
+            selectByIdUser(request, response);
+        } else {
+            selectAllUsers(request, response);
         }
     }
 
@@ -59,18 +73,26 @@ public class UserServlet extends HttpServlet {
 
     private void selectByIdUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = managerDB.getUserByEmail(request.getParameter("email"));
-        response.getWriter().write(new Gson().toJson(user));
+        if (user != null) {
+            response.getWriter().write(new Gson().toJson(user));
+        } else {
+            response.getWriter().write("{\"error\":\"User not found\"}");
+        }
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int res = managerDB.addUser(request.getParameter("email"), request.getParameter("name"), request.getParameter("surname"), request.getParameter("password"));
+        String email = request.getParameter("email");
+        int res = managerDB.addUser(email, request.getParameter("name"), request.getParameter("surname"), request.getParameter("password"));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getUserByEmail(request.getParameter("email"))));
+                response.getWriter().write(new Gson().toJson(managerDB.getUserByEmail(email)));
+                break;
             case 0:
-                response.getWriter().write(new Gson().toJson("{\"error\":\"Email already exists\"}"));
+                response.getWriter().write("{\"error\":\"Email already exists\"}");
+                break;
             case -1:
-                response.getWriter().write(new Gson().toJson("{\"error\":\"Generic error\"}"));
+                response.getWriter().write("{\"error\":\"Server error\"}");
+                break;
         }
     }
 
@@ -79,20 +101,21 @@ public class UserServlet extends HttpServlet {
         switch (res) {
             case 1:
                 response.getWriter().write(new Gson().toJson(managerDB.getUserByEmail(request.getParameter("newEmail"))));
+                break;
             case 0:
-                response.getWriter().write(new Gson().toJson("{\"error\":\"Email already exists\"}"));
+                response.getWriter().write("{\"error\":\"Email already exists\"}");
+                break;
             case -1:
-                response.getWriter().write(new Gson().toJson("{\"error\":\"Generic error\"}"));
+                response.getWriter().write("{\"error\":\"Server error\"}");
+                break;
         }
     }
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int res = managerDB.deleteUser(request.getParameter("email"));
-        //TODO: definire se e cosa mandare come response
     }
 
     private void updatePassword(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int res = managerDB.updatePassword(request.getParameter("password"), request.getParameter("password"));
-        //TODO: definire se e cosa mandare come response
+        int res = managerDB.updatePassword(request.getParameter("email"), request.getParameter("password"));
     }
 }
