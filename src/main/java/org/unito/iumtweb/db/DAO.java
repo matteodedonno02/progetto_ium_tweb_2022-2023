@@ -1,6 +1,7 @@
 package org.unito.iumtweb.db;
 
 import org.unito.iumtweb.model.Course;
+import org.unito.iumtweb.model.Professor;
 import org.unito.iumtweb.model.User;
 
 import java.sql.*;
@@ -225,6 +226,54 @@ public class DAO {
         return 1;
     }
 
+    public int addProfessor(String serialNumber, String name, String surname) {
+        openConnection();
+
+        PreparedStatement ps = null;
+        int res = 1;
+        try {
+            ps = conn.prepareStatement("INSERT INTO professor (serialNumber, name, surname) VALUES (?, ?, ?)");
+            ps.setString(1, serialNumber);
+            ps.setString(2, name);
+            ps.setString(3, surname);
+
+            ps.execute();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            res = 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res = -1;
+        } finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
+        }
+    }
+
+    public ArrayList<Professor> getProfessors() {
+        openConnection();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ArrayList<Professor> professors = new ArrayList<Professor>();
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM professor");
+            rs = ps.executeQuery();
+
+            while(rs.next()) {
+                professors.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return professors;
+    }
+
     private void registerDriver() {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
@@ -243,7 +292,8 @@ public class DAO {
 
     private void closeConnection() {
         try {
-            conn.close();
+            if(conn != null)
+                conn.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
