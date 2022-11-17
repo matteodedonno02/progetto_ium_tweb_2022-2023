@@ -14,8 +14,8 @@ public class InitServlet extends HttpServlet {
         String dbUsername = getServletContext().getInitParameter("dbUsername");
         String dbPassword = getServletContext().getInitParameter("dbPassword");
 
-        DAO dao = new DAO(dbUrl, dbUsername, dbPassword);
-        getServletContext().setAttribute("dao", dao);
+        DAO managerDB = new DAO(dbUrl, dbUsername, dbPassword);
+        getServletContext().setAttribute("dao", managerDB);
 
     }
 }
