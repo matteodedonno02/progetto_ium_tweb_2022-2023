@@ -16,6 +16,6 @@ public class InitServlet extends HttpServlet {
 
         DAO dao = new DAO(dbUrl, dbUsername, dbPassword);
         getServletContext().setAttribute("dao", dao);
-        dao.updateUser("giuseppecolazzo22@gmail.com","giuseppecolazzo@gmail.com","Giuseppe","Colazzo",true);
+        System.out.println(dao.getProfessors().toString());
     }
 }
