@@ -4,15 +4,13 @@ public class User {
     private String email;
     private String name;
     private String surname;
-    private String password;
     private boolean role;
     private boolean active;
 
-    public User(String email, String name, String surname, String password, boolean role, boolean active) {
+    public User(String email, String name, String surname, boolean role, boolean active) {
         this.email = email;
         this.name = name;
         this.surname = surname;
-        this.password = password;
         this.role = role;
         this.active = active;
     }
@@ -39,14 +37,6 @@ public class User {
 
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public boolean isRole() {
