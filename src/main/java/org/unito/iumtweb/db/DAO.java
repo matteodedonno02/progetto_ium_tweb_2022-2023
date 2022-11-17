@@ -145,9 +145,10 @@ public class DAO {
         return users;
     }
 
-    public int addUser(String email, String password, String name, String surname){
+    public int addUser(String email,  String name, String surname, String password){
         openConnection();
         PreparedStatement ps = null;
+        int res = 1;
 
         try {
             String query = "INSERT INTO user (email,password,name,surname) VALUES (?,SHA2(?,256),?,?)";
@@ -155,24 +156,26 @@ public class DAO {
             ps.setString(1,email);
             ps.setString(2,password);
             ps.setString(3,name);
-            ps.setString(4,name);
+            ps.setString(4,surname);
             ps.execute();
         }catch (SQLIntegrityConstraintViolationException e){
             e.printStackTrace();
-            return -1;
+            res = -1;
         }catch (SQLException e){
             e.printStackTrace();
-            return 0;
+            res = 0;
+        }finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
         }
-        closePreparedStatement(ps);
-        closeConnection();
 
-        return 1;
     }
 
     public int deleteUser(String email){
         openConnection();
         PreparedStatement ps = null;
+        int res = 1;
         try{
             String query = "UPDATE user SET active = 0 WHERE email = ?";
             ps = conn.prepareStatement(query);
@@ -180,16 +183,19 @@ public class DAO {
             ps.execute();
         }catch (SQLException e){
             e.printStackTrace();
-            return -1;
+            res = -1;
+        }finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
         }
 
-        closeConnection();
-        return 1;
     }
 
     public int updatePassword(String email, String password){
         openConnection();
         PreparedStatement ps = null;
+        int res = 1;
         try{
             String query = "UPDATE user SET password = SHA2(?,256) WHERE email = ?";
             ps = conn.prepareStatement(query);
@@ -198,32 +204,39 @@ public class DAO {
             ps.execute();
         }catch (SQLException e){
             e.printStackTrace();
-            return -1;
+            res = -1;
+        }finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
         }
 
-        closeConnection();
-        return 1;
+
     }
 
-    public int updateUser(String email,String password,String name, String surname,boolean role){
+    public int updateUser(String newEmail,String oldEmail,String name, String surname,boolean role){
         openConnection();
         PreparedStatement ps = null;
+        int res = 1;
         try{
-            String query = "UPDATE user SET password = SHA2(?,256), name = ?, surname = ?, role = ? WHERE email = ?";
+            String query = "UPDATE user SET email = ?,name = ?, surname = ?, role = ? WHERE email = ?";
             ps = conn.prepareStatement(query);
-            ps.setString(1,password);
+            ps.setString(1,newEmail);
             ps.setString(2,name);
             ps.setString(3,surname);
             ps.setBoolean(4,role);
+            ps.setString(5,oldEmail);
             ps.execute();
         }catch(SQLException e){
             e.printStackTrace();
-            return -1;
+            res = -1;
+        }finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
         }
 
-        closePreparedStatement(ps);
-        closeConnection();
-        return 1;
+
     }
 
     public int addProfessor(String serialNumber, String name, String surname) {
