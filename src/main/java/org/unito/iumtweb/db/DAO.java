@@ -14,6 +14,7 @@ public class DAO {
     private String dbPassword;
     private Connection conn;
 
+    //TODO: decidere se update ed elimina restituiscono valore, e modificare di conseguenza le servlet, ora mezzi metodi restituiscono un valore altri no
     public DAO(String dbUrl, String dbUsername, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbUsername = dbUsername;
