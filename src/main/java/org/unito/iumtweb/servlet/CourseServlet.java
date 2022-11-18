@@ -72,7 +72,10 @@ public class CourseServlet extends HttpServlet {
         int res = managerDB.addCourse(request.getParameter("title"));
         switch (res) {
             case 1:
-                //TODO: non saprei cosa mettere nella response nel caso il corso venga inserito, inoltre in caso modifico il metodo nel dao per la risposta
+                response.getWriter().write(new Gson().toJson(managerDB.getCourseByTitle(request.getParameter("title"))));
+                break;
+            case 0:
+                response.getWriter().write("{\"error\":\"Course already exists\"}");
                 break;
             case -1:
                 response.getWriter().write("{\"error\":\"Server error\"}");
@@ -85,7 +88,10 @@ public class CourseServlet extends HttpServlet {
         int res = managerDB.updateCourse(Integer.valueOf(request.getParameter("idCourse")), request.getParameter("title"));
         switch (res) {
             case 1:
-                //TODO: non saprei cosa mettere nella response nel caso il corso venga aggiornato, inoltre in caso modifico il metodo nel dao per la risposta
+                response.getWriter().write(new Gson().toJson(managerDB.getCourseById(Integer.valueOf(request.getParameter("idCourse")))));
+                break;
+            case 0:
+                response.getWriter().write("{\"error\":\"Course already exists\"}");
                 break;
             case -1:
                 response.getWriter().write("{\"error\":\"Server error\"}");
@@ -96,14 +102,9 @@ public class CourseServlet extends HttpServlet {
     private void deleteCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
         int res = managerDB.deleteCourse(Integer.valueOf(request.getParameter("idCourse")));
-        switch (res) {
-            case 1:
-                //TODO: non saprei cosa mettere nella response nel caso il corso venga aggiornato, inoltre in caso modifico il metodo nel dao per la risposta
-                break;
-            case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
-                break;
-        }
+        if (res == -1)
+            response.getWriter().write("{\"error\":\"Server error\"}");
+
     }
 
 

@@ -73,7 +73,10 @@ public class TeachingServlet extends HttpServlet {
         int res = managerDB.addTeaching(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")));
         switch (res) {
             case 1:
-                //TODO: non saprei cosa mettere nella response nel caso l'insegnamento venga inserito, inoltre in caso modifico il metodo nel dao per la risposta
+                response.getWriter().write(new Gson().toJson(managerDB.getTeachingByProfessorCourse(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")))));
+                break;
+            case 0:
+                response.getWriter().write("{\"error\":\"Teaching already exists\"}");
                 break;
             case -1:
                 response.getWriter().write("{\"error\":\"Server error\"}");
@@ -83,11 +86,26 @@ public class TeachingServlet extends HttpServlet {
 
     private void updateTeaching(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
-        managerDB.updateTeaching(Integer.valueOf(request.getParameter("idTeaching")), request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")));
+        int res = managerDB.updateTeaching(Integer.valueOf(request.getParameter("idTeaching")), request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")));
+
+        switch (res) {
+            case 1:
+                response.getWriter().write(new Gson().toJson(managerDB.getTeachingByProfessorCourse(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")))));
+                break;
+            case 0:
+                response.getWriter().write("{\"error\":\"Teaching already exists\"}");
+                break;
+            case -1:
+                response.getWriter().write("{\"error\":\"Server error\"}");
+                break;
+        }
     }
 
     private void deleteTeaching(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
-        managerDB.deleteTeaching(Integer.valueOf(request.getParameter("idTeaching")));
+        int res = managerDB.deleteTeaching(Integer.valueOf(request.getParameter("idTeaching")));
+        if (res == -1)
+            response.getWriter().write("{\"error\":\"Server error\"}");
+
     }
 }
