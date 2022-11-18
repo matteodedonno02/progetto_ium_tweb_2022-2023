@@ -43,13 +43,13 @@ public class DAO {
         return courses;
     }
 
-    public int addCourse(String courseTitle) {
+    public int addCourse(String title) {
         openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
             ps = conn.prepareStatement("INSERT INTO course (title) VALUES (?)");
-            ps.setString(1, courseTitle);
+            ps.setString(1, title);
             ps.execute();
         } catch (SQLIntegrityConstraintViolationException e) {
             res = 0;
