@@ -16,6 +16,5 @@ public class InitServlet extends HttpServlet {
 
         DAO managerDB = new DAO(dbUrl, dbUsername, dbPassword);
         getServletContext().setAttribute("managerDB", managerDB);
-
     }
 }

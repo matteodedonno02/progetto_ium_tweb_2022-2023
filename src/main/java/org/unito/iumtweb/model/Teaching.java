@@ -6,7 +6,7 @@ public class Teaching {
     private Course course;
     private boolean active;
 
-    public Teaching(int idTeaching,Professor professor,Course course,boolean active){
+    public Teaching(int idTeaching, Professor professor, Course course, boolean active) {
         this.idTeaching = idTeaching;
         this.professor = professor;
         this.course = course;
@@ -43,5 +43,15 @@ public class Teaching {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "Teaching{" +
+                "idTeaching=" + idTeaching +
+                ", professor=" + professor +
+                ", course=" + course +
+                ", active=" + active +
+                '}';
     }
 }

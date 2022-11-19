@@ -1,11 +1,10 @@
 package org.unito.iumtweb.db;
 
-import org.unito.iumtweb.model.Course;
-import org.unito.iumtweb.model.Professor;
-import org.unito.iumtweb.model.Teaching;
-import org.unito.iumtweb.model.User;
+import org.unito.iumtweb.model.*;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class DAO {
@@ -43,7 +42,7 @@ public class DAO {
         closeConnection();
         return courses;
     }
-
+    
     public int addCourse(String title) {
         openConnection();
         PreparedStatement ps = null;
@@ -146,8 +145,7 @@ public class DAO {
         closeConnection();
         return c;
     }
-
-
+    
     private User login(String email, String password) {
         openConnection();
         PreparedStatement ps = null;
@@ -179,7 +177,7 @@ public class DAO {
 
         try {
             String query = "SELECT * FROM user";
-
+            
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
@@ -399,7 +397,7 @@ public class DAO {
             ps.setString(1, serialNumber);
             rs = ps.executeQuery();
             if (rs.next())
-                p = new Professor(rs.getString("serialNuber"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("active"));
+                p = new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -455,7 +453,7 @@ public class DAO {
         PreparedStatement ps = null;
         int res = 1;
         try {
-            ps = conn.prepareStatement("INSERT INTO teaching (srialNumber, idCourse) VALUES (?,?)");
+            ps = conn.prepareStatement("INSERT INTO teaching (serialNumber, idCourse) VALUES (?,?)");
             ps.setString(1, serialNumber);
             ps.setInt(2, idCourse);
             ps.execute();
@@ -553,6 +551,50 @@ public class DAO {
         closeResultSet(rs);
         closeConnection();
         return t;
+    }
+
+    public void addRepetition(String email, int idTeaching, String date, String time) {
+        openConnection();
+
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("INSERT INTO repetition (email, idTeaching, date, time) VALUES (?, ?, ?, ?)");
+            ps.setString(1, email);
+            ps.setInt(2, idTeaching);
+            ps.setDate(3, Date.valueOf(date));
+            ps.setTime(4, Time.valueOf(time));
+
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeConnection();
+    }
+
+    public ArrayList<Repetition> getRepetitions() {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT * FROM repetition");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+
+        return repetitions;
     }
 
     private void registerDriver() {
