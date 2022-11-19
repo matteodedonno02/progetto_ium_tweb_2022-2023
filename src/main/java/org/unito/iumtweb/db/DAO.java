@@ -334,9 +334,9 @@ public class DAO {
         return professors;
     }
 
-    public void updateProfessor(String oldSerialNumber, String newSerialNumber, String name, String surname) {
+    public int updateProfessor(String oldSerialNumber, String newSerialNumber, String name, String surname) {
         openConnection();
-
+        int res = 1;
         PreparedStatement ps = null;
 
         try {
@@ -347,12 +347,19 @@ public class DAO {
             ps.setString(4, oldSerialNumber);
 
             ps.execute();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            e.printStackTrace();
+            res = 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            res = -1;
+        } finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
         }
 
-        closePreparedStatement(ps);
-        closeConnection();
+
     }
 
     public Professor getProfessorBySerialNumber(String serialNumber) {
