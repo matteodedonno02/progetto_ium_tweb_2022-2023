@@ -14,6 +14,7 @@ public class DAO {
     private String dbPassword;
     private Connection conn;
 
+    //TODO: rendere title di course unique nel db , e forse anche l'insieme di idCourse serialNUmber e active in teaching unique, in caso contrario sistemare i catch e la servlet
     public DAO(String dbUrl, String dbUsername, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbUsername = dbUsername;
@@ -43,13 +44,13 @@ public class DAO {
         return courses;
     }
 
-    public int addCourse(String courseTitle) {
+    public int addCourse(String title) {
         openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
             ps = conn.prepareStatement("INSERT INTO course (title) VALUES (?)");
-            ps.setString(1, courseTitle);
+            ps.setString(1, title);
             ps.execute();
         } catch (SQLIntegrityConstraintViolationException e) {
             res = 0;
@@ -72,6 +73,9 @@ public class DAO {
             ps.setString(1, title);
             ps.setInt(2, idCourse);
             ps.execute();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            e.printStackTrace();
+            res = 0;
         } catch (SQLException e) {
             res = -1;
             e.printStackTrace();
@@ -120,6 +124,29 @@ public class DAO {
         closeConnection();
         return c;
     }
+
+
+    public Course getCourseByTitle(String title) {
+        Course c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try {
+            ps = conn.prepareStatement("SELECT * FROM course WHERE title = ?");
+            ps.setString(1, title);
+            rs = ps.executeQuery();
+            if (rs.next())
+                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return c;
+    }
+
 
     private User login(String email, String password) {
         openConnection();
@@ -444,36 +471,45 @@ public class DAO {
         }
     }
 
-    public void updateTeaching(int idTeaching, String serialNumber, int idCourse) {
+    public int updateTeaching(int idTeaching, String serialNumber, int idCourse) {
         openConnection();
         PreparedStatement ps = null;
+        int res = 1;
         try {
             ps = conn.prepareStatement("UPDATE teaching SET serialNumber = ?, idCourse = ? WHERE idTeaching = ?");
             ps.setString(1, serialNumber);
             ps.setInt(2, idCourse);
             ps.setInt(3, idTeaching);
             ps.execute();
-        } catch (SQLException e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
             e.printStackTrace();
+            res = 0;
+        } catch (SQLException e) {
+            res = -1;
+            e.printStackTrace();
+        } finally {
+            closePreparedStatement(ps);
+            closeConnection();
+            return res;
         }
-
-        closePreparedStatement(ps);
-        closeConnection();
     }
 
-    public void deleteTeaching(int idTeaching) {
+    public int deleteTeaching(int idTeaching) {
         openConnection();
         PreparedStatement ps = null;
+        int res = 1;
         try {
             ps = conn.prepareStatement("UPDATE teaching SET active = FALSE WHERE idTeaching = ?");
             ps.setInt(1, idTeaching);
             ps.execute();
         } catch (SQLException e) {
+            res = -1;
             e.printStackTrace();
         }
 
         closePreparedStatement(ps);
         closeConnection();
+        return res;
     }
 
     public Teaching getTeachingById(int idTeaching) {
@@ -484,6 +520,28 @@ public class DAO {
         try {
             ps = conn.prepareStatement("SELECT * FROM teaching WHERE idTeaching = ?");
             ps.setInt(1, idTeaching);
+            rs = ps.executeQuery();
+            if (rs.next())
+                t = new Teaching(rs.getInt("idTeaching"), getProfessorBySerialNumber(rs.getString("serialNumber")), getCourseById(rs.getInt("idCourse")), rs.getBoolean("active"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return t;
+    }
+
+    public Teaching getTeachingByProfessorCourse(String serialNumber, int idCourse) {
+        Teaching t = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try {
+            ps = conn.prepareStatement("SELECT * FROM teaching WHERE serialNumber = ? AND idCourse = ?");
+            ps.setString(1, serialNumber);
+            ps.setInt(2, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
                 t = new Teaching(rs.getInt("idTeaching"), getProfessorBySerialNumber(rs.getString("serialNumber")), getCourseById(rs.getInt("idCourse")), rs.getBoolean("active"));

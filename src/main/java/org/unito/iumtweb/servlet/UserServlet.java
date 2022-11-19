@@ -18,13 +18,12 @@ public class UserServlet extends HttpServlet {
     //TODO: istanziare tutti i parametri della request
     @Override
     public void init() throws ServletException {
-        managerDB = (DAO) getServletContext().getAttribute("dao");
+        managerDB = (DAO) getServletContext().getAttribute("managerDB");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String operation = request.getParameter("operation");
-        System.out.println(operation);
         switch (operation) {
             case "select":
                 selectUser(request, response);
@@ -60,23 +59,15 @@ public class UserServlet extends HttpServlet {
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getParameter("email") != null) {
-            selectByIdUser(request, response);
+            User user = managerDB.getUserByEmail(request.getParameter("email"));
+            if (user != null) {
+                response.getWriter().write(new Gson().toJson(user));
+            } else {
+                response.getWriter().write("{\"error\":\"User not found\"}");
+            }
         } else {
-            selectAllUsers(request, response);
-        }
-    }
-
-    private void selectAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ArrayList<User> users = managerDB.getUsers();
-        response.getWriter().write(new Gson().toJson(users));
-    }
-
-    private void selectByIdUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User user = managerDB.getUserByEmail(request.getParameter("email"));
-        if (user != null) {
-            response.getWriter().write(new Gson().toJson(user));
-        } else {
-            response.getWriter().write("{\"error\":\"User not found\"}");
+            ArrayList<User> users = managerDB.getUsers();
+            response.getWriter().write(new Gson().toJson(users));
         }
     }
 
