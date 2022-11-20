@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 //TODO: CHIEDERE ALLA PROFESSORESSA
-@WebFilter({"/UserServlet", "/CourseServlet", "/ProfessorServlet", "/TeachingServlet"})
+@WebFilter({"/UserServlet", "/CourseServlet", "/ProfessorServlet", "/TeachingServlet", "/RepetitionServlet"})
 public class ContentTypeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

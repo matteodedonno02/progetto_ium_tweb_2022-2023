@@ -42,7 +42,7 @@ public class DAO {
         closeConnection();
         return courses;
     }
-    
+
     public int addCourse(String title) {
         openConnection();
         PreparedStatement ps = null;
@@ -145,7 +145,7 @@ public class DAO {
         closeConnection();
         return c;
     }
-    
+
     private User login(String email, String password) {
         openConnection();
         PreparedStatement ps = null;
@@ -177,7 +177,7 @@ public class DAO {
 
         try {
             String query = "SELECT * FROM user";
-            
+
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
@@ -553,10 +553,11 @@ public class DAO {
         return t;
     }
 
-    public void addRepetition(String email, int idTeaching, String date, String time) {
+    public int addRepetition(String email, int idTeaching, String date, String time) {
         openConnection();
 
         PreparedStatement ps = null;
+        int res = 1;
         try {
             ps = conn.prepareStatement("INSERT INTO repetition (email, idTeaching, date, time) VALUES (?, ?, ?, ?)");
             ps.setString(1, email);
@@ -565,12 +566,16 @@ public class DAO {
             ps.setTime(4, Time.valueOf(time));
 
             ps.execute();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            res = 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            res = -1;
         }
 
         closePreparedStatement(ps);
         closeConnection();
+        return res;
     }
 
     public ArrayList<Repetition> getRepetitions() {
@@ -595,6 +600,103 @@ public class DAO {
         closeConnection();
 
         return repetitions;
+    }
+
+    public Repetition getRepetitionById(int idRepetition) {
+        openConnection();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Repetition repetition = null;
+        try {
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE idRepetition = ?");
+            ps.setInt(1, idRepetition);
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                repetition = new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+        return repetition;
+    }
+
+    public Repetition getRepetition(String email, int idTeaching, String date, String time) {
+        System.out.println(time);
+        openConnection();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Repetition repetition = null;
+        try {
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? AND idTeaching = ? AND date = ? AND time = ?");
+            ps.setString(1, email);
+            ps.setInt(2, idTeaching);
+            ps.setDate(3, Date.valueOf(date));
+            ps.setTime(4, Time.valueOf(time));
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                repetition = new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+        return repetition;
+    }
+
+    public ArrayList<Repetition> getRepetitionsByEmail(String email) {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ?");
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+
+        return repetitions;
+    }
+
+    public boolean updateRepetition(int idRepetition, int newState) {
+        openConnection();
+
+        PreparedStatement ps = null;
+        boolean res = true;
+        try {
+            ps = conn.prepareStatement("UPDATE repetition SET state = ? WHERE idRepetition = ?");
+            ps.setInt(1, newState);
+            ps.setInt(2, idRepetition);
+            ps.execute();
+        } catch (SQLException e) {
+            res = false;
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeConnection();
+        return res;
     }
 
     private void registerDriver() {
