@@ -146,7 +146,7 @@ public class DAO {
         return c;
     }
 
-    private User login(String email, String password) {
+    public User login(String email, String password) {
         openConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -157,7 +157,7 @@ public class DAO {
             ps.setString(1, email);
             ps.setString(2, password);
             rs = ps.executeQuery();
-            if (rs != null) {
+            if (rs.next()) {
                 logged = new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("active"));
             }
         } catch (SQLException e) {

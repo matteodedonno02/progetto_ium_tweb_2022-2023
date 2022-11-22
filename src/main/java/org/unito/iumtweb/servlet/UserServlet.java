@@ -50,6 +50,9 @@ public class UserServlet extends HttpServlet {
             case "updatePassword":
                 updatePassword(request, response);
                 break;
+            case "login":
+                loginUser(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
@@ -108,5 +111,20 @@ public class UserServlet extends HttpServlet {
 
     private void updatePassword(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int res = managerDB.updatePassword(request.getParameter("email"), request.getParameter("password"));
+    }
+
+    public void loginUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String email = request.getParameter("email");
+        User user = managerDB.login(email, request.getParameter("password"));
+
+        if (user != null) {
+            response.getWriter().write(new Gson().toJson(user));
+        } else {
+            if (managerDB.getUserByEmail(email) != null) {
+                response.getWriter().write("{\"error\":\"Wrong password\"}");
+            } else {
+                response.getWriter().write("{\"error\":\"Email not found\"}");
+            }
+        }
     }
 }
