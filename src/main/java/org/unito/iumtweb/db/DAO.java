@@ -679,24 +679,26 @@ public class DAO {
         return repetitions;
     }
 
-    public boolean updateRepetition(int idRepetition, int newState) {
+    public Repetition updateRepetition(int idRepetition, int newState) {
         openConnection();
 
         PreparedStatement ps = null;
-        boolean res = true;
+        Repetition repetition = null;
+
         try {
             ps = conn.prepareStatement("UPDATE repetition SET state = ? WHERE idRepetition = ?");
             ps.setInt(1, newState);
             ps.setInt(2, idRepetition);
             ps.execute();
         } catch (SQLException e) {
-            res = false;
             e.printStackTrace();
         }
 
         closePreparedStatement(ps);
         closeConnection();
-        return res;
+
+        repetition = getRepetitionById(idRepetition);
+        return repetition;
     }
 
     private void registerDriver() {

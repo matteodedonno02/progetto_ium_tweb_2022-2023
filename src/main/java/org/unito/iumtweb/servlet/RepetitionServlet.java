@@ -38,6 +38,9 @@ public class RepetitionServlet extends HttpServlet {
             case "add":
                 addRepetition(request, response);
                 break;
+            case "edit":
+                updateRepetition(request, response);
+                break;
         }
     }
 
@@ -80,5 +83,17 @@ public class RepetitionServlet extends HttpServlet {
         String email = request.getParameter("email");
         System.out.println("YEAH!");
         response.getWriter().write(new Gson().toJson(managerDB.getRepetitionsByEmail(email)));
+    }
+
+    private void updateRepetition(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int idRepetition = Integer.valueOf(request.getParameter("idRepetition"));
+        int newState = Integer.valueOf(request.getParameter("newState"));
+
+        Repetition repetition = managerDB.updateRepetition(idRepetition, newState);
+        if (repetition != null) {
+            response.getWriter().write(new Gson().toJson(managerDB.getRepetitionById(idRepetition)));
+        } else {
+            response.getWriter().write("{\"error\":\"Repetition not found\"}");
+        }
     }
 }
