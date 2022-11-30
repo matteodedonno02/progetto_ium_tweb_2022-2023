@@ -2,6 +2,7 @@ package org.unito.iumtweb.util;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 //TODO: CHIEDERE ALLA PROFESSORESSA

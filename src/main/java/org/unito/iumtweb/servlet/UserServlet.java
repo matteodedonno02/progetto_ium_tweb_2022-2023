@@ -53,6 +53,9 @@ public class UserServlet extends HttpServlet {
             case "login":
                 loginUser(request, response);
                 break;
+            case "checkSession":
+                checkSession(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
@@ -118,7 +121,12 @@ public class UserServlet extends HttpServlet {
         User user = managerDB.login(email, request.getParameter("password"));
 
         if (user != null) {
-            response.getWriter().write(new Gson().toJson(user));
+            Gson gson = new Gson();
+            String json = gson.toJson(user);
+            json = json.replaceAll("}", ",\"sessionId\":" + "\"" + request.getSession().getId() + "\"}");
+            response.getWriter().write(json);
+
+            request.getSession().setAttribute("loggedUser", user);
         } else {
             if (managerDB.getUserByEmail(email) != null) {
                 response.getWriter().write("{\"error\":\"Wrong password\"}");
@@ -126,5 +134,9 @@ public class UserServlet extends HttpServlet {
                 response.getWriter().write("{\"error\":\"Email not found\"}");
             }
         }
+    }
+
+    private void checkSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.getWriter().write(new Gson().toJson((User) request.getSession().getAttribute("loggedUser")));
     }
 }
