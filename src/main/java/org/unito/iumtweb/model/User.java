@@ -39,7 +39,7 @@ public class User {
         this.surname = surname;
     }
 
-    public boolean isRole() {
+    public boolean getRole() {
         return role;
     }
 
