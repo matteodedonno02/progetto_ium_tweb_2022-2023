@@ -10,6 +10,7 @@ import java.io.IOException;
 public class ContentTypeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", "*");
         servletResponse.setContentType("application/json; charset=utf-8");
         filterChain.doFilter(servletRequest, servletResponse);
     }

@@ -31,7 +31,8 @@ public class DAO {
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
-                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active")));
+                System.out.println(rs.getString("iconUrl"));
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class DAO {
             ps.setInt(1, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
-                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active"));
+                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -135,7 +136,7 @@ public class DAO {
             ps.setString(1, title);
             rs = ps.executeQuery();
             if (rs.next())
-                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active"));
+                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
