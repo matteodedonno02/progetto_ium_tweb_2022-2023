@@ -3,11 +3,13 @@ package org.unito.iumtweb.model;
 public class Course {
     private int idCourse;
     private String title;
+    private String iconUrl;
     private boolean active;
 
-    public Course(int idCourse, String title, boolean active){
+    public Course(int idCourse, String title, String iconUrl, boolean active) {
         this.idCourse = idCourse;
         this.title = title;
+        this.iconUrl = iconUrl;
         this.active = active;
     }
 
@@ -25,6 +27,14 @@ public class Course {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
     }
 
     public boolean isActive() {
