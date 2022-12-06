@@ -31,7 +31,6 @@ public class DAO {
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
-                System.out.println(rs.getString("iconUrl"));
                 courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
             }
         } catch (SQLException e) {
@@ -628,7 +627,6 @@ public class DAO {
     }
 
     public Repetition getRepetition(String email, int idTeaching, String date, String time) {
-        System.out.println(time);
         openConnection();
 
         PreparedStatement ps = null;

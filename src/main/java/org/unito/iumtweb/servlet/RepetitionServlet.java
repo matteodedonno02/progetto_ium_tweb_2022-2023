@@ -81,7 +81,6 @@ public class RepetitionServlet extends HttpServlet {
 
     private void selectRepetitionByEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
-        System.out.println(email);
         response.getWriter().write(new Gson().toJson(managerDB.getRepetitionsByEmail(email)));
     }
 
