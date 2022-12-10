@@ -56,11 +56,19 @@ public class UserServlet extends HttpServlet {
             case "checkSession":
                 checkSession(request, response);
                 break;
+            case "getFromSession":
+                getLoggedUserFromSession(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
 
         }
+    }
+
+    private void getLoggedUserFromSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        response.getWriter().write(new Gson().toJson(loggedUser));
     }
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -118,7 +126,8 @@ public class UserServlet extends HttpServlet {
 
     public void loginUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
-        User user = managerDB.login(email, request.getParameter("password"));
+        String password = request.getParameter("password");
+        User user = managerDB.login(email, password);
 
         if (user != null) {
             Gson gson = new Gson();
