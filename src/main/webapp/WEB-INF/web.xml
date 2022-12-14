@@ -3,17 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
-    
+
     <context-param>
         <param-name>dbUrl</param-name>
-        <param-value>jdbc:mysql://192.168.1.64/ripetizioni</param-value>
+        <param-value>jdbc:mysql://localhost/ripetizioni</param-value>
     </context-param>
     <context-param>
         <param-name>dbUsername</param-name>
-        <param-value>mdd</param-value>
+        <param-value>root</param-value>
     </context-param>
     <context-param>
         <param-name>dbPassword</param-name>
-        <param-value>megachino</param-value>
+        <param-value></param-value>
     </context-param>
 </web-app>
