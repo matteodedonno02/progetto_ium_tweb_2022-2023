@@ -43,6 +43,32 @@ public class DAO {
         return courses;
     }
 
+
+    public ArrayList<Course> getMostRequestedCourses() {
+        openConnection();
+
+        ArrayList<Course> mostRequestedCourses = new ArrayList<Course>();
+
+        Statement s = null;
+        ResultSet rs = null;
+
+        try {
+            s = conn.createStatement();
+            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 3; ");
+            while (rs.next()) {
+                mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeStatement(s);
+        closeResultSet(rs);
+        closeConnection();
+
+        return mostRequestedCourses;
+    }
+
     public int addCourse(String title) {
         openConnection();
         PreparedStatement ps = null;
@@ -424,7 +450,6 @@ public class DAO {
         closePreparedStatement(ps);
         closeConnection();
     }
-
 
     public ArrayList<Teaching> getTeachings() {
         ArrayList<Teaching> teachings = new ArrayList<Teaching>();

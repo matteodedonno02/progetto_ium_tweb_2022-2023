@@ -27,6 +27,9 @@ public class CourseServlet extends HttpServlet {
             case "select":
                 selectCourse(request, response);
                 break;
+            case "mostRequested":
+                selectMostRequested(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
@@ -65,6 +68,11 @@ public class CourseServlet extends HttpServlet {
             ArrayList<Course> courses = managerDB.getCourses();
             response.getWriter().write(new Gson().toJson(courses));
         }
+    }
+
+    private void selectMostRequested(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ArrayList<Course> courses = managerDB.getMostRequestedCourses();
+        response.getWriter().write(new Gson().toJson(courses));
     }
 
     private void addCourse(HttpServletRequest request, HttpServletResponse
