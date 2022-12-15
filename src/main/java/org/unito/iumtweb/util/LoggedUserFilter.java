@@ -1,0 +1,26 @@
+package org.unito.iumtweb.util;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+@WebFilter({"/UserServlet", "/CourseServlet", "/ProfessorServlet", "/TeachingServlet", "/RepetitionServlet"})
+public class LoggedUserFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
+        String operation = servletRequest.getParameter("operation");
+
+        if (!servletName.equals("UserServlet") && (!operation.equals("login") || !operation.equals("register")) && !userIsLogged((HttpServletRequest) servletRequest)) {
+            servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
+            return;
+        }
+
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private boolean userIsLogged(HttpServletRequest request) {
+        return request.getSession().getAttribute("loggedUser") != null;
+    }
+}

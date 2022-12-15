@@ -31,7 +31,7 @@ public class DAO {
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
-                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active")));
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,6 +41,32 @@ public class DAO {
         closeResultSet(rs);
         closeConnection();
         return courses;
+    }
+
+
+    public ArrayList<Course> getMostRequestedCourses() {
+        openConnection();
+
+        ArrayList<Course> mostRequestedCourses = new ArrayList<Course>();
+
+        Statement s = null;
+        ResultSet rs = null;
+
+        try {
+            s = conn.createStatement();
+            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 3; ");
+            while (rs.next()) {
+                mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeStatement(s);
+        closeResultSet(rs);
+        closeConnection();
+
+        return mostRequestedCourses;
     }
 
     public int addCourse(String title) {
@@ -113,7 +139,7 @@ public class DAO {
             ps.setInt(1, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
-                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active"));
+                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -135,7 +161,7 @@ public class DAO {
             ps.setString(1, title);
             rs = ps.executeQuery();
             if (rs.next())
-                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getBoolean("active"));
+                c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -425,7 +451,6 @@ public class DAO {
         closeConnection();
     }
 
-
     public ArrayList<Teaching> getTeachings() {
         ArrayList<Teaching> teachings = new ArrayList<Teaching>();
         Statement s = null;
@@ -627,7 +652,6 @@ public class DAO {
     }
 
     public Repetition getRepetition(String email, int idTeaching, String date, String time) {
-        System.out.println(time);
         openConnection();
 
         PreparedStatement ps = null;
@@ -679,24 +703,26 @@ public class DAO {
         return repetitions;
     }
 
-    public boolean updateRepetition(int idRepetition, int newState) {
+    public Repetition updateRepetition(int idRepetition, int newState) {
         openConnection();
 
         PreparedStatement ps = null;
-        boolean res = true;
+        Repetition repetition = null;
+
         try {
             ps = conn.prepareStatement("UPDATE repetition SET state = ? WHERE idRepetition = ?");
             ps.setInt(1, newState);
             ps.setInt(2, idRepetition);
             ps.execute();
         } catch (SQLException e) {
-            res = false;
             e.printStackTrace();
         }
 
         closePreparedStatement(ps);
         closeConnection();
-        return res;
+
+        repetition = getRepetitionById(idRepetition);
+        return repetition;
     }
 
     private void registerDriver() {

@@ -53,11 +53,22 @@ public class UserServlet extends HttpServlet {
             case "login":
                 loginUser(request, response);
                 break;
+            case "checkSession":
+                checkSession(request, response);
+                break;
+            case "getFromSession":
+                getLoggedUserFromSession(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
 
         }
+    }
+
+    private void getLoggedUserFromSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        response.getWriter().write(new Gson().toJson(loggedUser));
     }
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -115,10 +126,16 @@ public class UserServlet extends HttpServlet {
 
     public void loginUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
-        User user = managerDB.login(email, request.getParameter("password"));
+        String password = request.getParameter("password");
+        User user = managerDB.login(email, password);
 
         if (user != null) {
-            response.getWriter().write(new Gson().toJson(user));
+            Gson gson = new Gson();
+            String json = gson.toJson(user);
+            json = json.replaceAll("}", ",\"sessionId\":" + "\"" + request.getSession().getId() + "\"}");
+            response.getWriter().write(json);
+
+            request.getSession().setAttribute("loggedUser", user);
         } else {
             if (managerDB.getUserByEmail(email) != null) {
                 response.getWriter().write("{\"error\":\"Wrong password\"}");
@@ -126,5 +143,9 @@ public class UserServlet extends HttpServlet {
                 response.getWriter().write("{\"error\":\"Email not found\"}");
             }
         }
+    }
+
+    private void checkSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.getWriter().write(new Gson().toJson((User) request.getSession().getAttribute("loggedUser")));
     }
 }

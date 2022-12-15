@@ -6,14 +6,14 @@
 
     <context-param>
         <param-name>dbUrl</param-name>
-        <param-value>jdbc:mysql://192.168.1.64/ripetizioni</param-value>
+        <param-value>jdbc:mysql://localhost/ripetizioni</param-value>
     </context-param>
     <context-param>
         <param-name>dbUsername</param-name>
-        <param-value>mdd</param-value>
+        <param-value>root</param-value>
     </context-param>
     <context-param>
         <param-name>dbPassword</param-name>
-        <param-value>megachino</param-value>
+        <param-value></param-value>
     </context-param>
 </web-app>
