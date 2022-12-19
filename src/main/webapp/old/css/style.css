@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body {
+  background: #E4DFDA !important;
+}
+
+.top {
+  color: #E4DFDA;
+  background-size: cover;
+  background: url("../img/pexels-pixabay-355948.jpg") no-repeat center;
+  height: 500px;
+}
+.top .cards {
+  gap: 10px;
+}
+
+.body {
+  background: #3185FC;
+  width: 80vw;
+  top: 350px;
+}
+
+@media (max-width: 576px) {
+  .body {
+    width: 100vw;
+  }
+}
+
+/*# sourceMappingURL=style.css.map */

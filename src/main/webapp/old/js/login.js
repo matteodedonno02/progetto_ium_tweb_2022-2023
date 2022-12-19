@@ -2,6 +2,8 @@ $("#loginForm").submit(function (e) {
     e.preventDefault();
     const email = $("input[name='email']").val();
     const password = $("input[name='password']").val();
+    console.log(email);
+    console.log(password);
 
     $.ajax({
         url: "UserServlet",

@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar {
+  height: 100vh;
+  flex-direction: column;
+  background: #E4DFDA;
+}
+.navbar a {
+  cursor: pointer;
+}
+.navbar .icon {
+  background: #ED4845;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+/*# sourceMappingURL=style.css.map */

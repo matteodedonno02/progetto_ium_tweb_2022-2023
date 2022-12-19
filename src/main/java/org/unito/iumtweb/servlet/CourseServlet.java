@@ -10,7 +10,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "CourseServlet", value = "/CourseServlet")
+@WebServlet(name = "CourseServlet", value = "/rungo")
 public class CourseServlet extends HttpServlet {
 
     private DAO managerDB;

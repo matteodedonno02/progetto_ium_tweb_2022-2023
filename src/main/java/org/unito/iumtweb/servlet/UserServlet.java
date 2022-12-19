@@ -28,6 +28,9 @@ public class UserServlet extends HttpServlet {
             case "select":
                 selectUser(request, response);
                 break;
+            case "getFromSession":
+                getLoggedUserFromSession(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
