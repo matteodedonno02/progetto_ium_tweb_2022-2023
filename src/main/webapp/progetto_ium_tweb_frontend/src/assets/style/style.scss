@@ -1,5 +1,6 @@
 $backgroundColor: #E4DFDA;
 $accentColor: #ED4845;
+$accentColor2: #3185FC;
 
 * {
   box-sizing: border-box;
@@ -7,18 +8,119 @@ $accentColor: #ED4845;
   margin: 0;
 }
 
-.navbar {
-  height: 100vh;
-  flex-direction: column;
-  background: $backgroundColor;
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:active:focus:not(:disabled):not(.disabled),
+.btn:focus,
+.btn:active,
+.btn:hover {
+  box-shadow: none !important;
+  outline: 0;
+}
 
-  a {
-    cursor: pointer;
+.btn-primary {
+  background: $accentColor2;
+
+  &:hover {
+    background: $accentColor;
+  }
+}
+
+.cards {
+  display: grid;
+
+  .card-body {
+    text-align: center;
   }
 
-  .icon {
-    background: $accentColor;
-    border-radius: 50%;
-    padding: 5px;
+  .professor-card {
+
+    padding: 10px;
+
+    .card {
+      padding: 0 10px 10px 10px;
+      width: 18rem;
+      height: 8rem;
+
+      .card-body {
+        padding: 0;
+      }
+
+      .row {
+        height: 8rem;
+      }
+    }
+  }
+
+  .course-card {
+    padding: 10px;
+
+    .card {
+      padding: 10px;
+      width: 18rem;
+      height: 8rem;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+
+      img {
+        width: 68px;
+      }
+    }
+  }
+}
+
+.col-img {
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius);
+}
+
+.card.is-loading {
+  padding: 20px;
+
+  .image,
+  h5,
+  p {
+    background: #eee;
+    background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
+  }
+
+  .row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .image {
+    height: 100px;
+    max-width: 80%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  h5 {
+    height: 30px;
+  }
+
+  p {
+    height: 70px;
+  }
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

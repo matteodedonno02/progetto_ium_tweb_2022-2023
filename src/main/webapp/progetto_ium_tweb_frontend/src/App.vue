@@ -1,11 +1,9 @@
 <template>
-  <div class="row">
-    <div class="col-1">
-      <VerticalBar @change-page="changePage" />
-    </div>
-    <div class="col-11">
+  <VerticalBar v-bind:page="page" @change-page="changePage" />
+  <div class="container">
+    <div class="content">
       <div v-if="page === 'home'">
-        <HomeView />
+        <HomeView v-bind:loggedUser="loggedUser" />
       </div>
       <div v-else-if="page === 'search'">
         <SearchView />
@@ -13,9 +11,13 @@
     </div>
   </div>
 
+
+  <!-- <button v-on:click="login">LOGIN</button> -->
+
 </template>
 
 <script>
+import $ from 'jquery'
 import VerticalBar from './components/VerticalBar.vue'
 import HomeView from './view/HomeView.vue'
 import SearchView from './view/SearchView.vue'
@@ -24,7 +26,8 @@ export default {
   name: 'App',
   data() {
     return {
-      page: "home"
+      page: "home",
+      loggedUser: null
     }
   },
   components: {
@@ -35,6 +38,20 @@ export default {
   methods: {
     changePage(page) {
       this.page = page
+    },
+    login() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "/UserServlet", {
+        method: "POST",
+        data: {
+          operation: "login",
+          email: "giuseppecolazzo@gmail.com",
+          password: "ciao"
+        },
+        success: (data) => {
+          self.loggedUser = data
+        }
+      })
     }
   },
   mounted() {

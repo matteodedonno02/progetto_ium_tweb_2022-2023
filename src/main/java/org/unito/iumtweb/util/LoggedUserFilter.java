@@ -11,6 +11,11 @@ public class LoggedUserFilter implements Filter {
         String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
 
+        if (servletName.equals("ProfessorServlet") && operation.equals("mostRequested")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         if (servletName.equals("CourseServlet") && operation.equals("mostRequested")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
