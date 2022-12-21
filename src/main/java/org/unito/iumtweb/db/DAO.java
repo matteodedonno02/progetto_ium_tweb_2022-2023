@@ -54,7 +54,7 @@ public class DAO {
 
         try {
             s = conn.createStatement();
-            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 3; ");
+            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4; ");
             while (rs.next()) {
                 mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
             }
@@ -373,7 +373,7 @@ public class DAO {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                professors.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("active")));
+                professors.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -383,6 +383,31 @@ public class DAO {
         closeResultSet(rs);
         closeConnection();
         return professors;
+    }
+
+    public ArrayList<Professor> getMostRequestedProfessor() {
+        openConnection();
+
+        ArrayList<Professor> mostRequestedProfessor = new ArrayList<Professor>();
+
+        Statement s = null;
+        ResultSet rs = null;
+
+        try {
+            s = conn.createStatement();
+            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, p.serialNumber, p.name, p.surname, p.imageUrl, p.active FROM professor p JOIN teaching t ON p.serialNumber = t.serialNumber LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY p.serialNumber ORDER BY nRepetition DESC LIMIT 4;");
+            while (rs.next()) {
+                mostRequestedProfessor.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeStatement(s);
+        closeResultSet(rs);
+        closeConnection();
+
+        return mostRequestedProfessor;
     }
 
     public int updateProfessor(String oldSerialNumber, String newSerialNumber, String name, String surname) {
@@ -423,7 +448,7 @@ public class DAO {
             ps.setString(1, serialNumber);
             rs = ps.executeQuery();
             if (rs.next())
-                p = new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("active"));
+                p = new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
