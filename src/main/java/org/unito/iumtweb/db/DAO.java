@@ -765,8 +765,8 @@ public class DAO {
         return availableRepetitions;
     }
 
-    public Map<String, Map<String, List<Repetition>>> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
-        Map<String, Map<String, List<Repetition>>> availableRepetitions = new HashMap<String, Map<String, List<Repetition>>>();
+    public Map<String, List<Repetition>> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
+        Map<String, List<Repetition>> availableRepetitions = new HashMap<String, List<Repetition>>();
 
         LocalDate from = DateAndTimeManipulator.fromStringToLocalDate(dateFrom);
         LocalDate to = DateAndTimeManipulator.fromStringToLocalDate(dateTo);
@@ -775,13 +775,13 @@ public class DAO {
 
 
         for (LocalDate date = from; date.isBefore(to); date = date.plusDays(1)) {
-            availableRepetitions.put(date.toString(), new TreeMap<String, List<Repetition>>());
+            availableRepetitions.put(date.toString(), new ArrayList<Repetition>());
             for (LocalTime time = start; time.isBefore(end); time = time.plusHours(1)) {
-                availableRepetitions.get(date.toString()).put(time.toString() + ":00", getAvailableRepetitions(date.toString(), time.toString() + ":00"));
+                availableRepetitions.get(date.toString()).addAll(getAvailableRepetitions(date.toString(), time.toString() + ":00"));
             }
         }
 
-        return new TreeMap<>(availableRepetitions);
+        return availableRepetitions;
     }
 
     public Repetition updateRepetition(int idRepetition, int newState) {

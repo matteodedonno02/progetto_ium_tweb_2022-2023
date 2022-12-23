@@ -8,6 +8,6 @@
 
 <script>
 export default {
-    name: "MyRepetition"
+    name: "MyRepetition",
 }
 </script>

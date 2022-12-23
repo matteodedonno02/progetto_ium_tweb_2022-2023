@@ -114,6 +114,10 @@ $accentColor2: #3185FC;
   }
 }
 
+.navigation {
+  display: flex;
+}
+
 @keyframes shine {
   to {
     background-position-x: -200%;

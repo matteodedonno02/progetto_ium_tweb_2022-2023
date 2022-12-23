@@ -94,6 +94,10 @@
   height: 70px;
 }
 
+.navigation {
+  display: flex;
+}
+
 @keyframes shine {
   to {
     background-position-x: -200%;

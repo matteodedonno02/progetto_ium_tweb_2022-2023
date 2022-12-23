@@ -106,7 +106,7 @@ public class RepetitionServlet extends HttpServlet {
         String date = request.getParameter("date");
         String time = request.getParameter("time");
 
-        Map<String, Map<String, List<Repetition>>> availableRepetitions = managerDB.getAvailableRepetitions("2022-12-23", "2022-12-26", "17:00:00", "20:00:00");
+        Map<String, List<Repetition>> availableRepetitions = managerDB.getAvailableRepetitions("2022-12-23", "2022-12-26", "17:00:00", "20:00:00");
 
         response.getWriter().write(new Gson().toJson(availableRepetitions));
     }
