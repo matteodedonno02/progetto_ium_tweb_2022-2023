@@ -8,6 +8,9 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "RepetitionServlet", value = "/RepetitionServlet")
 public class RepetitionServlet extends HttpServlet {
@@ -27,6 +30,9 @@ public class RepetitionServlet extends HttpServlet {
                 break;
             case "selectByEmail":
                 selectRepetitionByEmail(request, response);
+                break;
+            case "available":
+                getAvailableRepetitions(request, response);
                 break;
         }
     }
@@ -94,5 +100,14 @@ public class RepetitionServlet extends HttpServlet {
         } else {
             response.getWriter().write("{\"error\":\"Repetition not found\"}");
         }
+    }
+
+    private void getAvailableRepetitions(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String date = request.getParameter("date");
+        String time = request.getParameter("time");
+
+        Map<String, Map<String, List<Repetition>>> availableRepetitions = managerDB.getAvailableRepetitions("2022-12-23", "2022-12-26", "17:00:00", "20:00:00");
+
+        response.getWriter().write(new Gson().toJson(availableRepetitions));
     }
 }

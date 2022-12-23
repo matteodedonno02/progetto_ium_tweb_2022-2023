@@ -24,6 +24,7 @@
 
 .cards {
   display: grid;
+  justify-items: center;
 }
 .cards .card-body {
   text-align: center;

@@ -1,11 +1,16 @@
 package org.unito.iumtweb.db;
 
 import org.unito.iumtweb.model.*;
+import org.unito.iumtweb.util.DateAndTimeManipulator;
 
 import java.sql.*;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 
 public class DAO {
     private String dbUrl;
@@ -726,6 +731,57 @@ public class DAO {
         closeConnection();
 
         return repetitions;
+    }
+
+    private ArrayList<Repetition> getAvailableRepetitions(String date, String time) {
+        openConnection();
+
+        ArrayList<Repetition> availableRepetitions = new ArrayList<Repetition>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM teaching t WHERE " +
+                    "NOT EXISTS (SELECT * FROM repetition r WHERE r.idTeaching = t.idTeaching AND r.date = ? AND r.time = ?) " +
+                    "AND NOT EXISTS (SELECT * FROM repetition r JOIN teaching t1 ON r.idTeaching = t1.idTeaching WHERE t1.serialNumber = t.serialNumber AND r.date = ? AND r.time = ?) ");
+            ps.setDate(1, Date.valueOf(date));
+            ps.setTime(2, Time.valueOf(time));
+            ps.setDate(3, Date.valueOf(date));
+            ps.setTime(4, Time.valueOf(time));
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                availableRepetitions.add(new Repetition(getTeachingById(rs.getInt("idTeaching")), Date.valueOf(date), Time.valueOf(time)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+
+        return availableRepetitions;
+    }
+
+    public Map<String, Map<String, List<Repetition>>> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
+        Map<String, Map<String, List<Repetition>>> availableRepetitions = new HashMap<String, Map<String, List<Repetition>>>();
+
+        LocalDate from = DateAndTimeManipulator.fromStringToLocalDate(dateFrom);
+        LocalDate to = DateAndTimeManipulator.fromStringToLocalDate(dateTo);
+        LocalTime start = DateAndTimeManipulator.fromStringToLocalTime(timeFrom);
+        LocalTime end = DateAndTimeManipulator.fromStringToLocalTime(timeTo);
+
+
+        for (LocalDate date = from; date.isBefore(to); date = date.plusDays(1)) {
+            availableRepetitions.put(date.toString(), new TreeMap<String, List<Repetition>>());
+            for (LocalTime time = start; time.isBefore(end); time = time.plusHours(1)) {
+                availableRepetitions.get(date.toString()).put(time.toString() + ":00", getAvailableRepetitions(date.toString(), time.toString() + ":00"));
+            }
+        }
+
+        return new TreeMap<>(availableRepetitions);
     }
 
     public Repetition updateRepetition(int idRepetition, int newState) {

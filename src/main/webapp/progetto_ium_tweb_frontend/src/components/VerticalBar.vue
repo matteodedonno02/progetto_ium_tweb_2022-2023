@@ -15,10 +15,15 @@
             <a class="nav-link" :class="page === 'home' ? 'active' : ''"
               v-on:click="this.$emit('change-page', 'home')">Home</a>
           </li>
-          <li class="nav-item d-flex flex-column align-items-center">
+          <li v-if="loggedUser !== null" class="nav-item d-flex flex-column align-items-center">
             <SearchIcon />
             <a class="nav-link" :class="page === 'search' ? 'active' : ''"
               v-on:click="this.$emit('change-page', 'search')">Search</a>
+          </li>
+          <li v-if="loggedUser !== null" class="nav-item d-flex flex-column align-items-center">
+            <BookAlertIcon />
+            <a class="nav-link" :class="page === 'my-repetition' ? 'active' : ''"
+              v-on:click="this.$emit('change-page', 'my-repetition')">My Repetition</a>
           </li>
         </ul>
       </div>
@@ -30,14 +35,16 @@
 import HomeIcon from 'vue-material-design-icons/Home.vue'
 import SearchIcon from 'vue-material-design-icons/Magnify.vue'
 import BookOpenPageVariantOutlineIcon from 'vue-material-design-icons/BookOpenPageVariantOutline.vue'
+import BookAlertIcon from 'vue-material-design-icons/BookAlert.vue'
 
 export default {
   name: "VerticalBar",
   components: {
     HomeIcon,
     SearchIcon,
-    BookOpenPageVariantOutlineIcon
+    BookOpenPageVariantOutlineIcon,
+    BookAlertIcon
   },
-  props: ["page"]
+  props: ["page", "loggedUser"]
 }
 </script>

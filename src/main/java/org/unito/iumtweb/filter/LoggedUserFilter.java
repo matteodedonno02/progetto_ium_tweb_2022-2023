@@ -1,7 +1,6 @@
-package org.unito.iumtweb.util;
+package org.unito.iumtweb.filter;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -21,7 +20,7 @@ public class LoggedUserFilter implements Filter {
             return;
         }
 
-        if (servletName.equals("UserServlet") && (operation.equals("login") || operation.equals("register"))) {
+        if (servletName.equals("UserServlet") && (operation.equals("login") || operation.equals("register") || operation.equals("getFromSession"))) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }

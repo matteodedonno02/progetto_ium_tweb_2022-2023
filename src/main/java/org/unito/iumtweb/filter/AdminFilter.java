@@ -1,9 +1,8 @@
-package org.unito.iumtweb.util;
+package org.unito.iumtweb.filter;
 
 import org.unito.iumtweb.model.User;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 

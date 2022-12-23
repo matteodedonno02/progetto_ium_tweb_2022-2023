@@ -14,13 +14,13 @@
     <LoadingCard class="course-cards" />
     <LoadingCard class="course-cards" />
   </div>
-  <div v-else class="cards">
+  <div class="cards" v-else>
     <div class="course-card" v-for="course in mostRequestedCourse" :key="course.idCourse">
       <CourseCard v-bind:loggedUser="loggedUser" v-bind:iconUrl="course.iconUrl" v-bind:title="course.title" />
     </div>
   </div>
 
-  <h2>Docenti più richiesti!</h2>
+  <h2 class="pt-5">Docenti più richiesti!</h2>
 
   <div v-if="mostRequestedCourse.length === 0" class="cards">
     <LoadingCard class="course-cards" />
@@ -59,7 +59,7 @@ export default {
   methods: {
     getMostRequestedCourse() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "/CourseServlet?operation=mostRequested", {
+      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet?operation=mostRequested", {
         method: "GET",
         success: (data) => {
           setTimeout(() => {
@@ -70,7 +70,7 @@ export default {
     },
     getMostRequestedProfessor() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "/ProfessorServlet?operation=mostRequested", {
+      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet?operation=mostRequested", {
         method: "GET",
         success: (data) => {
           setTimeout(() => {
