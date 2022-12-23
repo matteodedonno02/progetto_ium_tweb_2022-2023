@@ -20,6 +20,12 @@ public class Repetition {
         this.time = time;
     }
 
+    public Repetition(Teaching teaching, Date date, Time time) {
+        this.teaching = teaching;
+        this.date = date;
+        this.time = time;
+    }
+
     public int getIdRepetition() {
         return idRepetition;
     }

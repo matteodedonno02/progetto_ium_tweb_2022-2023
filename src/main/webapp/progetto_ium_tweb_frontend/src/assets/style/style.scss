@@ -29,6 +29,7 @@ $accentColor2: #3185FC;
 
 .cards {
   display: grid;
+  justify-items: center;
 
   .card-body {
     text-align: center;
