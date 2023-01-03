@@ -3,7 +3,7 @@ package org.unito.iumtweb.model;
 import java.sql.Date;
 import java.sql.Time;
 
-public class Repetition {
+public class Repetition implements Comparable {
     private int idRepetition;
     private User user;
     private Teaching teaching;
@@ -84,5 +84,11 @@ public class Repetition {
                 ", date=" + date +
                 ", time=" + time +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        System.out.println(((Repetition) o).getDate().getTime());
+        return 0;
     }
 }

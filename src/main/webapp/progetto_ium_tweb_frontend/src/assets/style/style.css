@@ -4,6 +4,13 @@
   margin: 0;
 }
 
+.material-design-icon {
+  color: var(--bs-nav-link-color);
+}
+.material-design-icon .active {
+  color: var(--bs-navbar-active-color) !important;
+}
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
@@ -20,6 +27,14 @@
 }
 .btn-primary:hover {
   background: #ED4845;
+}
+
+.my-repetition-card {
+  width: 100%;
+}
+
+.trash-icon {
+  padding-right: 35px;
 }
 
 .cards {
@@ -47,7 +62,7 @@
   padding: 10px;
 }
 .cards .course-card .card {
-  padding: 10px;
+  padding: 10px !important;
   width: 18rem;
   height: 8rem;
 }
@@ -58,40 +73,65 @@
 .cards .course-card .row img {
   width: 68px;
 }
-
-.col-img {
-  background-size: cover;
-  background-position: center;
-  border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius);
+.cards .is-loading {
+  padding: 10px;
 }
-
-.card.is-loading {
-  padding: 20px;
-}
-.card.is-loading .image,
-.card.is-loading h5,
-.card.is-loading p {
+.cards .is-loading .image,
+.cards .is-loading h5,
+.cards .is-loading p {
   background: #eee;
   background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
   border-radius: 5px;
   background-size: 200% 100%;
   animation: 1.5s shine linear infinite;
 }
-.card.is-loading .row {
+.cards .is-loading .row {
   display: flex;
   justify-content: center;
 }
-.card.is-loading .image {
-  height: 100px;
-  max-width: 80%;
+.cards .is-loading .image {
+  height: 68px;
+  max-width: 68px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-.card.is-loading h5 {
+.cards .is-loading h5 {
   height: 30px;
 }
-.card.is-loading p {
+.cards .is-loading p {
   height: 70px;
+}
+
+.is-loading .image,
+.is-loading h5,
+.is-loading p {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+.is-loading .row {
+  display: flex;
+  justify-content: center;
+}
+.is-loading .image {
+  height: 68px;
+  max-width: 68px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.is-loading h5 {
+  height: 20px;
+}
+.is-loading p {
+  height: 20px;
+}
+
+.col-img {
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius);
 }
 
 .navigation {

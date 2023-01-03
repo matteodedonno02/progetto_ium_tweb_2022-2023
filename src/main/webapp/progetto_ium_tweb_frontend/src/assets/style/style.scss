@@ -8,6 +8,14 @@ $accentColor2: #3185FC;
   margin: 0;
 }
 
+.material-design-icon {
+  color: var(--bs-nav-link-color);
+
+  .active {
+    color: var(--bs-navbar-active-color) !important;
+  }
+}
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
@@ -25,6 +33,14 @@ $accentColor2: #3185FC;
   &:hover {
     background: $accentColor;
   }
+}
+
+.my-repetition-card {
+  width: 100%;
+}
+
+.trash-icon {
+  padding-right: 35px;
 }
 
 .cards {
@@ -58,7 +74,7 @@ $accentColor2: #3185FC;
     padding: 10px;
 
     .card {
-      padding: 10px;
+      padding: 10px !important;
       width: 18rem;
       height: 8rem;
     }
@@ -72,16 +88,43 @@ $accentColor2: #3185FC;
       }
     }
   }
+
+  .is-loading {
+    padding: 10px;
+
+    .image,
+    h5,
+    p {
+      background: #eee;
+      background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+      border-radius: 5px;
+      background-size: 200% 100%;
+      animation: 1.5s shine linear infinite;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .image {
+      height: 68px;
+      max-width: 68px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    h5 {
+      height: 30px;
+    }
+
+    p {
+      height: 70px;
+    }
+  }
 }
 
-.col-img {
-  background-size: cover;
-  background-position: center;
-  border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius);
-}
-
-.card.is-loading {
-  padding: 20px;
+.is-loading {
 
   .image,
   h5,
@@ -99,19 +142,25 @@ $accentColor2: #3185FC;
   }
 
   .image {
-    height: 100px;
-    max-width: 80%;
+    height: 68px;
+    max-width: 68px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
 
   h5 {
-    height: 30px;
+    height: 20px;
   }
 
   p {
-    height: 70px;
+    height: 20px;
   }
+}
+
+.col-img {
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius);
 }
 
 .navigation {

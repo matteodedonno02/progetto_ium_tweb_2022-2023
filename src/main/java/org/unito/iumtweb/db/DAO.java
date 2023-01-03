@@ -54,12 +54,12 @@ public class DAO {
 
         ArrayList<Course> mostRequestedCourses = new ArrayList<Course>();
 
-        Statement s = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            s = conn.createStatement();
-            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4; ");
+            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4;");
+            rs = ps.executeQuery();
             while (rs.next()) {
                 mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
             }
@@ -67,7 +67,7 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(s);
+        closeStatement(ps);
         closeResultSet(rs);
         closeConnection();
 
@@ -641,7 +641,7 @@ public class DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition");
+            ps = conn.prepareStatement("SELECT * FROM repetition ORDER BY date,time");
             rs = ps.executeQuery();
             while (rs.next()) {
                 repetitions.add(new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
@@ -688,7 +688,7 @@ public class DAO {
         ResultSet rs = null;
         Repetition repetition = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? AND idTeaching = ? AND date = ? AND time = ?");
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? AND idTeaching = ? AND date = ? AND time = ? ORDER BY date,time");
             ps.setString(1, email);
             ps.setInt(2, idTeaching);
             ps.setDate(3, Date.valueOf(date));
@@ -716,7 +716,7 @@ public class DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ?");
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? ORDER BY date,time");
             ps.setString(1, email);
             rs = ps.executeQuery();
             while (rs.next()) {

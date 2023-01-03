@@ -6,6 +6,7 @@
                     <th>Teacher</th>
                     <th>Course</th>
                     <th>Time</th>
+                    <th>Prenota</th>
                 </tr>
             </thead>
             <tbody>
@@ -13,6 +14,9 @@
                     <td>{{ repetition.teaching.professor.name }} {{ repetition.teaching.professor.surname }}</td>
                     <td>{{ repetition.teaching.course.title }}</td>
                     <td>{{ repetition.time }}</td>
+                    <td>
+                        <CheckBoldVue />
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -20,8 +24,13 @@
 </template>
 
 <script>
+import CheckBoldVue from 'vue-material-design-icons/CheckBold.vue';
+
 export default {
     name: "RepetitionTable",
-    props: ["repetitions"]
+    props: ["repetitions", "icon"],
+    components: [
+        CheckBoldVue
+    ],
 }
 </script>

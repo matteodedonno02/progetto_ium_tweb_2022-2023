@@ -10,20 +10,30 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item d-flex flex-column align-items-center">
-            <HomeIcon />
-            <a class="nav-link" :class="page === 'home' ? 'active' : ''"
-              v-on:click="this.$emit('change-page', 'home')">Home</a>
+          <li class="nav-item ">
+
+            <a class="nav-link"
+              :class="page === 'home' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'home')">
+              <HomeIcon />
+              Home
+            </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item d-flex flex-column align-items-center">
-            <SearchIcon />
-            <a class="nav-link" :class="page === 'search' ? 'active' : ''"
-              v-on:click="this.$emit('change-page', 'search')">Search</a>
+          <li v-if="loggedUser !== null" class="nav-item">
+            <a class="nav-link"
+              :class="page === 'search' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'search')">
+              <SearchIcon />
+              Cerca
+            </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item d-flex flex-column align-items-center">
-            <BookAlertIcon />
-            <a class="nav-link" :class="page === 'my-repetition' ? 'active' : ''"
-              v-on:click="this.$emit('change-page', 'my-repetition')">My Repetition</a>
+          <li v-if="loggedUser !== null" class="nav-item">
+            <a class="nav-link"
+              :class="page === 'my-repetitions' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'my-repetitions')">
+              <BookAlertIcon />
+              Le mie ripetizioni
+            </a>
           </li>
         </ul>
       </div>

@@ -9,10 +9,10 @@
   <h2>Corsi più richiesti!</h2>
 
   <div v-if="mostRequestedCourse.length === 0" class="cards">
-    <LoadingCard class="course-cards" />
-    <LoadingCard class="course-cards" />
-    <LoadingCard class="course-cards" />
-    <LoadingCard class="course-cards" />
+    <LoadingCard class="course-card" />
+    <LoadingCard class="course-card" />
+    <LoadingCard class="course-card" />
+    <LoadingCard class="course-card" />
   </div>
   <div class="cards" v-else>
     <div class="course-card" v-for="course in mostRequestedCourse" :key="course.idCourse">
@@ -23,10 +23,10 @@
   <h2 class="pt-5">Docenti più richiesti!</h2>
 
   <div v-if="mostRequestedCourse.length === 0" class="cards">
-    <LoadingCard class="course-cards" />
-    <LoadingCard class="course-cards" />
-    <LoadingCard class="course-cards" />
-    <LoadingCard class="course-cards" />
+    <LoadingCard class="course-card" />
+    <LoadingCard class="course-card" />
+    <LoadingCard class="course-card" />
+    <LoadingCard class="course-card" />
   </div>
   <div class="cards">
     <div class="professor-card" v-for="professor in mostRequestedProfessor" :key="professor.serialNumber">
