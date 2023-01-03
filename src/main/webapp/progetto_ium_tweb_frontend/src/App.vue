@@ -8,15 +8,14 @@
       <div v-else-if="page === 'search'">
         <SearchView />
       </div>
-      <div v-else-if="page === 'my-repetition'">
-        <MyRepetition />
+      <div v-else-if="page === 'my-repetitions'">
+        <MyRepetitions v-bind:loggedUserEmail="loggedUser.email" />
       </div>
     </div>
   </div>
 
 
   <button v-on:click="login">LOGIN</button>
-  <button v-on:click="getUserRepetitions">CIAO</button>
 
 </template>
 
@@ -25,7 +24,7 @@ import $ from 'jquery'
 import VerticalBar from './components/VerticalBar.vue'
 import HomeView from './view/HomeView.vue'
 import SearchView from './view/SearchView.vue'
-import MyRepetition from './view/MyRepetition.vue'
+import MyRepetitions from './view/MyRepetitions.vue'
 
 export default {
   name: 'App',
@@ -40,7 +39,7 @@ export default {
     VerticalBar,
     HomeView,
     SearchView,
-    MyRepetition
+    MyRepetitions
   },
   methods: {
     changePage(page) {
@@ -62,22 +61,6 @@ export default {
         success: (data) => {
           console.log(data)
           self.loggedUser = data
-        }
-      })
-    },
-    getUserRepetitions() {
-      $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
-        method: "GET",
-        data: {
-          operation: "selectByEmail",
-          email: "matteodedonno@gmail.com",
-        },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
-        success: (data) => {
-          console.log(data)
         }
       })
     }

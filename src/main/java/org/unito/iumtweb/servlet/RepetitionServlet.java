@@ -1,6 +1,7 @@
 package org.unito.iumtweb.servlet;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.unito.iumtweb.db.DAO;
 import org.unito.iumtweb.model.Repetition;
 
@@ -9,6 +10,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +89,9 @@ public class RepetitionServlet extends HttpServlet {
 
     private void selectRepetitionByEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
-        response.getWriter().write(new Gson().toJson(managerDB.getRepetitionsByEmail(email)));
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmail(email);
+        response.getWriter().write(gson.toJson(managerDB.getRepetitionsByEmail(email)));
     }
 
     private void updateRepetition(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -106,7 +110,7 @@ public class RepetitionServlet extends HttpServlet {
         String date = request.getParameter("date");
         String time = request.getParameter("time");
 
-        Map<String, Map<String, List<Repetition>>> availableRepetitions = managerDB.getAvailableRepetitions("2022-12-23", "2022-12-26", "17:00:00", "20:00:00");
+        Map<String, List<Repetition>> availableRepetitions = managerDB.getAvailableRepetitions("2022-12-23", "2022-12-26", "17:00:00", "20:00:00");
 
         response.getWriter().write(new Gson().toJson(availableRepetitions));
     }

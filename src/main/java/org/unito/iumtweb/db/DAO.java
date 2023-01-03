@@ -54,12 +54,12 @@ public class DAO {
 
         ArrayList<Course> mostRequestedCourses = new ArrayList<Course>();
 
-        Statement s = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            s = conn.createStatement();
-            rs = s.executeQuery("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4; ");
+            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4;");
+            rs = ps.executeQuery();
             while (rs.next()) {
                 mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
             }
@@ -67,7 +67,7 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(s);
+        closeStatement(ps);
         closeResultSet(rs);
         closeConnection();
 
@@ -641,7 +641,7 @@ public class DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition");
+            ps = conn.prepareStatement("SELECT * FROM repetition ORDER BY date,time");
             rs = ps.executeQuery();
             while (rs.next()) {
                 repetitions.add(new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
@@ -688,7 +688,7 @@ public class DAO {
         ResultSet rs = null;
         Repetition repetition = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? AND idTeaching = ? AND date = ? AND time = ?");
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? AND idTeaching = ? AND date = ? AND time = ? ORDER BY date,time");
             ps.setString(1, email);
             ps.setInt(2, idTeaching);
             ps.setDate(3, Date.valueOf(date));
@@ -716,7 +716,7 @@ public class DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ?");
+            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? ORDER BY date,time");
             ps.setString(1, email);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -765,8 +765,8 @@ public class DAO {
         return availableRepetitions;
     }
 
-    public Map<String, Map<String, List<Repetition>>> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
-        Map<String, Map<String, List<Repetition>>> availableRepetitions = new HashMap<String, Map<String, List<Repetition>>>();
+    public Map<String, List<Repetition>> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
+        Map<String, List<Repetition>> availableRepetitions = new HashMap<String, List<Repetition>>();
 
         LocalDate from = DateAndTimeManipulator.fromStringToLocalDate(dateFrom);
         LocalDate to = DateAndTimeManipulator.fromStringToLocalDate(dateTo);
@@ -775,13 +775,13 @@ public class DAO {
 
 
         for (LocalDate date = from; date.isBefore(to); date = date.plusDays(1)) {
-            availableRepetitions.put(date.toString(), new TreeMap<String, List<Repetition>>());
+            availableRepetitions.put(date.toString(), new ArrayList<Repetition>());
             for (LocalTime time = start; time.isBefore(end); time = time.plusHours(1)) {
-                availableRepetitions.get(date.toString()).put(time.toString() + ":00", getAvailableRepetitions(date.toString(), time.toString() + ":00"));
+                availableRepetitions.get(date.toString()).addAll(getAvailableRepetitions(date.toString(), time.toString() + ":00"));
             }
         }
 
-        return new TreeMap<>(availableRepetitions);
+        return availableRepetitions;
     }
 
     public Repetition updateRepetition(int idRepetition, int newState) {
