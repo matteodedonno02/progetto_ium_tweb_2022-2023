@@ -13,9 +13,9 @@
 }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                     <button v-on:click="executeOperation" type="button" class="btn btn-primary"
-                        data-bs-dismiss="modal">Save changes</button>
+                        data-bs-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
@@ -25,15 +25,21 @@
 
 <script>
 import $ from 'jquery'
+import { Toast } from "bootstrap"
 import { formatDate, formatTime } from '../util/DateFormatter'
+
 export default {
     name: "CustomModal",
     props: ["title", "repetition", "modalId", "newState"],
     methods: {
         formatDate,
         formatTime,
+        openToast() {
+            const toastLiveExample = $("#liveToast")
+            const toast = new Toast(toastLiveExample)
+            toast.show()
+        },
         executeOperation() {
-
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
                 method: "POST",
@@ -51,6 +57,8 @@ export default {
                         self.$emit("confirm-repetition")
                     else if (self.newState === "2")
                         self.$emit("delete-repetition")
+
+                    self.openToast()
                 }
             })
         }

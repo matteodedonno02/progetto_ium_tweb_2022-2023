@@ -1,4 +1,6 @@
 <template>
+    <CustomToast />
+
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item active" aria-current="page">Le mie ripetizioni</li>
@@ -69,6 +71,7 @@
 import $ from 'jquery'
 import MyRepetitionCard from '@/components/MyRepetitionCard.vue'
 import MyRepetitionCardLoading from '@/components/MyRepetitionCardLoading.vue'
+import CustomToast from '@/components/CustomToast.vue'
 
 export default {
     name: "MyRepetition",
@@ -84,7 +87,8 @@ export default {
     },
     components: {
         MyRepetitionCard,
-        MyRepetitionCardLoading
+        MyRepetitionCardLoading,
+        CustomToast
     },
     computed: {
         deletedRepetitionsComputed() {
