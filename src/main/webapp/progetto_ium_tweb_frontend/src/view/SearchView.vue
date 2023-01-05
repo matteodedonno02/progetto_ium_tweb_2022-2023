@@ -1,4 +1,6 @@
 <template>
+  <CustomToast />
+
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Cerca</li>
@@ -27,10 +29,11 @@
 
     <div v-for="(dateRepetition, date) in availableRepetitions" v-bind:key="date">
       <div v-if="date === Object.keys(availableRepetitions)[tablePage]">
-        <RepetitionTable v-bind:repetitions="dateRepetition" class="repetition-table" />
+        <RepetitionTable v-bind:loggedUser="loggedUser" v-bind:repetitions="dateRepetition" class="repetition-table" />
       </div>
       <div v-else>
-        <RepetitionTable v-bind:repetitions="dateRepetition" class="repetition-table d-none" />
+        <RepetitionTable v-bind:loggedUser="loggedUser" v-bind:repetitions="dateRepetition"
+          class="repetition-table d-none" />
       </div>
     </div>
   </div>
@@ -42,6 +45,7 @@ import RepetitionTable from '../components/RepetitionTable.vue'
 import ArrowLeftThickIcon from 'vue-material-design-icons/ArrowLeftThick.vue'
 import ArrowRightThickIcon from 'vue-material-design-icons/ArrowRightThick.vue'
 import { formatDate } from '../util/DateFormatter'
+import CustomToast from '../components/CustomToast.vue'
 
 
 export default {
@@ -52,10 +56,12 @@ export default {
       tablePage: 0
     }
   },
+  props: ["loggedUser"],
   components: {
     RepetitionTable,
     ArrowLeftThickIcon,
-    ArrowRightThickIcon
+    ArrowRightThickIcon,
+    CustomToast
   },
   methods: {
     formatDate,
@@ -90,7 +96,7 @@ export default {
       }
     },
     changeTable() {
-      $(".d-none")[0].classList.remove("d-none");
+      $(".d-none")[0].classList.remove("d-none")
       $(".repetition-table")[this.tablePage].classList.add("d-none")
     }
   },

@@ -8,9 +8,8 @@
                 </div>
                 <div class="modal-body">
                     Ripetizione di {{ repetition.teaching.course.title }} con {{ repetition.teaching.professor.name }}
-                    {{ repetition.teaching.professor.surname }} del giorno {{ formatDate(repetition.date) }} alle {{
-        formatTime(repetition.time)
-}}
+                    {{ repetition.teaching.professor.surname }} del giorno {{ formatDate(repetition.date) }} alle
+                    {{ formatTime(repetition.time) }}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
@@ -29,7 +28,7 @@ import { Toast } from "bootstrap"
 import { formatDate, formatTime } from '../util/DateFormatter'
 
 export default {
-    name: "CustomModal",
+    name: "MyRepetitionModal",
     props: ["title", "repetition", "modalId", "newState"],
     methods: {
         formatDate,

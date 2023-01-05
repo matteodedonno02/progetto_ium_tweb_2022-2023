@@ -10,27 +10,39 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="repetition in repetitions" v-bind:key="repetition.idRepetition">
+                <tr v-for="(repetition, index) in repetitions" v-bind:key="index">
                     <td>{{ repetition.teaching.professor.name }} {{ repetition.teaching.professor.surname }}</td>
                     <td>{{ repetition.teaching.course.title }}</td>
-                    <td>{{ repetition.time }}</td>
+                    <td>{{ formatTime(repetition.time) }}</td>
                     <td>
-                        <CheckBoldVue />
+                        <BookPlusIcon class="pointer" data-bs-toggle="modal"
+                            v-bind:data-bs-target="'#newRepetitionModel' + index + repetition.date" />
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <div v-for="(repetition, index) in repetitions" v-bind:key="index">
+            <NewRepetitionModel title="Desideri prenotarti per la seguente ripetizione?" v-bind:loggedUser="loggedUser"
+                v-bind:modalId="'newRepetitionModel' + index + repetition.date" v-bind:repetition="repetition" />
+        </div>
     </div>
 </template>
 
 <script>
-import CheckBoldVue from 'vue-material-design-icons/CheckBold.vue';
+import BookPlusIcon from 'vue-material-design-icons/BookPlus.vue';
+import NewRepetitionModel from './NewRepetitionModal.vue';
+import { formatTime } from '../util/DateFormatter.js'
 
 export default {
     name: "RepetitionTable",
-    props: ["repetitions", "icon"],
-    components: [
-        CheckBoldVue
-    ],
+    props: ["repetitions", "loggedUser"],
+    components: {
+        BookPlusIcon,
+        NewRepetitionModel
+    },
+    methods: {
+        formatTime
+    }
 }
 </script>

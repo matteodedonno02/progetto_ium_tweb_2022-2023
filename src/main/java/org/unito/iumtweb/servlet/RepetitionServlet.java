@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.unito.iumtweb.db.DAO;
 import org.unito.iumtweb.model.Repetition;
+import org.unito.iumtweb.util.DateAndTimeManipulator;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,11 +109,10 @@ public class RepetitionServlet extends HttpServlet {
     }
 
     private void getAvailableRepetitions(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String date = request.getParameter("date");
-        String time = request.getParameter("time");
+        LocalDate now = LocalDate.now();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        Map<String, List<Repetition>> availableRepetitions = managerDB.getAvailableRepetitions(DateAndTimeManipulator.fromLocalDateToString(now), DateAndTimeManipulator.fromLocalDateToString(now.plusDays(7)), "17:00:00", "20:00:00");
 
-        Map<String, List<Repetition>> availableRepetitions = managerDB.getAvailableRepetitions("2022-12-23", "2022-12-26", "17:00:00", "20:00:00");
-
-        response.getWriter().write(new Gson().toJson(availableRepetitions));
+        response.getWriter().write(gson.toJson(availableRepetitions));
     }
 }

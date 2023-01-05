@@ -34,14 +34,15 @@
 
     <context-param>
         <param-name>dbUrl</param-name>
-        <param-value>jdbc:mysql://localhost/ripetizioni</param-value>
+        <param-value>jdbc:mysql://db-mysql-lon1-65135-do-user-13237839-0.b.db.ondigitalocean.com:25060/defaultdb
+        </param-value>
     </context-param>
     <context-param>
         <param-name>dbUsername</param-name>
-        <param-value>root</param-value>
+        <param-value>doadmin</param-value>
     </context-param>
     <context-param>
         <param-name>dbPassword</param-name>
-        <param-value></param-value>
+        <param-value>AVNS_u9V8ZskpjfhUtypIn92</param-value>
     </context-param>
 </web-app>

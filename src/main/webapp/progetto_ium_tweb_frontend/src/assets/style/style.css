@@ -4,6 +4,10 @@
   margin: 0;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .material-design-icon {
   color: var(--bs-nav-link-color);
 }

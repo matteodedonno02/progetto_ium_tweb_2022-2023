@@ -81,8 +81,8 @@ export default {
     }
   },
   mounted() {
-    this.getMostRequestedCourse()
-    this.getMostRequestedProfessor()
+    // this.getMostRequestedCourse()
+    // this.getMostRequestedProfessor()
   }
 }
 </script>

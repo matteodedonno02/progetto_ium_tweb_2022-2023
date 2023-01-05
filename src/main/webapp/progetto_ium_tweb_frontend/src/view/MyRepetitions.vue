@@ -111,28 +111,26 @@ export default {
                 success: (data) => {
                     setTimeout(() => {
                         self.loggedUserRepetitions = data
-                        self.loadRepetitionsByState(data)
+                        self.loadRepetitionsByState(self.loggedUserRepetitions)
                     }, 2000)
                 }
             })
         },
         loadRepetitionsByState(repetitions) {
             this.pendingRepetitions = []
-            repetitions.forEach((repetition) => {
-                if (repetition.state === 0) {
-                    this.pendingRepetitions.push(repetition)
-                }
-            })
             this.confirmedRepetitions = []
-            repetitions.forEach((repetition) => {
-                if (repetition.state === 1) {
-                    this.confirmedRepetitions.push(repetition)
-                }
-            })
             this.deletedRepetitions = []
             repetitions.forEach((repetition) => {
-                if (repetition.state === 2) {
-                    this.deletedRepetitions.push(repetition)
+                switch (repetition.state) {
+                    case 0:
+                        this.pendingRepetitions.push(repetition)
+                        break;
+                    case 1:
+                        this.confirmedRepetitions.push(repetition)
+                        break;
+                    case 2:
+                        this.deletedRepetitions.push(repetition)
+                        break;
                 }
             })
         },
