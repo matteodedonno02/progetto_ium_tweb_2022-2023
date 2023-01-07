@@ -5,21 +5,24 @@
     </ol>
   </nav>
 
-  <div v-if="professors.length === 0" class="cards">
+  <div v-if="professors === null">
     <LoadingRow />
     <LoadingRow />
     <LoadingRow />
 
   </div>
   <div v-else>
-
-    <ul class="list-group">
-      <div class="course-card" v-for="professor in professors" v-bind:key="professor.serialNumber">
-        <ProfessorItem v-bind:professor="professor" />
-      </div>
-    </ul>
+    <div v-if="professors == ''">
+      Nessun professore presente
+    </div>
+    <div v-else>
+      <ul class="list-group">
+        <div class="course-card" v-for="professor in professors" v-bind:key="professor.serialNumber">
+          <ProfessorItem v-bind:professor="professor" />
+        </div>
+      </ul>
+    </div>
   </div>
-
 </template>
 
 <script>
@@ -32,7 +35,7 @@ export default {
   name: "AdminProfessors",
   data() {
     return {
-      professors: []
+      professors: null
     }
   },
   components: {
@@ -46,7 +49,7 @@ export default {
         method: "GET",
         success: (data) => {
           setTimeout(() => {
-            self.courses = data
+            self.professors = data
           }, 2000)
         }
       })

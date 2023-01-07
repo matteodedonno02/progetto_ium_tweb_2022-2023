@@ -5,20 +5,23 @@
     </ol>
   </nav>
 
-  <div v-if="courses.length === 0" class="cards">
+  <div v-if="courses === null">
     <LoadingRow />
     <LoadingRow />
     <LoadingRow />
   </div>
   <div v-else>
-
-    <ul class="list-group">
-      <div class="course-card" v-for="course in courses" v-bind:key="course.idCourse">
-        <CourseItem v-bind:course="course" />
-      </div>
-    </ul>
+    <div v-if="courses == ''">
+      Nessun corso presente
+    </div>
+    <div v-else>
+      <ul class="list-group">
+        <div class="course-card" v-for="course in courses" v-bind:key="course.idCourse">
+          <CourseItem v-bind:course="course" />
+        </div>
+      </ul>
+    </div>
   </div>
-
 </template>
 
 <script>
@@ -31,7 +34,7 @@ export default {
   name: "AdminCourse",
   data() {
     return {
-      courses: []
+      courses: null
     }
   },
   components: {

@@ -5,19 +5,25 @@
     </ol>
   </nav>
 
-  <div v-if="teachings.length === 0" class="cards">
+  <div v-if="teachings === null">
     <LoadingRow />
     <LoadingRow />
     <LoadingRow />
   </div>
   <div v-else>
-
-    <ul class="list-group">
-      <div class="course-card" v-for="teaching in teachings" v-bind:key="teaching.idTeaching">
-        <TeachingItem v-bind:teaching="teaching" />
-      </div>
-    </ul>
+    <div v-if="teachings == ''">
+      Nessun insegnamento presente
+    </div>
+    <div v-else>
+      <h2>FA SCHIFO POI LO SISTEMO</h2>
+      <ul class="list-group">
+        <div class="course-card" v-for="teaching in teachings" v-bind:key="teaching.idTeaching">
+          <TeachingItem v-bind:teaching="teaching" />
+        </div>
+      </ul>
+    </div>
   </div>
+
 
 </template>
 
@@ -31,7 +37,7 @@ export default {
   name: "AdminTeachings",
   data() {
     return {
-      teachings: []
+      teachings: null
     }
   },
   components: {
@@ -46,7 +52,7 @@ export default {
         method: "GET",
         success: (data) => {
           setTimeout(() => {
-            self.courses = data
+            self.teachings = data
           }, 2000)
         }
       })
