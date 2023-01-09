@@ -72,6 +72,7 @@ export default {
                     time: formatTime(self.repetition.time) + ":00"
                 },
                 success: () => {
+                    this.$emit("reload-available-repetitions")
                     self.openToast()
                 }
             })

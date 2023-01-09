@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.unito.iumtweb.db.DAO;
 import org.unito.iumtweb.model.Repetition;
 import org.unito.iumtweb.util.DateAndTimeManipulator;
+import org.unito.iumtweb.util.EmailSender;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -63,7 +64,9 @@ public class RepetitionServlet extends HttpServlet {
         int res = managerDB.addRepetition(email, idTeaching, date, time);
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getRepetition(email, idTeaching, date, time)));
+                Repetition r = managerDB.getRepetition(email, idTeaching, date, time);
+                response.getWriter().write(new Gson().toJson(r));
+                EmailSender.bookedRepetition(r);
                 break;
             case 0:
                 response.getWriter().write("{\"error\":\"Email or teaching doesn't exist\"}");

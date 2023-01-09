@@ -23,15 +23,16 @@
         </table>
 
         <div v-for="(repetition, index) in repetitions" v-bind:key="index">
-            <NewRepetitionModel title="Desideri prenotarti per la seguente ripetizione?" v-bind:loggedUser="loggedUser"
+            <NewRepetitionModel @reload-available-repetitions="reloadAvailableRepetitions"
+                title="Desideri prenotarti per la seguente ripetizione?" v-bind:loggedUser="loggedUser"
                 v-bind:modalId="'newRepetitionModel' + index + repetition.date" v-bind:repetition="repetition" />
         </div>
     </div>
 </template>
 
 <script>
-import BookPlusIcon from 'vue-material-design-icons/BookPlus.vue';
-import NewRepetitionModel from './NewRepetitionModal.vue';
+import BookPlusIcon from 'vue-material-design-icons/BookPlus.vue'
+import NewRepetitionModel from './NewRepetitionModal.vue'
 import { formatTime } from '../util/DateFormatter.js'
 
 export default {
@@ -42,7 +43,10 @@ export default {
         NewRepetitionModel
     },
     methods: {
-        formatTime
+        formatTime,
+        reloadAvailableRepetitions() {
+            this.$emit("reload-available-repetitions")
+        }
     }
 }
 </script>

@@ -578,11 +578,18 @@ public class DAO {
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM teaching WHERE idTeaching = ?");
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
+                    "FROM teaching t JOIN course c ON t.idCourse = c.idCourse JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "WHERE idTeaching = ?;");
             ps.setInt(1, idTeaching);
             rs = ps.executeQuery();
             if (rs.next())
-                t = new Teaching(rs.getInt("idTeaching"), getProfessorBySerialNumber(rs.getString("serialNumber")), getCourseById(rs.getInt("idCourse")), rs.getBoolean("active"));
+                t = new Teaching(rs.getInt("idTeaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")),
+                        rs.getBoolean("teachingActive"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -685,9 +692,9 @@ public class DAO {
         Repetition repetition = null;
         try {
             ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
-                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
                     "t.idTeaching, t.active as teachingActive, " +
-                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
                     "FROM repetition r " +
                     "JOIN user u ON r.email = u.email " +
@@ -699,8 +706,8 @@ public class DAO {
             rs = ps.executeQuery();
             if (rs.next()) {
                 repetition = new Repetition(rs.getInt("idRepetition"),
-                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
-                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorMame"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
                         rs.getInt("state"), rs.getDate("date"), rs.getTime("time"));
             }
         } catch (SQLException e) {
@@ -720,7 +727,16 @@ public class DAO {
         ResultSet rs = null;
         Repetition repetition = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? AND idTeaching = ? AND date = ? AND time = ? ORDER BY date,time");
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse WHERE u.email = ? AND t.idTeaching = ? AND r.date = ? AND r.time = ? ORDER BY date,time");
             ps.setString(1, email);
             ps.setInt(2, idTeaching);
             ps.setDate(3, Date.valueOf(date));
@@ -728,7 +744,10 @@ public class DAO {
 
             rs = ps.executeQuery();
             if (rs.next()) {
-                repetition = new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time"));
+                repetition = new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorName"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -748,11 +767,24 @@ public class DAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition WHERE email = ? ORDER BY date,time");
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse WHERE u.email = ? ORDER BY date,time");
+
             ps.setString(1, email);
             rs = ps.executeQuery();
             while (rs.next()) {
-                repetitions.add(new Repetition(rs.getInt("idRepetition"), getUserByEmail(rs.getString("email")), getTeachingById(rs.getInt("idTeaching")), rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorName"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -774,9 +806,14 @@ public class DAO {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT * FROM teaching t WHERE " +
-                    "NOT EXISTS (SELECT * FROM repetition r WHERE r.idTeaching = t.idTeaching AND r.date = ? AND r.time = ?) " +
-                    "AND NOT EXISTS (SELECT * FROM repetition r JOIN teaching t1 ON r.idTeaching = t1.idTeaching WHERE t1.serialNumber = t.serialNumber AND r.date = ? AND r.time = ?) ");
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
+                    "FROM teaching t " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "WHERE NOT EXISTS (SELECT * FROM repetition r WHERE r.idTeaching = t.idTeaching AND r.date = ? AND r.time = ?) " +
+                    "AND NOT EXISTS (SELECT * FROM repetition r JOIN teaching t1 ON r.idTeaching = t1.idTeaching WHERE t1.serialNumber = t.serialNumber AND r.date = ? AND r.time = ?); ");
             ps.setDate(1, Date.valueOf(date));
             ps.setTime(2, Time.valueOf(time));
             ps.setDate(3, Date.valueOf(date));
@@ -784,7 +821,9 @@ public class DAO {
 
             rs = ps.executeQuery();
             while (rs.next()) {
-                availableRepetitions.add(new Repetition(getTeachingById(rs.getInt("idTeaching")), Date.valueOf(date), Time.valueOf(time)));
+                availableRepetitions.add(new Repetition(new Teaching(rs.getInt("idteaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")), Date.valueOf(date), Time.valueOf(time)));
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -29,11 +29,12 @@
 
     <div v-for="(dateRepetition, date) in availableRepetitions" v-bind:key="date">
       <div v-if="date === Object.keys(availableRepetitions)[tablePage]">
-        <RepetitionTable v-bind:loggedUser="loggedUser" v-bind:repetitions="dateRepetition" class="repetition-table" />
+        <RepetitionTable @reload-available-repetitions="getAvailableRepetitions" v-bind:loggedUser="loggedUser"
+          v-bind:repetitions="dateRepetition" class="repetition-table" />
       </div>
       <div v-else>
-        <RepetitionTable v-bind:loggedUser="loggedUser" v-bind:repetitions="dateRepetition"
-          class="repetition-table d-none" />
+        <RepetitionTable @reload-available-repetitions="getAvailableRepetitions" v-bind:loggedUser="loggedUser"
+          v-bind:repetitions="dateRepetition" class="repetition-table d-none" />
       </div>
     </div>
   </div>

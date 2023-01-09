@@ -51,7 +51,7 @@ export default {
         method: "POST",
         data: {
           operation: "login",
-          email: "matteodedonno@gmail.com",
+          email: "matteodedonno02@gmail.com",
           password: "matteo"
         },
         xhrFields: {

@@ -62,9 +62,7 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet?operation=mostRequested", {
         method: "GET",
         success: (data) => {
-          setTimeout(() => {
-            self.mostRequestedCourse = data
-          }, 2000)
+          self.mostRequestedCourse = data
         }
       })
     },
@@ -73,16 +71,14 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet?operation=mostRequested", {
         method: "GET",
         success: (data) => {
-          setTimeout(() => {
-            self.mostRequestedProfessor = data
-          }, 2000)
+          self.mostRequestedProfessor = data
         }
       })
     }
   },
   mounted() {
-    // this.getMostRequestedCourse()
-    // this.getMostRequestedProfessor()
+    this.getMostRequestedCourse()
+    this.getMostRequestedProfessor()
   }
 }
 </script>
