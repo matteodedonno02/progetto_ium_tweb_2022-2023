@@ -1,7 +1,9 @@
 package org.unito.iumtweb.util;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class DateAndTimeManipulator {
     /**
@@ -22,5 +24,10 @@ public class DateAndTimeManipulator {
      */
     public static LocalTime fromStringToLocalTime(String time) {
         return LocalTime.of(Integer.valueOf(time.split(":")[0]), Integer.valueOf(time.split(":")[1]), Integer.valueOf(time.split(":")[2]));
+    }
+
+    public static String fromLocalDateToString(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
     }
 }

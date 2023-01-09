@@ -1,9 +1,9 @@
 <template>
-    <CustomModal @confirm-repetition="this.$emit('confirm-repetition', this.repetition)"
+    <MyRepetitionModal @confirm-repetition="this.$emit('confirm-repetition', this.repetition)"
         v-bind:modalId="'modalConfirm' + repetition.idRepetition" newState="1" operation="confirmRepetition"
         title="Desideri segnare come effettuata la seguente ripetizione ?" v-bind:repetition="repetition" />
 
-    <CustomModal @delete-repetition="this.$emit('delete-repetition', this.repetition)"
+    <MyRepetitionModal @delete-repetition="this.$emit('delete-repetition', this.repetition)"
         v-bind:modalId="'modalDelete' + repetition.idRepetition" newState="2" operation="deleteRepetition"
         title="Desideri segnare come cancellata la seguente ripetizione ?" v-bind:repetition="repetition" />
 
@@ -58,12 +58,12 @@
 import { formatDate, formatTime } from '../util/DateFormatter'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import DeleteIcon from 'vue-material-design-icons/Delete.vue'
-import CustomModal from './CustomModal.vue'
+import MyRepetitionModal from './MyRepetitionModal.vue'
 
 export default {
     name: "MyRepetitionCard",
     props: ["repetition"],
-    components: { CustomModal, CheckIcon, DeleteIcon },
+    components: { MyRepetitionModal, CheckIcon, DeleteIcon },
     emits: ["delete-repetition", "confirm-repetition"],
     methods: {
         formatDate,

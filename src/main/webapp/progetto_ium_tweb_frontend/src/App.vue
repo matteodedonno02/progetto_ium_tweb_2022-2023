@@ -6,7 +6,7 @@
         <HomeView v-bind:loggedUser="loggedUser" />
       </div>
       <div v-else-if="page === 'search'">
-        <SearchView />
+        <SearchView v-bind:loggedUser="loggedUser" />
       </div>
       <div v-else-if="page === 'my-repetitions'">
         <MyRepetitions v-bind:loggedUserEmail="loggedUser.email" />
@@ -51,7 +51,7 @@ export default {
         method: "POST",
         data: {
           operation: "login",
-          email: "matteodedonno@gmail.com",
+          email: "matteodedonno02@gmail.com",
           password: "matteo"
         },
         xhrFields: {
@@ -64,8 +64,6 @@ export default {
         }
       })
     }
-  },
-  mounted() {
   }
 }
 </script>
