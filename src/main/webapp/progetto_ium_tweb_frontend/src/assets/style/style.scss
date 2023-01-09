@@ -171,6 +171,16 @@ $accentColor2: #3185FC;
   display: flex;
 }
 
+.professor-item {
+  .card-body {
+    padding: 0 !important;
+  }
+
+  .row {
+    height: 120px;
+  }
+}
+
 @keyframes shine {
   to {
     background-position-x: -200%;
