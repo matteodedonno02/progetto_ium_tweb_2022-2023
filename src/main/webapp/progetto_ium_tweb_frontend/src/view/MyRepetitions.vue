@@ -135,10 +135,10 @@ export default {
             })
         },
         moveRepetitionToDeletedRepetitions(repetition) {
-
             for (var i = 0; i < this.pendingRepetitions.length; i++)
                 if (this.pendingRepetitions[i] == repetition)
                     this.pendingRepetitions.splice(i, 1)
+
             repetition.state = 2
             this.deletedRepetitions.push(repetition)
         },
@@ -146,6 +146,7 @@ export default {
             for (var i = 0; i < this.pendingRepetitions.length; i++)
                 if (this.pendingRepetitions[i] == repetition)
                     this.pendingRepetitions.splice(i, 1)
+
             repetition.state = 1
             this.confirmedRepetitions.push(repetition)
         }

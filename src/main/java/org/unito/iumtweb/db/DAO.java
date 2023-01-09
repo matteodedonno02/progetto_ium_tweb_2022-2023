@@ -491,7 +491,7 @@ public class DAO {
             String query = "SELECT t.idTeaching, t.active as teachingActive, " +
                     "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
-                    "FROM teaching t JOIN professor p ON t.serialNumber = p.serialNumber JOIN course c ON t.idCourse = c.idCourse WHERE teachingActive = 1 AND professorActive = 1 AND courseActive = 1;";
+                    "FROM teaching t JOIN professor p ON t.serialNumber = p.serialNumber JOIN course c ON t.idCourse = c.idCourse WHERE t.active = 1 AND p.active = 1 AND c.active = 1;";
 
             s = conn.createStatement();
             rs = s.executeQuery(query);
