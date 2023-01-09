@@ -26,7 +26,7 @@ public class ProfessorServlet extends HttpServlet {
                 selectUser(request, response);
                 break;
             case "mostRequested":
-                getMOstRequestedProfessor(request, response);
+                getMostRequestedProfessor(request, response);
                 break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
@@ -66,7 +66,7 @@ public class ProfessorServlet extends HttpServlet {
         }
     }
 
-    private void getMOstRequestedProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void getMostRequestedProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.getWriter().write(new Gson().toJson(managerDB.getMostRequestedProfessor()));
     }
 
