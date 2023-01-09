@@ -35,6 +35,30 @@
               Le mie ripetizioni
             </a>
           </li>
+          <li v-if="loggedUser !== null" class="nav-item">
+            <a class="nav-link"
+              :class="page === 'admin-courses' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'admin-courses')">
+              <BookOpenVariant />
+              Gestione corsi
+            </a>
+          </li>
+          <li v-if="loggedUser !== null" class="nav-item">
+            <a class="nav-link"
+              :class="page === 'admin-professors' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'admin-professors')">
+              <AccountTie />
+              Gestione professori
+            </a>
+          </li>
+          <li v-if="loggedUser !== null" class="nav-item">
+            <a class="nav-link"
+              :class="page === 'admin-teachings' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'admin-teachings')">
+              <AccountDetails />
+              Gestione insegnamenti
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -46,6 +70,9 @@ import HomeIcon from 'vue-material-design-icons/Home.vue'
 import SearchIcon from 'vue-material-design-icons/Magnify.vue'
 import BookOpenPageVariantOutlineIcon from 'vue-material-design-icons/BookOpenPageVariantOutline.vue'
 import BookAlertIcon from 'vue-material-design-icons/BookAlert.vue'
+import BookOpenVariant from 'vue-material-design-icons/BookOpenVariant.vue'
+import AccountDetails from 'vue-material-design-icons/AccountDetails.vue'
+import AccountTie from 'vue-material-design-icons/AccountTie.vue'
 
 export default {
   name: "VerticalBar",
@@ -53,7 +80,10 @@ export default {
     HomeIcon,
     SearchIcon,
     BookOpenPageVariantOutlineIcon,
-    BookAlertIcon
+    BookAlertIcon,
+    BookOpenVariant,
+    AccountDetails,
+    AccountTie
   },
   props: ["page", "loggedUser"]
 }

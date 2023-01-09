@@ -11,6 +11,15 @@
       <div v-else-if="page === 'my-repetitions'">
         <MyRepetitions v-bind:loggedUserEmail="loggedUser.email" />
       </div>
+      <div v-else-if="page === 'admin-courses'">
+        <AdminCourses />
+      </div>
+      <div v-else-if="page === 'admin-professors'">
+        <AdminProfessors />
+      </div>
+      <div v-else-if="page === 'admin-teachings'">
+        <AdminTeachings />
+      </div>
     </div>
   </div>
 
@@ -25,6 +34,9 @@ import VerticalBar from './components/VerticalBar.vue'
 import HomeView from './view/HomeView.vue'
 import SearchView from './view/SearchView.vue'
 import MyRepetitions from './view/MyRepetitions.vue'
+import AdminCourses from './view/AdminCourses.vue'
+import AdminProfessors from './view/AdminProfessors.vue'
+import AdminTeachings from './view/AdminTeachings.vue'
 
 export default {
   name: 'App',
@@ -39,7 +51,10 @@ export default {
     VerticalBar,
     HomeView,
     SearchView,
-    MyRepetitions
+    MyRepetitions,
+    AdminCourses,
+    AdminProfessors,
+    AdminTeachings
   },
   methods: {
     changePage(page) {

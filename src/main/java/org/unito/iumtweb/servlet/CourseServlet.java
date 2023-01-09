@@ -109,10 +109,12 @@ public class CourseServlet extends HttpServlet {
 
     private void deleteCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
+
         int res = managerDB.deleteCourse(Integer.valueOf(request.getParameter("idCourse")));
         if (res == -1)
             response.getWriter().write("{\"error\":\"Server error\"}");
-
+        else
+            response.getWriter().write("1");
     }
 
 

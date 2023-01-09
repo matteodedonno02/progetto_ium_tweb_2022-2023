@@ -106,6 +106,7 @@ public class TeachingServlet extends HttpServlet {
         int res = managerDB.deleteTeaching(Integer.valueOf(request.getParameter("idTeaching")));
         if (res == -1)
             response.getWriter().write("{\"error\":\"Server error\"}");
-
+        else
+            response.getWriter().write("1");
     }
 }
