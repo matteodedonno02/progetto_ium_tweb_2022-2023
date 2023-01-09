@@ -32,7 +32,7 @@ public class DAO {
         ResultSet rs = null;
         openConnection();
         try {
-            String query = "SELECT * FROM course";
+            String query = "SELECT * FROM course where active = 1";
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next()) {
@@ -374,7 +374,7 @@ public class DAO {
         ArrayList<Professor> professors = new ArrayList<Professor>();
 
         try {
-            ps = conn.prepareStatement("SELECT * FROM professor");
+            ps = conn.prepareStatement("SELECT * FROM professor WHERE active = 1 ");
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -488,7 +488,7 @@ public class DAO {
         openConnection();
 
         try {
-            String query = "SELECT * FROM teaching";
+            String query = "SELECT * FROM teaching WHERE active = 1 ";
             s = conn.createStatement();
             rs = s.executeQuery(query);
             while (rs.next())

@@ -1,4 +1,6 @@
 <template>
+
+  <CustomToast />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione professori</li>
@@ -18,7 +20,7 @@
     <div v-else>
       <ul class="list-group">
         <div class="course-card" v-for="professor in professors" v-bind:key="professor.serialNumber">
-          <ProfessorItem v-bind:professor="professor" />
+          <ProfessorItem v-bind:professor="professor" @delete-professor="removeProfessor" />
         </div>
       </ul>
     </div>
@@ -30,6 +32,7 @@
 import $ from 'jquery'
 import LoadingRow from '../components/LoadingRow.vue'
 import ProfessorItem from '../components/ProfessorItem.vue'
+import CustomToast from '@/components/CustomToast.vue'
 
 export default {
   name: "AdminProfessors",
@@ -40,7 +43,8 @@ export default {
   },
   components: {
     LoadingRow,
-    ProfessorItem
+    ProfessorItem,
+    CustomToast
   },
   methods: {
     getProfessors() {
@@ -53,7 +57,12 @@ export default {
           }, 2000)
         }
       })
-    }
+    },
+    removeProfessor(professor) {
+      for (var i = 0; i < this.professors.length; i++)
+        if (this.professors[i] == professor)
+          this.professors.splice(i, 1)
+    },
   },
   mounted() {
     this.getProfessors()

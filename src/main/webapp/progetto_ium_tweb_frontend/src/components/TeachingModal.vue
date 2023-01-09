@@ -1,0 +1,61 @@
+<template>
+  <div v-bind:id="modalId" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">{{ title }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {{ teaching.professor.surname }}
+          {{ teaching.professor.name }} con matricola
+          {{ teaching.professor.serialNumber }} insegna
+          {{ teaching.course.title }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+          <button v-on:click="executeOperation" type="button" class="btn btn-primary"
+            data-bs-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<script>
+import $ from 'jquery'
+import { Toast } from "bootstrap"
+
+export default {
+  name: "TeachingModal",
+  props: ["teaching", "title", "modalId"],
+  methods: {
+
+    openToast() {
+      const toastLiveExample = $("#liveToast")
+      const toast = new Toast(toastLiveExample)
+      toast.show()
+    },
+    executeOperation() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+        method: "POST",
+        data: {
+          operation: "delete",
+          idTeaching: self.teaching.idTeaching
+        },
+        xhrFields: {
+          withCredentials: true
+        },
+        crossDomain: true,
+        success() {
+          self.$emit("delete-teaching")
+
+          self.openToast()
+        }
+      })
+    }
+  }
+}
+</script>

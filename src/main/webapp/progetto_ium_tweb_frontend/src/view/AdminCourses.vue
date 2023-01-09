@@ -1,4 +1,5 @@
 <template>
+  <CustomToast />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione corsi</li>
@@ -17,7 +18,8 @@
     <div v-else>
       <ul class="list-group">
         <div class="course-card" v-for="course in courses" v-bind:key="course.idCourse">
-          <CourseItem v-bind:course="course" />
+          <CourseItem v-bind:course="course" @delete-course="removeCourse" />
+
         </div>
       </ul>
     </div>
@@ -29,6 +31,7 @@
 import $ from 'jquery'
 import LoadingRow from '../components/LoadingRow.vue'
 import CourseItem from '../components/CourseItem.vue'
+import CustomToast from '@/components/CustomToast.vue'
 
 export default {
   name: "AdminCourse",
@@ -39,7 +42,8 @@ export default {
   },
   components: {
     LoadingRow,
-    CourseItem
+    CourseItem,
+    CustomToast
   },
 
   methods: {
@@ -53,7 +57,13 @@ export default {
           }, 2000)
         }
       })
-    }
+    },
+    removeCourse(course) {
+      console.log(course)
+      for (var i = 0; i < this.courses.length; i++)
+        if (this.courses[i] == course)
+          this.courses.splice(i, 1)
+    },
   },
   mounted() {
     this.getCourses()

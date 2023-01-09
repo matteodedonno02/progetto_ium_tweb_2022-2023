@@ -1,4 +1,5 @@
 <template>
+  <CustomToast />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione insegnamenti</li>
@@ -15,10 +16,10 @@
       Nessun insegnamento presente
     </div>
     <div v-else>
-      <h2>FA SCHIFO POI LO SISTEMO</h2>
+
       <ul class="list-group">
         <div class="course-card" v-for="teaching in teachings" v-bind:key="teaching.idTeaching">
-          <TeachingItem v-bind:teaching="teaching" />
+          <TeachingItem v-bind:teaching="teaching" @delete-teaching="removeTeaching" />
         </div>
       </ul>
     </div>
@@ -32,6 +33,7 @@
 import $ from 'jquery'
 import LoadingRow from '../components/LoadingRow.vue'
 import TeachingItem from '../components/TeachingItem.vue'
+import CustomToast from '@/components/CustomToast.vue'
 
 export default {
   name: "AdminTeachings",
@@ -42,7 +44,8 @@ export default {
   },
   components: {
     LoadingRow,
-    TeachingItem
+    TeachingItem,
+    CustomToast
   },
 
   methods: {
@@ -56,7 +59,12 @@ export default {
           }, 2000)
         }
       })
-    }
+    },
+    removeTeaching(teaching) {
+      for (var i = 0; i < this.teachings.length; i++)
+        if (this.teachings[i] == teaching)
+          this.teachings.splice(i, 1)
+    },
   },
   mounted() {
     this.getTeachings()

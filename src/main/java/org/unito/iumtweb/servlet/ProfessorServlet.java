@@ -103,6 +103,8 @@ public class ProfessorServlet extends HttpServlet {
 
     private void deleteProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
         managerDB.deleteProfessor(request.getParameter("serialNumber"));
+
+        response.getWriter().write("1");
     }
 
 
