@@ -9,8 +9,10 @@ import java.io.IOException;
 public class AdminFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-     /*   String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
+        String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
+
+        System.out.println(servletName);
 
         if (servletName.equals("RepetitionServlet") && operation.equals("select") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
             servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
@@ -21,7 +23,7 @@ public class AdminFilter implements Filter {
             servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
             return;
         }
-*/
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

@@ -26,6 +26,7 @@
 import $ from 'jquery'
 import { Toast } from "bootstrap"
 import { formatDate, formatTime } from '../util/DateFormatter'
+import { changeToastMessage } from '../util/ChangeToastMessage'
 
 export default {
     name: "MyRepetitionModal",
@@ -33,6 +34,7 @@ export default {
     methods: {
         formatDate,
         formatTime,
+        changeToastMessage,
         openToast() {
             const toastLiveExample = $("#liveToast")
             const toast = new Toast(toastLiveExample)
@@ -52,10 +54,15 @@ export default {
                 },
                 crossDomain: true,
                 success() {
-                    if (self.newState === "1")
+                    if (self.newState === "1") {
+                        changeToastMessage("Prenotazione confermata con successo!")
                         self.$emit("confirm-repetition")
-                    else if (self.newState === "2")
+                    }
+
+                    else if (self.newState === "2") {
+                        changeToastMessage("Prenotazione eliminata con successo!")
                         self.$emit("delete-repetition")
+                    }
 
                     self.openToast()
                 }
