@@ -7,8 +7,9 @@ import java.io.IOException;
 public class LoggedUserFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-      /*  String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
+        String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
+
 
         if (servletName.equals("ProfessorServlet") && operation.equals("mostRequested")) {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -30,7 +31,7 @@ public class LoggedUserFilter implements Filter {
             return;
         }
 
-*/        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     private boolean userIsLogged(HttpServletRequest request) {

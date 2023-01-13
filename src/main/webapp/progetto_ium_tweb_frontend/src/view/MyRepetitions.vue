@@ -1,5 +1,5 @@
 <template>
-    <CustomToast />
+    <CustomToast ref="customToast" />
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
