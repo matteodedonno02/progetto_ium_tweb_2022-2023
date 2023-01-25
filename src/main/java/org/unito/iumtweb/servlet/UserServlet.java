@@ -135,7 +135,6 @@ public class UserServlet extends HttpServlet {
         if (user != null) {
             Gson gson = new Gson();
             String json = gson.toJson(user);
-            json = json.replaceAll("}", ",\"sessionId\":" + "\"" + request.getSession().getId() + "\"}");
 
             response.addHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; SameSite=None;");
             response.getWriter().write(json);

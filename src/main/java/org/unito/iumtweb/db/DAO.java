@@ -67,7 +67,7 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(ps);
+        closePreparedStatement(ps);
         closeResultSet(rs);
         closeConnection();
 

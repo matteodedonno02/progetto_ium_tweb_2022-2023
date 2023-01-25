@@ -38,6 +38,8 @@
       </div>
     </div>
   </div>
+
+  <CustomCalendar />
 </template>
 
 <script>
@@ -47,6 +49,7 @@ import ArrowLeftThickIcon from 'vue-material-design-icons/ArrowLeftThick.vue'
 import ArrowRightThickIcon from 'vue-material-design-icons/ArrowRightThick.vue'
 import { formatDate } from '../util/DateFormatter'
 import CustomToast from '../components/CustomToast.vue'
+import CustomCalendar from '../components/CustomCalendar.vue'
 
 
 export default {
@@ -54,7 +57,7 @@ export default {
   data() {
     return {
       availableRepetitions: null,
-      tablePage: 0
+      tablePage: 0,
     }
   },
   props: ["loggedUser"],
@@ -62,7 +65,8 @@ export default {
     RepetitionTable,
     ArrowLeftThickIcon,
     ArrowRightThickIcon,
-    CustomToast
+    CustomToast,
+    CustomCalendar
   },
   methods: {
     formatDate,

@@ -5,6 +5,7 @@ import org.unito.iumtweb.db.DAO;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import java.util.ArrayList;
 
 @WebServlet(name = "InitServlet", value = "/InitServlet", asyncSupported = true, loadOnStartup = 1)
 public class InitServlet extends HttpServlet {
