@@ -5,17 +5,14 @@ import org.unito.iumtweb.util.DateAndTimeManipulator;
 
 import java.sql.*;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
 public class DAO {
-    private String dbUrl;
-    private String dbUsername;
-    private String dbPassword;
+    private final String dbUrl;
+    private final String dbUsername;
+    private final String dbPassword;
     private Connection conn;
 
     //TODO: rendere title di course unique nel db , e forse anche l'insieme di idCourse serialNUmber e active in teaching unique, in caso contrario sistemare i catch e la servlet
@@ -27,7 +24,7 @@ public class DAO {
     }
 
     public ArrayList<Course> getCourses() {
-        ArrayList<Course> courses = new ArrayList<Course>();
+        ArrayList<Course> courses = new ArrayList<>();
         Statement s = null;
         ResultSet rs = null;
         openConnection();

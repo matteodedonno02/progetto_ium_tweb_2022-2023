@@ -78,7 +78,24 @@ export default {
           self.loggedUser = data
         }
       })
+    },
+    getUserFromSession() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
+        method: "POST",
+        data: {
+          operation: "getFromSession"
+        },
+        success: (data) => {
+          if (data !== null) {
+            self.loggedUser = data
+          }
+        }
+      })
     }
+  },
+  mounted() {
+    this.getUserFromSession()
   }
 }
 </script>

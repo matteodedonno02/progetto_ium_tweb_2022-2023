@@ -8,14 +8,17 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "ProfessorServlet", value = "/ProfessorServlet")
 public class ProfessorServlet extends HttpServlet {
     private DAO managerDB;
+    private Gson gson;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
+        gson = (Gson) getServletContext().getAttribute("gson");
     }
 
     @Override
@@ -29,7 +32,9 @@ public class ProfessorServlet extends HttpServlet {
                 getMostRequestedProfessor(request, response);
                 break;
             default:
-                response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                PrintWriter pw = response.getWriter();
+                pw.write("{\"error\":\"Invalid operation\"}");
+                pw.close();
                 break;
         }
     }
@@ -48,62 +53,73 @@ public class ProfessorServlet extends HttpServlet {
                 deleteProfessor(request, response);
                 break;
             default:
-                response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                PrintWriter pw = response.getWriter();
+                pw.write("{\"error\":\"Invalid operation\"}");
+                pw.close();
+                break;
         }
     }
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         if (request.getParameter("serialNumber") != null) {
             Professor professor = managerDB.getProfessorBySerialNumber(request.getParameter("serialNumber"));
             if (professor != null) {
-                response.getWriter().write(new Gson().toJson(professor));
+                pw.write(gson.toJson(professor));
             } else {
-                response.getWriter().write("{\"error\":\"Professor not found\"}");
+                pw.write("{\"error\":\"Professor not found\"}");
             }
         } else {
-            response.getWriter().write(new Gson().toJson(managerDB.getProfessors()));
+            pw.write(gson.toJson(managerDB.getProfessors()));
         }
+        pw.close();
     }
 
     private void getMostRequestedProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.getWriter().write(new Gson().toJson(managerDB.getMostRequestedProfessor()));
+        PrintWriter pw = response.getWriter();
+        pw.write(gson.toJson(managerDB.getMostRequestedProfessor()));
+        pw.close();
     }
 
     private void addProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         String serialNumber = request.getParameter("serialNumber");
-        int res = managerDB.addProfessor(serialNumber, request.getParameter("name"), request.getParameter("surname"), request.getParameter("serialNumber"));
+        int res = managerDB.addProfessor(serialNumber, request.getParameter("name"), request.getParameter("surname"), request.getParameter("imageUrl"));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getProfessorBySerialNumber(serialNumber)));
+                pw.write(gson.toJson(managerDB.getProfessorBySerialNumber(serialNumber)));
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Serial number already exists\"}");
+                pw.write("{\"error\":\"Serial number already exists\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+        pw.close();
     }
 
     private void editProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         int res = managerDB.updateProfessor(request.getParameter("oldSerialNumber"), request.getParameter("newSerialNumber"), request.getParameter("name"), request.getParameter("surname"));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getProfessorBySerialNumber(request.getParameter("newSerialNumber"))));
+                pw.write(gson.toJson(managerDB.getProfessorBySerialNumber(request.getParameter("newSerialNumber"))));
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Serial number already exists\"}");
+                pw.write("{\"error\":\"Serial number already exists\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+        pw.close();
     }
 
     private void deleteProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         managerDB.deleteProfessor(request.getParameter("serialNumber"));
-
-        response.getWriter().write("1");
+        pw.write("1");
     }
 
 

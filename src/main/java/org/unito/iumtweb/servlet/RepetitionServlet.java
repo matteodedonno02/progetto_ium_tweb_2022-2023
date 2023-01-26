@@ -11,6 +11,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,10 +21,12 @@ import java.util.Map;
 @WebServlet(name = "RepetitionServlet", value = "/RepetitionServlet")
 public class RepetitionServlet extends HttpServlet {
     private DAO managerDB;
+    private Gson gson;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
+        gson = (Gson) getServletContext().getAttribute("gson");
     }
 
     @Override
@@ -56,6 +59,7 @@ public class RepetitionServlet extends HttpServlet {
     }
 
     private void addRepetition(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         String email = request.getParameter("email");
         int idTeaching = Integer.valueOf(request.getParameter("idTeaching"));
         String date = request.getParameter("date");
@@ -65,57 +69,68 @@ public class RepetitionServlet extends HttpServlet {
         switch (res) {
             case 1:
                 Repetition r = managerDB.getRepetition(email, idTeaching, date, time);
-                response.getWriter().write(new Gson().toJson(r));
+                pw.write(gson.toJson(r));
                 EmailSender.bookedRepetition(r);
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Email or teaching doesn't exist\"}");
+                pw.write("{\"error\":\"Email or teaching doesn't exist\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+
+        pw.close();
     }
 
     private void selectRepetition(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+
         if (request.getParameter("idRepetition") != null) {
             Repetition repetition = managerDB.getRepetitionById(Integer.valueOf(request.getParameter("idRepetition")));
             if (repetition == null) {
-                response.getWriter().write("{\"error\":\"Repetition not found\"}");
+                pw.write("{\"error\":\"Repetition not found\"}");
             } else {
-                response.getWriter().write(new Gson().toJson(repetition));
+                pw.write(gson.toJson(repetition));
             }
-
-            return;
+        } else {
+            pw.write(gson.toJson(managerDB.getRepetitions()));
         }
 
-        response.getWriter().write(new Gson().toJson(managerDB.getRepetitions()));
+        pw.close();
     }
 
     private void selectRepetitionByEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         String email = request.getParameter("email");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmail(email);
-        response.getWriter().write(gson.toJson(managerDB.getRepetitionsByEmail(email)));
+        pw.write(gson.toJson(managerDB.getRepetitionsByEmail(email)));
+        pw.close();
     }
 
     private void updateRepetition(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         int idRepetition = Integer.valueOf(request.getParameter("idRepetition"));
         int newState = Integer.valueOf(request.getParameter("newState"));
 
         Repetition repetition = managerDB.updateRepetition(idRepetition, newState);
         if (repetition != null) {
-            response.getWriter().write(new Gson().toJson(managerDB.getRepetitionById(idRepetition)));
+            pw.write(gson.toJson(managerDB.getRepetitionById(idRepetition)));
         } else {
-            response.getWriter().write("{\"error\":\"Repetition not found\"}");
+            pw.write("{\"error\":\"Repetition not found\"}");
         }
+
+        pw.close();
     }
 
     private void getAvailableRepetitions(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         LocalDate now = LocalDate.now();
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         ArrayList<Repetition> availableRepetitions = managerDB.getAvailableRepetitions(DateAndTimeManipulator.fromLocalDateToString(now), DateAndTimeManipulator.fromLocalDateToString(now.plusDays(7)), "17:00:00", "20:00:00");
 
-        response.getWriter().write(gson.toJson(availableRepetitions));
+        pw.write(gson.toJson(availableRepetitions));
+        pw.close();
     }
 }

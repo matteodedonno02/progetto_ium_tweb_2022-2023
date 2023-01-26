@@ -9,13 +9,13 @@
 
   <div class="row pb-5">
     <div class="col">
-      <select v-on:change="coursesChanged" class="form-select" aria-label="Default select example">
+      <select v-on:change="coursesChanged" class="form-select" aria-label="Select della materia">
         <option selected value="default">Seleziona materia</option>
         <option v-for="course in courses" :value="course.idCourse" :key="course.idCourse">{{ course.title }}</option>
       </select>
     </div>
     <div class="col">
-      <select v-on:change="professorChange" class="form-select" aria-label="Default select example">
+      <select v-on:change="professorChange" class="form-select" aria-label="Select del professore">
         <option selected value="default">Seleziona professore</option>
         <option v-for="professor in professors" :value="professor.serialNumber" :key="professor.serialNumber">{{
           professor.name
@@ -137,7 +137,7 @@ export default {
       })
     },
     dateChanged() {
-      console.log($(".vuecal__title span:nth-child(1)").text())
+      console.log($(".slide-fade--right-enter-to").text())
     }
   },
   mounted() {

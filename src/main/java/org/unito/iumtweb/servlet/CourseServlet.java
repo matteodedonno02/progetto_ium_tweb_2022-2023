@@ -8,16 +8,19 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 @WebServlet(name = "CourseServlet", value = "/CourseServlet")
 public class CourseServlet extends HttpServlet {
 
     private DAO managerDB;
+    private Gson gson;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
+        gson = (Gson) getServletContext().getAttribute("gson");
     }
 
     @Override
@@ -31,7 +34,9 @@ public class CourseServlet extends HttpServlet {
                 selectMostRequested(request, response);
                 break;
             default:
-                response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                PrintWriter pw = response.getWriter();
+                pw.write("{\"error\":\"Invalid operation\"}");
+                pw.close();
                 break;
         }
     }
@@ -50,72 +55,83 @@ public class CourseServlet extends HttpServlet {
                 deleteCourse(request, response);
                 break;
             default:
-                response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                PrintWriter pw = response.getWriter();
+                pw.write("{\"error\":\"Invalid operation\"}");
+                pw.close();
                 break;
 
         }
     }
 
     private void selectCourse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         if (request.getParameter("idCourse") != null) {
             Course course = managerDB.getCourseById(Integer.valueOf(request.getParameter("idCourse")));
             if (course != null)
-                response.getWriter().write(new Gson().toJson(course));
+                pw.write(gson.toJson(course));
             else
-                response.getWriter().write("{\"error\":\"Course not found\"}");
+                pw.write("{\"error\":\"Course not found\"}");
 
         } else {
             ArrayList<Course> courses = managerDB.getCourses();
-            response.getWriter().write(new Gson().toJson(courses));
+            pw.write(gson.toJson(courses));
         }
+        pw.close();
     }
 
     private void selectMostRequested(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         ArrayList<Course> courses = managerDB.getMostRequestedCourses();
-        response.getWriter().write(new Gson().toJson(courses));
+        pw.write(gson.toJson(courses));
+        pw.close();
     }
 
     private void addCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
+        PrintWriter pw = response.getWriter();
         int res = managerDB.addCourse(request.getParameter("title"), request.getParameter("iconUrl"));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getCourseByTitle(request.getParameter("title"))));
+                pw.write(gson.toJson(managerDB.getCourseByTitle(request.getParameter("title"))));
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Course already exists\"}");
+                pw.write("{\"error\":\"Course already exists\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+        pw.close();
     }
 
     private void updateCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
+        PrintWriter pw = response.getWriter();
         int res = managerDB.updateCourse(Integer.valueOf(request.getParameter("idCourse")), request.getParameter("title"));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getCourseById(Integer.valueOf(request.getParameter("idCourse")))));
+                pw.write(gson.toJson(managerDB.getCourseById(Integer.valueOf(request.getParameter("idCourse")))));
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Course already exists\"}");
+                pw.write("{\"error\":\"Course already exists\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+        pw.close();
     }
 
     private void deleteCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
+        PrintWriter pw = response.getWriter();
 
         int res = managerDB.deleteCourse(Integer.valueOf(request.getParameter("idCourse")));
         if (res == -1)
-            response.getWriter().write("{\"error\":\"Server error\"}");
+            pw.write("{\"error\":\"Server error\"}");
         else
-            response.getWriter().write("1");
+            pw.write("1");
+
+        pw.close();
     }
-
-
 }
