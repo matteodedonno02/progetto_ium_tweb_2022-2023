@@ -35,7 +35,7 @@
               Le mie ripetizioni
             </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item">
+          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
             <a class="nav-link"
               :class="page === 'admin-courses' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'admin-courses')">
@@ -43,7 +43,7 @@
               Gestione corsi
             </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item">
+          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
             <a class="nav-link"
               :class="page === 'admin-professors' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'admin-professors')">
@@ -51,7 +51,7 @@
               Gestione professori
             </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item">
+          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
             <a class="nav-link"
               :class="page === 'admin-teachings' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'admin-teachings')">

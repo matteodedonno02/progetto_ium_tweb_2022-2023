@@ -44,7 +44,7 @@ export default {
     return {
       page: "home",
       loggedUser: null,
-      userRepetitions: []
+      userRepetitions: [],
     }
   },
   components: {

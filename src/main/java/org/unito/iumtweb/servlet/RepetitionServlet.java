@@ -114,7 +114,7 @@ public class RepetitionServlet extends HttpServlet {
     private void getAvailableRepetitions(HttpServletRequest request, HttpServletResponse response) throws IOException {
         LocalDate now = LocalDate.now();
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-        Map<String, List<Repetition>> availableRepetitions = managerDB.getAvailableRepetitions(DateAndTimeManipulator.fromLocalDateToString(now), DateAndTimeManipulator.fromLocalDateToString(now.plusDays(7)), "17:00:00", "20:00:00");
+        ArrayList<Repetition> availableRepetitions = managerDB.getAvailableRepetitions(DateAndTimeManipulator.fromLocalDateToString(now), DateAndTimeManipulator.fromLocalDateToString(now.plusDays(7)), "17:00:00", "20:00:00");
 
         response.getWriter().write(gson.toJson(availableRepetitions));
     }

@@ -7,46 +7,33 @@
     </ol>
   </nav>
 
-  <div v-if="availableRepetitions !== null">
-    <div class="navigation">
-      <div class="row w-100">
-        <div class="col text-center">
-          <div class="left-arrow d-none pt-1" v-on:click="previousPage">
-            <ArrowLeftThickIcon />
-          </div>
-        </div>
-        <div class="col text-center">
-
-          <h3>{{ formatDate(Object.keys(availableRepetitions)[tablePage]) }}</h3>
-        </div>
-        <div class="col text-center">
-          <div class="right-arrow pt-1" v-on:click="nextPage">
-            <ArrowRightThickIcon />
-          </div>
-        </div>
-      </div>
+  <div class="row pb-5">
+    <div class="col">
+      <select v-on:change="coursesChanged" class="form-select" aria-label="Default select example">
+        <option selected value="default">Seleziona materia</option>
+        <option v-for="course in courses" :value="course.idCourse" :key="course.idCourse">{{ course.title }}</option>
+      </select>
     </div>
-
-    <div v-for="(dateRepetition, date) in availableRepetitions" v-bind:key="date">
-      <div v-if="date === Object.keys(availableRepetitions)[tablePage]">
-        <RepetitionTable @reload-available-repetitions="getAvailableRepetitions" v-bind:loggedUser="loggedUser"
-          v-bind:repetitions="dateRepetition" class="repetition-table" />
-      </div>
-      <div v-else>
-        <RepetitionTable @reload-available-repetitions="getAvailableRepetitions" v-bind:loggedUser="loggedUser"
-          v-bind:repetitions="dateRepetition" class="repetition-table d-none" />
-      </div>
+    <div class="col">
+      <select v-on:change="professorChange" class="form-select" aria-label="Default select example">
+        <option selected value="default">Seleziona professore</option>
+        <option v-for="professor in professors" :value="professor.serialNumber" :key="professor.serialNumber">{{
+          professor.name
+        }} {{ professor.surname }}</option>
+      </select>
     </div>
   </div>
+
+  <vue-cal v-on:view-change="dateChanged" locale="it" active-view="day" :time-from="14 * 60" :time-to="19 * 60"
+    hide-weekends :disable-views="['years', 'year', 'month', 'week']" />
 </template>
 
 <script>
 import $ from 'jquery'
-import RepetitionTable from '../components/RepetitionTable.vue'
-import ArrowLeftThickIcon from 'vue-material-design-icons/ArrowLeftThick.vue'
-import ArrowRightThickIcon from 'vue-material-design-icons/ArrowRightThick.vue'
-import { formatDate } from '../util/DateFormatter'
+import { formatDate, sumHours } from '../util/DateFormatter'
 import CustomToast from '../components/CustomToast.vue'
+import VueCal from 'vue-cal'
+import 'vue-cal/dist/vuecal.css'
 
 
 export default {
@@ -54,55 +41,108 @@ export default {
   data() {
     return {
       availableRepetitions: null,
-      tablePage: 0
+      professors: [],
+      courses: [],
+      tablePage: 0,
+
+      // events: [
+      //   {
+      //     start: '2023-01-25 16:00',
+      //     end: '2023-01-25 17:00',
+      //     // You can also define event dates with Javascript Date objects:
+      //     // start: new Date(2018, 11 - 1, 16, 10, 30),
+      //     // end: new Date(2018, 11 - 1, 16, 11, 30),
+      //     title: 'Doctor appointment',
+      //     content: 'Me gusta',
+      //     class: 'materia'
+      //   }
+      // ]
     }
   },
   props: ["loggedUser"],
   components: {
-    RepetitionTable,
-    ArrowLeftThickIcon,
-    ArrowRightThickIcon,
-    CustomToast
+    CustomToast,
+    VueCal
   },
   methods: {
     formatDate,
-    getAvailableRepetitions() {
+    sumHours,
+    getProfessors() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
         method: "GET",
         data: {
-          operation: "available"
+          operation: "select"
         },
         success: (data) => {
-          self.availableRepetitions = data
+          self.professors = data
         }
       })
     },
-    nextPage() {
-      this.tablePage++
-      if (this.tablePage > 0) {
-        $(".left-arrow").removeClass("d-none")
-      }
-      if (this.tablePage === Object.keys(this.availableRepetitions).length - 1) {
-        $(".right-arrow").addClass("d-none")
-      }
+    getCourses() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+        method: "GET",
+        data: {
+          operation: "select"
+        },
+        success: (data) => {
+          self.courses = data
+        }
+      })
     },
-    previousPage() {
-      this.tablePage--
-      if (this.tablePage < Object.keys(this.availableRepetitions).length - 1) {
-        $(".right-arrow").removeClass("d-none")
+    coursesChanged(e) {
+      let self = this
+      const idCourse = e.target.value
+      if (idCourse === "default") {
+        self.getProfessors()
+        return;
       }
-      if (this.tablePage === 0) {
-        $(".left-arrow").addClass("d-none")
-      }
+
+
+      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+        method: "GET",
+        data: {
+          operation: "selectByCourse",
+          idCourse: idCourse
+        },
+        success: (data) => {
+          self.professors = []
+          data.forEach((teaching) => {
+            this.professors.push(teaching.professor)
+          })
+        }
+      })
     },
-    changeTable() {
-      $(".d-none")[0].classList.remove("d-none")
-      $(".repetition-table")[this.tablePage].classList.add("d-none")
+    professorChange(e) {
+      let self = this
+      const serialNumber = e.target.value
+      if (serialNumber === "default") {
+        self.getCourses()
+        return;
+      }
+
+      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+        method: "GET",
+        data: {
+          operation: "selectByProfessor",
+          serialNumber: serialNumber
+        },
+        success: (data) => {
+          self.courses = []
+          data.forEach((teaching) => {
+            this.courses.push(teaching.course)
+          })
+        }
+      })
+    },
+    dateChanged() {
+      console.log($(".vuecal__title span:nth-child(1)").text())
     }
   },
   mounted() {
-    this.getAvailableRepetitions()
+    this.getProfessors()
+    this.getCourses()
   }
 }
 </script>
