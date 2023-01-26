@@ -1,12 +1,17 @@
 <template>
 
   <CustomToast />
+
+  <AddProfessorModal v-bind:modalId="'addModal'" />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione professori</li>
     </ol>
   </nav>
-
+  <div class="row">
+    <p @new-professor="updateProfessors" data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
+      Aggiungi insegnante</p>
+  </div>
   <div v-if="professors === null">
     <LoadingRow />
     <LoadingRow />
@@ -33,6 +38,7 @@ import $ from 'jquery'
 import LoadingRow from '../components/LoadingRow.vue'
 import ProfessorItem from '../components/ProfessorItem.vue'
 import CustomToast from '@/components/CustomToast.vue'
+import AddProfessorModal from '../components/AddProfessorModal.vue'
 
 export default {
   name: "AdminProfessors",
@@ -44,7 +50,8 @@ export default {
   components: {
     LoadingRow,
     ProfessorItem,
-    CustomToast
+    CustomToast,
+    AddProfessorModal
   },
   methods: {
     getProfessors() {
@@ -63,6 +70,9 @@ export default {
         if (this.professors[i] == professor)
           this.professors.splice(i, 1)
     },
+    updateProfessors(professor) {
+      this.professors.add(professor);
+    }
   },
   mounted() {
     this.getProfessors()

@@ -39,10 +39,6 @@ export default {
     CourseModal
   },
   emits: ["delete-course"],
-  methods: {
-    removeCourse() {
-      this.$emit("delete-course", this.course)
-    }
-  }
+
 }
 </script>

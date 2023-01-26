@@ -36,11 +36,6 @@ export default {
     ProfessorModal
   },
   emits: ["delete-professor"],
-  methods: {
-    removeProfessor() {
-      this.$emit("delete-professor", this.professor)
-    }
-  },
   mounted() {
     $("#" + this.professor.serialNumber).css("background-image", "url(" + this.professor.imageUrl + ")")
   }

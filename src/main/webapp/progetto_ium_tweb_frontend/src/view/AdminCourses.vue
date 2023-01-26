@@ -1,17 +1,22 @@
 <template>
   <CustomToast />
+  <AddCourseModal v-bind:modalId="'addModal'" />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione corsi</li>
     </ol>
   </nav>
-
+  <div class="row">
+    <p @new-course="updateCourses" data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
+      Aggiungi corso</p>
+  </div>
   <div v-if="courses === null">
     <LoadingRow />
     <LoadingRow />
     <LoadingRow />
   </div>
   <div v-else>
+
     <div v-if="courses == ''">
       Nessun corso presente
     </div>
@@ -32,6 +37,7 @@ import $ from 'jquery'
 import LoadingRow from '../components/LoadingRow.vue'
 import CourseItem from '../components/CourseItem.vue'
 import CustomToast from '@/components/CustomToast.vue'
+import AddCourseModal from '@/components/AddCourseModal.vue'
 
 export default {
   name: "AdminCourse",
@@ -43,7 +49,8 @@ export default {
   components: {
     LoadingRow,
     CourseItem,
-    CustomToast
+    CustomToast,
+    AddCourseModal
   },
 
   methods: {
@@ -59,11 +66,13 @@ export default {
       })
     },
     removeCourse(course) {
-      console.log(course)
       for (var i = 0; i < this.courses.length; i++)
         if (this.courses[i] == course)
           this.courses.splice(i, 1)
     },
+    updateCourses(course) {
+      this.courses.add(course);
+    }
   },
   mounted() {
     this.getCourses()
