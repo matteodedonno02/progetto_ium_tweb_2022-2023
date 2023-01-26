@@ -59,7 +59,6 @@ export default {
     },
     executeOperation() {
       let self = this
-      self.clearInput();
       $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
         method: "POST",
         data: {
@@ -81,6 +80,9 @@ export default {
           }
         }
       })
+
+      self.clearInput();
+
     }
   }
 }

@@ -2,14 +2,14 @@
 
   <CustomToast />
 
-  <AddProfessorModal v-bind:modalId="'addModal'" />
+  <AddProfessorModal v-bind:modalId="'addModal'" @new-professor="updateProfessors" />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione professori</li>
     </ol>
   </nav>
   <div class="row">
-    <p @new-professor="updateProfessors" data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
+    <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
       Aggiungi insegnante</p>
   </div>
   <div v-if="professors === null">
@@ -71,7 +71,7 @@ export default {
           this.professors.splice(i, 1)
     },
     updateProfessors(professor) {
-      this.professors.add(professor);
+      this.professors.push(professor);
     }
   },
   mounted() {
