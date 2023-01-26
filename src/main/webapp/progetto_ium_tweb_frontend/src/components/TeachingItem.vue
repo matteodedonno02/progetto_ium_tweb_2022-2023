@@ -43,10 +43,6 @@ export default {
     TeachingModal
   },
   emits: ["delete-teaching"],
-  methods: {
-    removeTeaching() {
-      this.$emit("delete-teaching", this.teaching)
-    }
-  }
+
 }
 </script>

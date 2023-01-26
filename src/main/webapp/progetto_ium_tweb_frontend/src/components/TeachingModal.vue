@@ -26,15 +26,16 @@
 <script>
 import $ from 'jquery'
 import { Toast } from "bootstrap"
-
+import { changeToastMessage } from '@/util/ChangeToastMessage'
 export default {
   name: "TeachingModal",
   props: ["teaching", "title", "modalId"],
   methods: {
-
+    changeToastMessage,
     openToast() {
       const toastLiveExample = $("#liveToast")
       const toast = new Toast(toastLiveExample)
+      this.changeToastMessage("Insegnamento cancellato con successo")
       toast.show()
     },
     executeOperation() {
