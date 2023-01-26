@@ -42,7 +42,6 @@ export default {
     }
   },
   mounted() {
-    console.log()
     $("#" + this.professor.serialNumber).css("background-image", "url(" + this.professor.imageUrl + ")")
   }
 }

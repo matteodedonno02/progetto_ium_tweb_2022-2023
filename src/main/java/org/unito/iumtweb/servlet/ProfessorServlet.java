@@ -49,7 +49,6 @@ public class ProfessorServlet extends HttpServlet {
                 break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
-
         }
     }
 
@@ -72,7 +71,7 @@ public class ProfessorServlet extends HttpServlet {
 
     private void addProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String serialNumber = request.getParameter("serialNumber");
-        int res = managerDB.addProfessor(serialNumber, request.getParameter("name"), request.getParameter("surname"));
+        int res = managerDB.addProfessor(serialNumber, request.getParameter("name"), request.getParameter("surname"), request.getParameter("serialNumber"));
         switch (res) {
             case 1:
                 response.getWriter().write(new Gson().toJson(managerDB.getProfessorBySerialNumber(serialNumber)));

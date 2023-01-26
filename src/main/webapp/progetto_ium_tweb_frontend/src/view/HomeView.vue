@@ -63,6 +63,8 @@ export default {
         method: "GET",
         success: (data) => {
           self.mostRequestedCourse = data
+
+          self.getMostRequestedProfessor()
         }
       })
     },
@@ -78,7 +80,6 @@ export default {
   },
   mounted() {
     this.getMostRequestedCourse()
-    this.getMostRequestedProfessor()
   }
 }
 </script>

@@ -42,8 +42,8 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(s);
         closeResultSet(rs);
+        closeStatement(s);
         closeConnection();
         return courses;
     }
@@ -67,20 +67,21 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(ps);
         closeResultSet(rs);
+        closePreparedStatement(ps);
         closeConnection();
 
         return mostRequestedCourses;
     }
 
-    public int addCourse(String title) {
+    public int addCourse(String title, String iconUrl) {
         openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
-            ps = conn.prepareStatement("INSERT INTO course (title) VALUES (?)");
+            ps = conn.prepareStatement("INSERT INTO course (title, iconUrl) VALUES (?, ?)");
             ps.setString(1, title);
+            ps.setString(2, iconUrl);
             ps.execute();
         } catch (SQLIntegrityConstraintViolationException e) {
             res = 0;
@@ -342,16 +343,17 @@ public class DAO {
         return u;
     }
 
-    public int addProfessor(String serialNumber, String name, String surname) {
+    public int addProfessor(String serialNumber, String name, String surname, String imageUrl) {
         openConnection();
 
         PreparedStatement ps = null;
         int res = 1;
         try {
-            ps = conn.prepareStatement("INSERT INTO professor (serialNumber, name, surname) VALUES (?, ?, ?)");
+            ps = conn.prepareStatement("INSERT INTO professor (serialNumber, name, surname, imageUrl) VALUES (?, ?, ?, ?)");
             ps.setString(1, serialNumber);
             ps.setString(2, name);
             ps.setString(3, surname);
+            ps.setString(4, imageUrl);
 
             ps.execute();
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -408,8 +410,8 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closePreparedStatement(ps);
         closeResultSet(rs);
+        closePreparedStatement(ps);
         closeConnection();
 
         return mostRequestedProfessor;
@@ -620,6 +622,74 @@ public class DAO {
         closeResultSet(rs);
         closeConnection();
         return t;
+    }
+
+    public ArrayList<Teaching> getTeachingsByCourse(int idCourse) {
+        openConnection();
+
+        ArrayList<Teaching> teachings = new ArrayList<Teaching>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM teaching t " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE c.idCourse = ? AND t.active = 1 AND p.active = 1 AND c.active = 1; ");
+            ps.setInt(1, idCourse);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                teachings.add(new Teaching(rs.getInt("idTeaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+
+        return teachings;
+    }
+
+    public ArrayList<Teaching> getTeachingsByProfessor(String serialNumber) {
+        openConnection();
+
+        ArrayList<Teaching> teachings = new ArrayList<Teaching>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM teaching t " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE p.serialNumber = ? AND t.active = 1 AND p.active = 1 AND c.active = 1; ");
+            ps.setString(1, serialNumber);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                teachings.add(new Teaching(rs.getInt("idTeaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+
+        return teachings;
     }
 
     public int addRepetition(String email, int idTeaching, String date, String time) {
@@ -836,8 +906,8 @@ public class DAO {
         return availableRepetitions;
     }
 
-    public Map<String, List<Repetition>> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
-        Map<String, List<Repetition>> availableRepetitions = new TreeMap<String, List<Repetition>>();
+    public ArrayList<Repetition> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
+        ArrayList<Repetition> availableRepetitions = new ArrayList<Repetition>();
 
         LocalDate from = DateAndTimeManipulator.fromStringToLocalDate(dateFrom);
         LocalDate to = DateAndTimeManipulator.fromStringToLocalDate(dateTo);
@@ -846,9 +916,8 @@ public class DAO {
 
 
         for (LocalDate date = from; date.isBefore(to); date = date.plusDays(1)) {
-            availableRepetitions.put(date.toString(), new ArrayList<Repetition>());
             for (LocalTime time = start; time.isBefore(end); time = time.plusHours(1)) {
-                availableRepetitions.get(date.toString()).addAll(getAvailableRepetitions(date.toString(), time.toString() + ":00"));
+                availableRepetitions.addAll(getAvailableRepetitions(date.toString(), time.toString() + ":00"));
             }
         }
 

@@ -12,8 +12,6 @@ public class AdminFilter implements Filter {
         String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
 
-        System.out.println(servletName);
-
         if (servletName.equals("RepetitionServlet") && operation.equals("select") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
             servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
             return;

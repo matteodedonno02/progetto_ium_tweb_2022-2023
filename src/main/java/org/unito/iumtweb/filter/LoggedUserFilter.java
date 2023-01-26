@@ -1,5 +1,7 @@
 package org.unito.iumtweb.filter;
 
+import org.unito.iumtweb.model.User;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -9,7 +11,6 @@ public class LoggedUserFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
-
 
         if (servletName.equals("ProfessorServlet") && operation.equals("mostRequested")) {
             filterChain.doFilter(servletRequest, servletResponse);
