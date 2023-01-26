@@ -28,6 +28,12 @@ public class TeachingServlet extends HttpServlet {
             case "select":
                 selectTeaching(request, response);
                 break;
+            case "selectByCourse":
+                selectTeachingByCourse(request, response);
+                break;
+            case "selectByProfessor":
+                selectTeachingByProfessor(request, response);
+                break;
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
@@ -50,8 +56,19 @@ public class TeachingServlet extends HttpServlet {
             default:
                 response.getWriter().write("{\"error\":\"Invalid operation\"}");
                 break;
-
         }
+    }
+
+    private void selectTeachingByCourse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int idCourse = Integer.parseInt(request.getParameter("idCourse"));
+        ArrayList<Teaching> teachings = managerDB.getTeachingsByCourse(idCourse);
+        response.getWriter().write(new Gson().toJson(teachings));
+    }
+
+    private void selectTeachingByProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String serialNumber = request.getParameter("serialNumber");
+        ArrayList<Teaching> teachings = managerDB.getTeachingsByProfessor(serialNumber);
+        response.getWriter().write(new Gson().toJson(teachings));
     }
 
     private void selectTeaching(HttpServletRequest request, HttpServletResponse response) throws IOException {

@@ -106,6 +106,26 @@
   height: 70px;
 }
 
+.w-10 {
+  width: 10%;
+}
+
+.vuecal__menu {
+  display: none;
+}
+
+.vuecal__time-cell {
+  height: 100px !important;
+}
+
+.vuecal__event {
+  height: 100px !important;
+  top: 100px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .is-loading .image,
 .is-loading h5,
 .is-loading p {
@@ -130,6 +150,10 @@
 }
 .is-loading p {
   height: 20px;
+}
+
+.materia {
+  background-color: lightblue;
 }
 
 .col-img {

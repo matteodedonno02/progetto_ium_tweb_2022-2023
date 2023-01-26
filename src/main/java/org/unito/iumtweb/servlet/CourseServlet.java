@@ -77,7 +77,7 @@ public class CourseServlet extends HttpServlet {
 
     private void addCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
-        int res = managerDB.addCourse(request.getParameter("title"));
+        int res = managerDB.addCourse(request.getParameter("title"), request.getParameter("iconUrl"));
         switch (res) {
             case 1:
                 response.getWriter().write(new Gson().toJson(managerDB.getCourseByTitle(request.getParameter("title"))));
