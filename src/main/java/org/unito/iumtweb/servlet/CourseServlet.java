@@ -33,6 +33,8 @@ public class CourseServlet extends HttpServlet {
             case "mostRequested":
                 selectMostRequested(request, response);
                 break;
+            case "newTeaching":
+                newTeaching(request, response);
             default:
                 PrintWriter pw = response.getWriter();
                 pw.write("{\"error\":\"Invalid operation\"}");
@@ -76,6 +78,13 @@ public class CourseServlet extends HttpServlet {
             ArrayList<Course> courses = managerDB.getCourses();
             pw.write(gson.toJson(courses));
         }
+        pw.close();
+    }
+
+    private void newTeaching(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        ArrayList<Course> courses = managerDB.getCoursesBySerialNumberNeg(request.getParameter("serialNumber"));
+        pw.write(gson.toJson(courses));
         pw.close();
     }
 

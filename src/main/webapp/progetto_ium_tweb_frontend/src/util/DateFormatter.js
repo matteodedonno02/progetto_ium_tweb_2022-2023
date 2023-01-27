@@ -6,6 +6,16 @@ export const formatDate = (date) => {
     return date.split("-")[2] + " " + monthNames[parseInt(date.split("-")[1]) - 1] + " " + date.split("-")[0]
 }
 
+export const fromDateToString = (date) => {
+    var mm = date.getMonth() + 1 // getMonth() is zero-based
+    var dd = date.getDate()
+
+    return [date.getFullYear(),
+    (mm > 9 ? '' : '0') + mm,
+    (dd > 9 ? '' : '0') + dd
+    ].join('-');
+}
+
 export const sumHours = (date) => {
     return parseInt(date.split(":")[0]) + 1 + ":00"
 }
@@ -20,7 +30,7 @@ export const formatTime = (time) => {
     return newTime.split(":")[0] + ":" + newTime.split(":")[1]
 }
 
-// export const fromCalendarDateToString(date) {
-//     const month = {"Gennaio": "01", "Febbraio": "02", "Marzo": "03", "Aprile": "04", "Maggio": "05", "Giugno": "06", "Luglio": "07", "Agosto": "08", "Settembre": "09", "Ottobre": "10", "Novembre": "11", "Dicembre": "12"}
-//     return date.split(" ")[3] + "-" + month(date.split(" ")[2]) + date.split
-// }
+export const fromCalendarDateToString = (date) => {
+    const month = { "Gennaio": "01", "Febbraio": "02", "Marzo": "03", "Aprile": "04", "Maggio": "05", "Giugno": "06", "Luglio": "07", "Agosto": "08", "Settembre": "09", "Ottobre": "10", "Novembre": "11", "Dicembre": "12" }
+    return date.split(" ")[3] + "-" + month[date.split(" ")[2]] + "-" + date.split(" ")[1]
+}

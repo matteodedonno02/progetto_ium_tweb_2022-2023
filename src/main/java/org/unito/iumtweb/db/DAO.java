@@ -45,6 +45,31 @@ public class DAO {
         return courses;
     }
 
+    public ArrayList<Course> getCoursesBySerialNumberNeg(String serialNumber) {
+        openConnection();
+
+        ArrayList<Course> courses = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM course c WHERE c.active = 1 AND NOT EXISTS(SELECT idCourse FROM teaching WHERE serialNumber=? AND c.idCourse=idCourse); ");
+            ps.setString(1, serialNumber);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+
+        return courses;
+    }
+
 
     public ArrayList<Course> getMostRequestedCourses() {
         openConnection();
@@ -503,8 +528,8 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(s);
         closeResultSet(rs);
+        closeStatement(s);
         closeConnection();
         return teachings;
     }
@@ -862,6 +887,25 @@ public class DAO {
         closeConnection();
 
         return repetitions;
+    }
+
+    public ArrayList<Repetition> getRepetitionsFromCourseAndDate(int idCourse, String date) {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT * FROM repetition r JOIN teaching t ON r.idTeaching = t.idTeaching WHERE t.idCourse = ? AND r.date = ?; ");
+            ps.setInt(1, idCourse);
+            ps.setDate(2, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+//                repetitions.add(new Repetition())
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private ArrayList<Repetition> getAvailableRepetitions(String date, String time) {
