@@ -889,80 +889,119 @@ public class DAO {
         return repetitions;
     }
 
-    public ArrayList<Repetition> getRepetitionsFromCourseAndDate(int idCourse, String date) {
+    public ArrayList<Repetition> getRepetitionsByCourseAndDate(int idCourse, String date) {
         openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition r JOIN teaching t ON r.idTeaching = t.idTeaching WHERE t.idCourse = ? AND r.date = ?; ");
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.idCourse = ? AND r.date = ? AND r.state != 2 AND t.active = 1 AND c.active = 1;");
+
             ps.setInt(1, idCourse);
             ps.setDate(2, Date.valueOf(date));
             rs = ps.executeQuery();
             while (rs.next()) {
-//                repetitions.add(new Repetition())
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+        return repetitions;
     }
 
-    private ArrayList<Repetition> getAvailableRepetitions(String date, String time) {
+    public ArrayList<Repetition> getRepetitionsByProfessorAndDate(String serialNumber, String date) {
         openConnection();
 
-        ArrayList<Repetition> availableRepetitions = new ArrayList<Repetition>();
-
+        ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         try {
-            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
-                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
-                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
-                    "FROM teaching t " +
-                    "JOIN course c ON t.idCourse = c.idCourse " +
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
                     "JOIN professor p ON t.serialNumber = p.serialNumber " +
-                    "WHERE NOT EXISTS (SELECT * FROM repetition r WHERE r.idTeaching = t.idTeaching AND r.date = ? AND r.time = ?) " +
-                    "AND NOT EXISTS (SELECT * FROM repetition r JOIN teaching t1 ON r.idTeaching = t1.idTeaching WHERE t1.serialNumber = t.serialNumber AND r.date = ? AND r.time = ?); ");
-            ps.setDate(1, Date.valueOf(date));
-            ps.setTime(2, Time.valueOf(time));
-            ps.setDate(3, Date.valueOf(date));
-            ps.setTime(4, Time.valueOf(time));
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.serialNumber = ? AND r.date = ? AND r.state != 2 AND t.active = 1 AND c.active = 1;");
 
+            ps.setString(1, serialNumber);
+            ps.setDate(2, Date.valueOf(date));
             rs = ps.executeQuery();
             while (rs.next()) {
-                availableRepetitions.add(new Repetition(new Teaching(rs.getInt("idteaching"),
-                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
-                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")), Date.valueOf(date), Time.valueOf(time)));
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        closePreparedStatement(ps);
         closeResultSet(rs);
+        closePreparedStatement(ps);
         closeConnection();
-
-        return availableRepetitions;
+        return repetitions;
     }
 
-    public ArrayList<Repetition> getAvailableRepetitions(String dateFrom, String dateTo, String timeFrom, String timeTo) {
-        ArrayList<Repetition> availableRepetitions = new ArrayList<Repetition>();
+    public ArrayList<Repetition> getRepetitionsByProfessorCourseAndDate(String serialNumber, int idCourse, String date) {
+        openConnection();
 
-        LocalDate from = DateAndTimeManipulator.fromStringToLocalDate(dateFrom);
-        LocalDate to = DateAndTimeManipulator.fromStringToLocalDate(dateTo);
-        LocalTime start = DateAndTimeManipulator.fromStringToLocalTime(timeFrom);
-        LocalTime end = DateAndTimeManipulator.fromStringToLocalTime(timeTo);
+        ArrayList<Repetition> repetitions = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.serialNumber = ? AND t.idCourse = ? AND r.date = ? AND r.state != 2 AND t.active = 1 AND c.active = 1;");
 
-
-        for (LocalDate date = from; date.isBefore(to); date = date.plusDays(1)) {
-            for (LocalTime time = start; time.isBefore(end); time = time.plusHours(1)) {
-                availableRepetitions.addAll(getAvailableRepetitions(date.toString(), time.toString() + ":00"));
+            ps.setString(1, serialNumber);
+            ps.setInt(2, idCourse);
+            ps.setDate(3, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        return availableRepetitions;
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+        return repetitions;
     }
 
     public Repetition updateRepetition(int idRepetition, int newState) {

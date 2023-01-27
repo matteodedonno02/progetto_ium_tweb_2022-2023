@@ -20,7 +20,6 @@ public class Repetition implements Comparable {
         this.time = time;
     }
 
-
     public Repetition(Teaching teaching, Date date, Time time) {
         this.teaching = teaching;
         this.date = date;

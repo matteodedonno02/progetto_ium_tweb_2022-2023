@@ -10,28 +10,25 @@
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Prof.</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control"
-                                v-bind:value="repetition.teaching.professor.name + ' ' + repetition.teaching.professor.surname"
-                                disabled>
+                            <input type="text" class="form-control" v-bind:value="professorName" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Corso</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" v-bind:value="repetition.teaching.course.title"
-                                disabled>
+                            <input type="text" class="form-control" v-bind:value="courseTitle" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Data</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" v-bind:value="repetition.date" disabled>
+                            <input type="date" class="form-control" v-bind:value="date" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Ora</label>
                         <div class="col-sm-10">
-                            <input type="time" class="form-control" v-bind:value="formatTime(repetition.time)" disabled>
+                            <input type="time" class="form-control" v-bind:value="time" disabled>
                         </div>
                     </div>
                 </div>
@@ -52,7 +49,7 @@ import { Toast } from 'bootstrap'
 
 export default {
     name: "NewRepetitionModal",
-    props: ["modalId", "title", "repetition", "loggedUser"],
+    props: ["modalId", "title", "professorName", "courseTitle", "date", "time", "loggedUser"],
     methods: {
         formatTime,
         openToast() {
