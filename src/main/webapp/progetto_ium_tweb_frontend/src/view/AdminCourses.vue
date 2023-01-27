@@ -17,7 +17,7 @@
   </div>
   <div v-else>
 
-    <div v-if="courses == ''">
+    <div v-if="courses.length === 0">
       Nessun corso presente
     </div>
     <div v-else>

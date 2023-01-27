@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="progetto_ium_tweb_2022-2023:war exploded">
-    <output-path>$PROJECT_DIR$/target/iumtweb-1.0-SNAPSHOT</output-path>
+  <artifact type="exploded-war" name="progetto_ium_tweb_2022_2023:war exploded">
+    <output-path>$PROJECT_DIR$/../progetto_ium_tweb_2022_2023/target/iumtweb-1.0-SNAPSHOT</output-path>
     <properties id="maven-jee-properties">
       <options>
         <exploded>true</exploded>

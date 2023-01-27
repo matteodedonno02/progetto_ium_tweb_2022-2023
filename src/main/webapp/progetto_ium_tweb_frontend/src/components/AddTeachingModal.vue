@@ -8,7 +8,26 @@
             aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <div class="row pb-5">
 
+            <div class="col">
+              <select v-model="selectedProfessor" v-on:change="professorChange" class="form-select"
+                aria-label="Default select example">
+                <option value="default">Seleziona professore</option>
+                <option v-for="professor in professors" :value="professor.serialNumber" :key="professor.serialNumber">{{
+                  professor.name
+                }} {{ professor.surname }}</option>
+              </select>
+            </div>
+            <div class="col">
+              <select v-model="selectedCourse" :disabled="selectedProfessor === 'default'" class="form-select"
+                aria-label="Default select example">
+                <option value="default">Seleziona materia</option>
+                <option v-for="course in courses" :value="course.idCourse" :key="course.idCourse">{{ course.title }}
+                </option>
+              </select>
+            </div>
+          </div>
 
 
 
@@ -16,8 +35,8 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" v-on:click="clearInput"
             data-bs-dismiss="modal">Annulla</button>
-          <button v-on:click="executeOperation" type="button" :disabled="imageUrl.length <= 0" class="btn btn-primary"
-            data-bs-dismiss="modal">Aggiungi</button>
+          <button v-on:click="executeOperation" :disabled="selectedCourse === 'default'" type="button"
+            class="btn btn-primary" data-bs-dismiss="modal">Aggiungi</button>
         </div>
       </div>
     </div>
@@ -35,10 +54,10 @@ export default {
   emits: ["new-teaching"],
   data() {
     return {
-      serialNumber: '',
-      imageUrl: '',
-      name: '',
-      surname: ''
+      professors: [],
+      courses: [],
+      selectedCourse: 'default',
+      selectedProfessor: 'default'
     };
   },
   methods: {
@@ -51,9 +70,15 @@ export default {
       toast.show()
     },
     clearInput() {
-      this.serialNumber = ''
-      this.idCourse = ''
+      if (this.selectedProfessor !== 'default') {
+        this.selectedProfessor = 'default'
+        this.getProfessors()
 
+        if (this.selectedCourse !== 'default') {
+          this.selectedCourse = 'default'
+          this.getCourses()
+        }
+      }
     },
     executeOperation() {
       let self = this
@@ -61,27 +86,69 @@ export default {
         method: "POST",
         data: {
           operation: "add",
-          serialNumber: self.serialNumber,
-          idCourse: self.idCourse
+          serialNumber: self.selectedProfessor,
+          idCourse: self.selectedCourse
         },
         xhrFields: {
           withCredentials: true
         },
         crossDomain: true,
         success(data) {
-          if (data.error !== undefined) {
-            self.openToast("Professore già presente")
-          }
-          else {
-            self.$emit("new-professore", data)
-            self.openToast("Professore inserito con successo")
-          }
+          self.$emit("new-teaching", data)
+          self.openToast("Insegnamento inserito con successo")
         }
       })
 
       self.clearInput();
-    }
+    },
+    getProfessors() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+        method: "GET",
+        data: {
+          operation: "select"
+        },
+        success: (data) => {
+          self.professors = data
+        }
+      })
+    },
+    getCourses() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+        method: "GET",
+        data: {
+          operation: "select"
+        },
+        success: (data) => {
+          self.courses = data
+        }
+      })
+    },
 
+    professorChange() {
+      let self = this
+
+      if (this.selectedProfessor === "default") {
+        self.getCourses()
+        return;
+      }
+
+      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+        method: "GET",
+        data: {
+          operation: "newTeaching",
+          serialNumber: self.selectedProfessor
+        },
+        success: (data) => {
+          self.courses = data
+        }
+      })
+    }
+  },
+  mounted() {
+    this.getProfessors()
+    this.getCourses()
   }
 }
 </script>

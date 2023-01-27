@@ -19,7 +19,7 @@
 
   </div>
   <div v-else>
-    <div v-if="professors == ''">
+    <div v-if="professors.length === 0">
       Nessun professore presente
     </div>
     <div v-else>
@@ -71,11 +71,15 @@ export default {
           this.professors.splice(i, 1)
     },
     updateProfessors(professor) {
-      this.professors.push(professor);
+      this.professors.push(professor)
+      this.professors.sort((a, b) => {
+        return a.serialNumber.localeCompare(b.serialNumber)
+      })
     }
   },
   mounted() {
     this.getProfessors()
+
   }
 }
 </script>

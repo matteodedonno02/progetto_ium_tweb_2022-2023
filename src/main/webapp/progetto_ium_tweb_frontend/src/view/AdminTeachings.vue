@@ -15,7 +15,7 @@
     <LoadingRow />
   </div>
   <div v-else>
-    <div v-if="teachings == ''">
+    <div v-if="teachings.length === 0">
       Nessun insegnamento presente
     </div>
     <div v-else>
