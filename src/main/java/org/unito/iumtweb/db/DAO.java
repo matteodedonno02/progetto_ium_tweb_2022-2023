@@ -15,7 +15,6 @@ public class DAO {
     private final String dbPassword;
     private Connection conn;
 
-    //TODO: rendere title di course unique nel db , e forse anche l'insieme di idCourse serialNUmber e active in teaching unique, in caso contrario sistemare i catch e la servlet
     public DAO(String dbUrl, String dbUsername, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbUsername = dbUsername;
