@@ -69,8 +69,8 @@ export default {
       this.surname = ''
     },
     executeOperation() {
+
       let self = this
-      self.clearInput();
       $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
         method: "POST",
         data: {
@@ -89,11 +89,15 @@ export default {
             self.openToast("Professore già presente")
           }
           else {
-            self.$emit("new-professore", data)
+            self.$emit("new-professor", data)
             self.openToast("Professore inserito con successo")
           }
         }
       })
+
+      self.clearInput();
+
+
     }
 
   }

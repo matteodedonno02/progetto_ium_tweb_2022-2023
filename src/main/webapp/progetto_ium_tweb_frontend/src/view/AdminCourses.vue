@@ -1,13 +1,13 @@
 <template>
   <CustomToast />
-  <AddCourseModal v-bind:modalId="'addModal'" />
+  <AddCourseModal v-bind:modalId="'addModal'" @new-course="updateCourses" />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione corsi</li>
     </ol>
   </nav>
   <div class="row">
-    <p @new-course="updateCourses" data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
+    <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
       Aggiungi corso</p>
   </div>
   <div v-if="courses === null">
@@ -17,7 +17,7 @@
   </div>
   <div v-else>
 
-    <div v-if="courses == ''">
+    <div v-if="courses.length === 0">
       Nessun corso presente
     </div>
     <div v-else>
@@ -71,7 +71,7 @@ export default {
           this.courses.splice(i, 1)
     },
     updateCourses(course) {
-      this.courses.add(course);
+      this.courses.push(course);
     }
   },
   mounted() {

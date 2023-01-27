@@ -1,13 +1,13 @@
 <template>
   <CustomToast />
 
-  <AddTeachingModal v-bind:modalId="'addModal'" />
+  <AddTeachingModal v-bind:modalId="'addModal'" @new-teaching="updateTeaching" />
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page">Gestione insegnamenti</li>
     </ol>
   </nav>
-  <p @new-teaching="updateTeaching" data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
+  <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
     Aggiungi insegnamento</p>
   <div v-if="teachings === null">
     <LoadingRow />
@@ -15,7 +15,7 @@
     <LoadingRow />
   </div>
   <div v-else>
-    <div v-if="teachings == ''">
+    <div v-if="teachings.length === 0">
       Nessun insegnamento presente
     </div>
     <div v-else>
@@ -71,7 +71,7 @@ export default {
           this.teachings.splice(i, 1)
     },
     updateTeaching(teaching) {
-      this.teaching.add(teaching);
+      this.teaching.push(teaching);
     }
   },
   mounted() {
