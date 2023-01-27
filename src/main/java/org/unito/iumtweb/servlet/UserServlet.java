@@ -9,16 +9,19 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 @WebServlet(name = "UserServlet", value = "/UserServlet")
 public class UserServlet extends HttpServlet {
     private DAO managerDB;
+    private Gson gson;
 
     //TODO: istanziare tutti i parametri della request
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
+        gson = (Gson) getServletContext().getAttribute("gson");
     }
 
     @Override
@@ -32,7 +35,9 @@ public class UserServlet extends HttpServlet {
                 getLoggedUserFromSession(request, response);
                 break;
             default:
-                response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                PrintWriter pw = response.getWriter();
+                pw.write("{\"error\":\"Invalid operation\"}");
+                pw.close();
                 break;
         }
     }
@@ -63,60 +68,69 @@ public class UserServlet extends HttpServlet {
                 getLoggedUserFromSession(request, response);
                 break;
             default:
-                response.getWriter().write("{\"error\":\"Invalid operation\"}");
+                PrintWriter pw = response.getWriter();
+                pw.write("{\"error\":\"Invalid operation\"}");
+                pw.close();
                 break;
-
         }
     }
 
     private void getLoggedUserFromSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         User loggedUser = (User) request.getSession().getAttribute("loggedUser");
-        response.getWriter().write(new Gson().toJson(loggedUser));
+        pw.write(gson.toJson(loggedUser));
+        pw.close();
     }
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         if (request.getParameter("email") != null) {
             User user = managerDB.getUserByEmail(request.getParameter("email"));
             if (user != null) {
-                response.getWriter().write(new Gson().toJson(user));
+                pw.write(gson.toJson(user));
             } else {
-                response.getWriter().write("{\"error\":\"User not found\"}");
+                pw.write("{\"error\":\"User not found\"}");
             }
         } else {
             ArrayList<User> users = managerDB.getUsers();
-            response.getWriter().write(new Gson().toJson(users));
+            pw.write(gson.toJson(users));
         }
+        pw.close();
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         String email = request.getParameter("email");
         int res = managerDB.addUser(email, request.getParameter("name"), request.getParameter("surname"), request.getParameter("password"));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getUserByEmail(email)));
+                pw.write(gson.toJson(managerDB.getUserByEmail(email)));
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Email already exists\"}");
+                pw.write("{\"error\":\"Email already exists\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+        pw.close();
     }
 
     private void editUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         int res = managerDB.updateUser(request.getParameter("newEmail"), request.getParameter("oldEmail"), request.getParameter("name"), request.getParameter("surname"), Boolean.valueOf(request.getParameter("role")));
         switch (res) {
             case 1:
-                response.getWriter().write(new Gson().toJson(managerDB.getUserByEmail(request.getParameter("newEmail"))));
+                pw.write(gson.toJson(managerDB.getUserByEmail(request.getParameter("newEmail"))));
                 break;
             case 0:
-                response.getWriter().write("{\"error\":\"Email already exists\"}");
+                pw.write("{\"error\":\"Email already exists\"}");
                 break;
             case -1:
-                response.getWriter().write("{\"error\":\"Server error\"}");
+                pw.write("{\"error\":\"Server error\"}");
                 break;
         }
+        pw.close();
     }
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -128,28 +142,31 @@ public class UserServlet extends HttpServlet {
     }
 
     public void loginUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         User user = managerDB.login(email, password);
 
         if (user != null) {
-            Gson gson = new Gson();
             String json = gson.toJson(user);
 
             response.addHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; SameSite=None;");
-            response.getWriter().write(json);
+            pw.write(json);
 
             request.getSession().setAttribute("loggedUser", user);
         } else {
             if (managerDB.getUserByEmail(email) != null) {
-                response.getWriter().write("{\"error\":\"Wrong password\"}");
+                pw.write("{\"error\":\"Wrong password\"}");
             } else {
-                response.getWriter().write("{\"error\":\"Email not found\"}");
+                pw.write("{\"error\":\"Email not found\"}");
             }
         }
+        pw.close();
     }
 
     private void checkSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.getWriter().write(new Gson().toJson((User) request.getSession().getAttribute("loggedUser")));
+        PrintWriter pw = response.getWriter();
+        pw.write(gson.toJson((User) request.getSession().getAttribute("loggedUser")));
+        pw.close();
     }
 }

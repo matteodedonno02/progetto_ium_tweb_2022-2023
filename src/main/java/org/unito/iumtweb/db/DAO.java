@@ -5,17 +5,14 @@ import org.unito.iumtweb.util.DateAndTimeManipulator;
 
 import java.sql.*;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
 public class DAO {
-    private String dbUrl;
-    private String dbUsername;
-    private String dbPassword;
+    private final String dbUrl;
+    private final String dbUsername;
+    private final String dbPassword;
     private Connection conn;
 
     //TODO: rendere title di course unique nel db , e forse anche l'insieme di idCourse serialNUmber e active in teaching unique, in caso contrario sistemare i catch e la servlet
@@ -27,7 +24,7 @@ public class DAO {
     }
 
     public ArrayList<Course> getCourses() {
-        ArrayList<Course> courses = new ArrayList<Course>();
+        ArrayList<Course> courses = new ArrayList<>();
         Statement s = null;
         ResultSet rs = null;
         openConnection();
@@ -45,6 +42,31 @@ public class DAO {
         closeResultSet(rs);
         closeStatement(s);
         closeConnection();
+        return courses;
+    }
+
+    public ArrayList<Course> getCoursesBySerialNumberNeg(String serialNumber) {
+        openConnection();
+
+        ArrayList<Course> courses = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM course c WHERE c.active = 1 AND NOT EXISTS(SELECT idCourse FROM teaching WHERE serialNumber=? AND c.idCourse=idCourse); ");
+            ps.setString(1, serialNumber);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closeResultSet(rs);
+        closePreparedStatement(ps);
+        closeConnection();
+
         return courses;
     }
 
@@ -506,8 +528,8 @@ public class DAO {
             e.printStackTrace();
         }
 
-        closeStatement(s);
         closeResultSet(rs);
+        closeStatement(s);
         closeConnection();
         return teachings;
     }
@@ -865,6 +887,25 @@ public class DAO {
         closeConnection();
 
         return repetitions;
+    }
+
+    public ArrayList<Repetition> getRepetitionsFromCourseAndDate(int idCourse, String date) {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT * FROM repetition r JOIN teaching t ON r.idTeaching = t.idTeaching WHERE t.idCourse = ? AND r.date = ?; ");
+            ps.setInt(1, idCourse);
+            ps.setDate(2, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+//                repetitions.add(new Repetition())
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private ArrayList<Repetition> getAvailableRepetitions(String date, String time) {

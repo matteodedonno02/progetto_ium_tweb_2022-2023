@@ -17,6 +17,11 @@ public class AdminFilter implements Filter {
             return;
         }
 
+        if (servletName.equals("CourseServlet") && operation.equals("newTeaching") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
+            servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
+            return;
+        }
+
         if (servletName.equals("TeachingServlet") && operation.equals("add") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
             servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
             return;

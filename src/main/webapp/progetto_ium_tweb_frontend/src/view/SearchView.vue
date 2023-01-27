@@ -9,13 +9,13 @@
 
   <div class="row pb-5">
     <div class="col">
-      <select v-on:change="coursesChanged" class="form-select" aria-label="Default select example">
+      <select v-on:change="coursesChanged" class="form-select" aria-label="Select della materia">
         <option selected value="default">Seleziona materia</option>
         <option v-for="course in courses" :value="course.idCourse" :key="course.idCourse">{{ course.title }}</option>
       </select>
     </div>
     <div class="col">
-      <select v-on:change="professorChange" class="form-select" aria-label="Default select example">
+      <select v-on:change="professorChange" class="form-select" aria-label="Select del professore">
         <option selected value="default">Seleziona professore</option>
         <option v-for="professor in professors" :value="professor.serialNumber" :key="professor.serialNumber">{{
           professor.name
@@ -24,13 +24,13 @@
     </div>
   </div>
 
-  <vue-cal v-on:view-change="dateChanged" locale="it" active-view="day" :time-from="14 * 60" :time-to="19 * 60"
-    hide-weekends :disable-views="['years', 'year', 'month', 'week']" />
+  <vue-cal v-on:view-change="dateChanged" :events="events" locale="it" active-view="day" :time-from="14 * 60"
+    :time-to="19 * 60" hide-weekends :disable-views="['years', 'year', 'month', 'week']" />
 </template>
 
 <script>
 import $ from 'jquery'
-import { formatDate, sumHours } from '../util/DateFormatter'
+import { formatDate, fromDateToString } from '../util/DateFormatter'
 import CustomToast from '../components/CustomToast.vue'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
@@ -40,23 +40,22 @@ export default {
   name: "SearchView",
   data() {
     return {
-      availableRepetitions: null,
+      userRepetitions: null,
       professors: [],
       courses: [],
-      tablePage: 0,
 
-      // events: [
-      //   {
-      //     start: '2023-01-25 16:00',
-      //     end: '2023-01-25 17:00',
-      //     // You can also define event dates with Javascript Date objects:
-      //     // start: new Date(2018, 11 - 1, 16, 10, 30),
-      //     // end: new Date(2018, 11 - 1, 16, 11, 30),
-      //     title: 'Doctor appointment',
-      //     content: 'Me gusta',
-      //     class: 'materia'
-      //   }
-      // ]
+      events: [
+        {
+          start: '2023-01-27 16:00',
+          end: '2023-01-27 17:00',
+          // You can also define event dates with Javascript Date objects:
+          // start: new Date(2018, 11 - 1, 16, 10, 30),
+          // end: new Date(2018, 11 - 1, 16, 11, 30),
+          title: 'Doctor appointment',
+          content: 'Me gusta',
+          class: 'materia'
+        }
+      ]
     }
   },
   props: ["loggedUser"],
@@ -66,7 +65,7 @@ export default {
   },
   methods: {
     formatDate,
-    sumHours,
+    fromDateToString,
     getProfessors() {
       let self = this
       $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
@@ -98,7 +97,6 @@ export default {
         self.getProfessors()
         return;
       }
-
 
       $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
         method: "GET",
@@ -136,13 +134,27 @@ export default {
         }
       })
     },
-    dateChanged() {
-      console.log($(".vuecal__title span:nth-child(1)").text())
+    dateChanged({ startDate }) {
+      console.log(fromDateToString(startDate))
+    },
+    getUserRepetition() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+        method: "GET",
+        data: {
+          operation: "selectByEmail",
+          email: self.loggedUser.email,
+        },
+        success: (data) => {
+          self.userRepetitions = data
+        }
+      })
     }
   },
   mounted() {
     this.getProfessors()
     this.getCourses()
+    this.getUserRepetition()
   }
 }
 </script>

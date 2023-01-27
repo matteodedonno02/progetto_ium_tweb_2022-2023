@@ -1,5 +1,6 @@
 package org.unito.iumtweb.servlet;
 
+import com.google.gson.Gson;
 import org.unito.iumtweb.db.DAO;
 
 import javax.servlet.ServletException;
@@ -17,5 +18,8 @@ public class InitServlet extends HttpServlet {
 
         DAO managerDB = new DAO(dbUrl, dbUsername, dbPassword);
         getServletContext().setAttribute("managerDB", managerDB);
+
+        Gson gson = new Gson();
+        getServletContext().setAttribute("gson", gson);
     }
 }
