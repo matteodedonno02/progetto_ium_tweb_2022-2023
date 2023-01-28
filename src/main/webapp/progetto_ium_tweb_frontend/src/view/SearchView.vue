@@ -1,8 +1,8 @@
 <template>
   <CustomToast />
   <NewRepetitionModal modalId="newRepetition" title="Vuoi prenotare la seguente ripetizione?"
-    :professorName="professorNameForModal" :courseTitle="courseTitleForModal" :date="dateForModal"
-    :time="timeForModal" />
+    :professorName="professorNameForModal" :courseTitle="courseTitleForModal" :date="dateForModal" :time="timeForModal"
+    :idCourse="idCourseForModal" :serialNumber="serialNumberForModal" :loggedUser="loggedUser" />
 
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -58,7 +58,9 @@ export default {
       professorNameForModal: "",
       courseTitleForModal: "",
       dateForModal: "",
-      timeForModal: ""
+      timeForModal: "",
+      serialNumberForModal: "",
+      idCourseForModal: ""
     }
   },
   props: ["loggedUser"],
@@ -88,7 +90,9 @@ export default {
                 end: this.date + " " + parseInt((i + 1)) + ":00",
                 title: this.getSelectedCourseText(),
                 content: professor.name + " " + professor.surname,
-                class: "materia"
+                class: "materia",
+                serialNumber: professor.serialNumber,
+                idCourse: this.selectedCourse
               })
             }
           })
@@ -102,7 +106,9 @@ export default {
                 end: this.date + " " + parseInt((i + 1)) + ":00",
                 title: course.title,
                 content: this.getSelectedProfessorText(),
-                class: "materia"
+                class: "materia",
+                serialNumber: this.selectedProfessor,
+                idCourse: course.idCourse
               })
             }
           })
@@ -115,7 +121,9 @@ export default {
               end: this.date + " " + parseInt((i + 1)) + ":00",
               title: this.getSelectedCourseText(),
               content: this.getSelectedProfessorText(),
-              class: "materia"
+              class: "materia",
+              serialNumber: this.selectedProfessor,
+              idCourse: this.selectedCourse
             })
           }
         }
@@ -255,12 +263,10 @@ export default {
       this.courseTitleForModal = event.title
       this.dateForModal = fromDateToString(event.start)
       this.timeForModal = event.start.getHours() + ":00"
-      console.log(this.timeForModal)
+      this.serialNumberForModal = event.serialNumber
+      this.idCourseForModal = event.idCourse
       const modal = new Modal($("#newRepetition"))
       modal.show()
-      // console.log(event)
-
-      // Prevent navigating to narrower view (default vue-cal behavior).
       e.stopPropagation()
     }
   },

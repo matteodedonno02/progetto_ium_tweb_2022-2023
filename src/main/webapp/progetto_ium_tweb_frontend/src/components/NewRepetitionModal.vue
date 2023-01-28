@@ -34,7 +34,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                    <button v-on:click="executeOperation" type="button" class="btn btn-primary"
+                    <button v-on:click="getIdTeaching" type="button" class="btn btn-primary"
                         data-bs-dismiss="modal">Ok</button>
                 </div>
             </div>
@@ -46,30 +46,46 @@
 import $ from 'jquery'
 import { formatTime } from '@/util/DateFormatter';
 import { Toast } from 'bootstrap'
+import { changeToastMessage } from '@/util/ChangeToastMessage';
 
 export default {
     name: "NewRepetitionModal",
-    props: ["modalId", "title", "professorName", "courseTitle", "date", "time", "loggedUser"],
+    props: ["modalId", "title", "professorName", "courseTitle", "date", "time", "idCourse", "serialNumber", "loggedUser"],
     methods: {
         formatTime,
+        changeToastMessage,
         openToast() {
             const toastLiveExample = $("#liveToast")
             const toast = new Toast(toastLiveExample)
             toast.show()
         },
-        executeOperation() {
+        getIdTeaching() {
+            let self = this
+            $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+                method: "GET",
+                data: {
+                    operation: "getIdTeaching",
+                    serialNumber: self.serialNumber,
+                    idCourse: self.idCourse
+                },
+                success(data) {
+                    self.executeOperation(data.idTeaching)
+                }
+            })
+        },
+        executeOperation(idTeaching) {
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
                 method: "POST",
                 data: {
                     operation: "add",
                     email: self.loggedUser.email,
-                    idTeaching: self.repetition.teaching.idTeaching,
-                    date: self.repetition.date,
-                    time: formatTime(self.repetition.time) + ":00"
+                    idTeaching: idTeaching,
+                    date: self.date,
+                    time: formatTime(self.time) + ":00"
                 },
                 success: () => {
-                    this.$emit("reload-available-repetitions")
+                    self.changeToastMessage("Ripetizione prenotata con successo!")
                     self.openToast()
                 }
             })

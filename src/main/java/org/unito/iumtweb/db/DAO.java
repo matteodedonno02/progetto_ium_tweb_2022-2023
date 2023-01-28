@@ -624,18 +624,27 @@ public class DAO {
         return t;
     }
 
-    public Teaching getTeachingByProfessorCourse(String serialNumber, int idCourse) {
+    public Teaching getTeachingByProfessorAndCourse(String serialNumber, int idCourse) {
         Teaching t = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM teaching WHERE serialNumber = ? AND idCourse = ?");
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
+                    "FROM teaching t " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "WHERE p.serialNumber = ? AND c.idCourse = ? AND t.active = 1 AND c.active = 1 AND p.active = 1");
             ps.setString(1, serialNumber);
             ps.setInt(2, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
-                t = new Teaching(rs.getInt("idTeaching"), getProfessorBySerialNumber(rs.getString("serialNumber")), getCourseById(rs.getInt("idCourse")), rs.getBoolean("active"));
+                t = new Teaching(rs.getInt("idTeaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")),
+                        rs.getBoolean("teachingActive"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -644,6 +653,30 @@ public class DAO {
         closeResultSet(rs);
         closeConnection();
         return t;
+    }
+
+    public Integer getIdTeachingByProfessorAndCourse(String serialNumber, int idCourse) {
+        Integer idTeaching = null;
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try {
+            ps = conn.prepareStatement("SELECT idTeaching FROM teaching WHERE serialNumber = ? AND idCourse = ? AND active = 1");
+            ps.setString(1, serialNumber);
+            ps.setInt(2, idCourse);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                idTeaching = rs.getInt("idTeaching");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        closePreparedStatement(ps);
+        closeResultSet(rs);
+        closeConnection();
+        return idTeaching;
     }
 
     public ArrayList<Teaching> getTeachingsByCourse(int idCourse) {

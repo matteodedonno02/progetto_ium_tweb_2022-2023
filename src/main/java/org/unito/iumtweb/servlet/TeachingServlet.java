@@ -37,6 +37,9 @@ public class TeachingServlet extends HttpServlet {
             case "selectByProfessor":
                 selectTeachingByProfessor(request, response);
                 break;
+            case "getIdTeaching":
+                selectTeachingByProfessorAndCourse(request, response);
+                break;
             default:
                 PrintWriter pw = response.getWriter();
                 pw.write("{\"error\":\"Invalid operation\"}");
@@ -82,6 +85,19 @@ public class TeachingServlet extends HttpServlet {
         pw.close();
     }
 
+    private void selectTeachingByProfessorAndCourse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        String serialNumber = request.getParameter("serialNumber");
+        int idCourse = Integer.parseInt(request.getParameter("idCourse"));
+        Integer idTeaching = managerDB.getIdTeachingByProfessorAndCourse(serialNumber, idCourse);
+        if (idTeaching != null) {
+            pw.write("{\"idTeaching\": \"" + idTeaching + "\"}");
+        } else {
+            pw.write("{\"error\": \"Teaching not exists\"}");
+        }
+        pw.close();
+    }
+
     private void selectTeaching(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
         if (request.getParameter("idTeaching") != null) {
@@ -104,7 +120,7 @@ public class TeachingServlet extends HttpServlet {
         int res = managerDB.addTeaching(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")));
         switch (res) {
             case 1:
-                pw.write(gson.toJson(managerDB.getTeachingByProfessorCourse(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")))));
+                pw.write(gson.toJson(managerDB.getTeachingByProfessorAndCourse(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")))));
                 break;
             case 0:
                 pw.write("{\"error\":\"Teaching already exists\"}");
@@ -123,7 +139,7 @@ public class TeachingServlet extends HttpServlet {
 
         switch (res) {
             case 1:
-                pw.write(gson.toJson(managerDB.getTeachingByProfessorCourse(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")))));
+                pw.write(gson.toJson(managerDB.getTeachingByProfessorAndCourse(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")))));
                 break;
             case 0:
                 pw.write("{\"error\":\"Teaching already exists\"}");
