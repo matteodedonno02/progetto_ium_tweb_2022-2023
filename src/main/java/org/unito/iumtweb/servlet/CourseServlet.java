@@ -35,6 +35,10 @@ public class CourseServlet extends HttpServlet {
                 break;
             case "newTeaching":
                 newTeaching(request, response);
+                break;
+            case "search":
+                searchCourses(request, response);
+                break;
             default:
                 PrintWriter pw = response.getWriter();
                 pw.write("{\"error\":\"Invalid operation\"}");
@@ -78,6 +82,12 @@ public class CourseServlet extends HttpServlet {
             ArrayList<Course> courses = managerDB.getCourses();
             pw.write(gson.toJson(courses));
         }
+        pw.close();
+    }
+
+    private void searchCourses(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        pw.write(gson.toJson(managerDB.searchCourses(request.getParameter("searchField"))));
         pw.close();
     }
 

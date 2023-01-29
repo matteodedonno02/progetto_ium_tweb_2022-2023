@@ -12,7 +12,7 @@
             <DeleteIcon data-bs-toggle="modal" v-bind:data-bs-target="'#modalDelete' + repetition.idRepetition" />
         </div>
 
-        <div v-on:contextmenu="openMenu" class="w-100 card-row d-flex align-items-center mb-3">
+        <div class="w-100 card-row d-flex align-items-center mb-3">
             <div class="card my-repetition-card me-5">
                 <div class="card-body">
                     <h5 class="card-title">{{ repetition.teaching.course.title }}</h5>

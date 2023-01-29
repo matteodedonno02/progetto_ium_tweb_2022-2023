@@ -200,6 +200,14 @@ $accentColor2: #3185FC;
 
   .row {
     height: 120px;
+
+    .col-10 {
+      padding: 10px;
+    }
+
+    .col-1 {
+      padding: 10px 20px 0 0;
+    }
   }
 }
 
