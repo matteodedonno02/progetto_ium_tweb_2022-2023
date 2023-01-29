@@ -104,10 +104,6 @@ export default {
                     operation: "selectByEmail",
                     email: email,
                 },
-                xhrFields: {
-                    withCredentials: true
-                },
-                crossDomain: true,
                 success: (data) => {
                     setTimeout(() => {
                         self.loggedUserRepetitions = data

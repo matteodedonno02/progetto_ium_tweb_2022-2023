@@ -46,10 +46,6 @@ export default {
           operation: "delete",
           idTeaching: self.teaching.idTeaching
         },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
         success() {
           self.$emit("delete-teaching")
 

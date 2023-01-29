@@ -71,7 +71,7 @@ export default {
           this.teachings.splice(i, 1)
     },
     updateTeaching(teaching) {
-      this.teaching.push(teaching);
+      this.teachings.push(teaching);
     }
   },
   mounted() {

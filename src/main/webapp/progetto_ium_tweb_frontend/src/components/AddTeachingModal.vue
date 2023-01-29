@@ -89,11 +89,8 @@ export default {
           serialNumber: self.selectedProfessor,
           idCourse: self.selectedCourse
         },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
         success(data) {
+          console.log(data)
           self.$emit("new-teaching", data)
           self.openToast("Insegnamento inserito con successo")
         }
@@ -122,6 +119,7 @@ export default {
         },
         success: (data) => {
           self.courses = data
+          this.getCourses()
         }
       })
     },
@@ -148,7 +146,7 @@ export default {
   },
   mounted() {
     this.getProfessors()
-    this.getCourses()
+
   }
 }
 </script>
