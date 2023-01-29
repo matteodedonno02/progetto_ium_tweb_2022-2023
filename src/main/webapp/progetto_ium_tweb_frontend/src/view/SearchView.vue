@@ -2,7 +2,8 @@
   <CustomToast />
   <NewRepetitionModal modalId="newRepetition" title="Vuoi prenotare la seguente ripetizione?"
     :professorName="professorNameForModal" :courseTitle="courseTitleForModal" :date="dateForModal" :time="timeForModal"
-    :idCourse="idCourseForModal" :serialNumber="serialNumberForModal" :loggedUser="loggedUser" />
+    :idCourse="idCourseForModal" :serialNumber="serialNumberForModal" :loggedUser="loggedUser"
+    @change-page="this.$emit('change-page', 'my-repetitions')" />
 
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">

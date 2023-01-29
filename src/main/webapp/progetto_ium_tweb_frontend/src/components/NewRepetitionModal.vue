@@ -85,8 +85,7 @@ export default {
                     time: formatTime(self.time) + ":00"
                 },
                 success: () => {
-                    self.changeToastMessage("Ripetizione prenotata con successo!")
-                    self.openToast()
+                    self.$emit("change-page")
                 }
             })
         }
