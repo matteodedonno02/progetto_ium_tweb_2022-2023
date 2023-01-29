@@ -6,7 +6,7 @@
         <HomeView v-bind:loggedUser="loggedUser" />
       </div>
       <div v-else-if="page === 'search'">
-        <SearchView v-bind:loggedUser="loggedUser" />
+        <SearchView v-bind:loggedUser="loggedUser" @change-page="changePage" />
       </div>
       <div v-else-if="page === 'my-repetitions'">
         <MyRepetitions v-bind:loggedUserEmail="loggedUser.email" />

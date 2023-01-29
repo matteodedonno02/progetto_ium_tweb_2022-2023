@@ -39,8 +39,14 @@ public class RepetitionServlet extends HttpServlet {
             case "selectByEmail":
                 selectRepetitionByEmail(request, response);
                 break;
-            case "available":
-                getAvailableRepetitions(request, response);
+            case "selectByCourseAndDate":
+                selectRepetitionByCourseAndDate(request, response);
+                break;
+            case "selectByProfessorAndDate":
+                selectRepetitionByProfessorAndDate(request, response);
+                break;
+            case "selectByProfessorCourseAndDate":
+                selectRepetitionByProfessorCourseAndDate(request, response);
                 break;
         }
     }
@@ -83,6 +89,27 @@ public class RepetitionServlet extends HttpServlet {
         pw.close();
     }
 
+    private void selectRepetitionByCourseAndDate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByCourseAndDate(Integer.parseInt(request.getParameter("idCourse")), request.getParameter("date"));
+        pw.write(gson.toJson(repetitions));
+        pw.close();
+    }
+
+    private void selectRepetitionByProfessorAndDate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByProfessorAndDate(request.getParameter("serialNumber"), request.getParameter("date"));
+        pw.write(gson.toJson(repetitions));
+        pw.close();
+    }
+
+    private void selectRepetitionByProfessorCourseAndDate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByProfessorCourseAndDate(request.getParameter("serialNumber"), Integer.valueOf(request.getParameter("idCourse")), request.getParameter("date"));
+        pw.write(gson.toJson(repetitions));
+        pw.close();
+    }
+
     private void selectRepetition(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
 
@@ -121,16 +148,6 @@ public class RepetitionServlet extends HttpServlet {
             pw.write("{\"error\":\"Repetition not found\"}");
         }
 
-        pw.close();
-    }
-
-    private void getAvailableRepetitions(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PrintWriter pw = response.getWriter();
-        LocalDate now = LocalDate.now();
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-        ArrayList<Repetition> availableRepetitions = managerDB.getAvailableRepetitions(DateAndTimeManipulator.fromLocalDateToString(now), DateAndTimeManipulator.fromLocalDateToString(now.plusDays(7)), "17:00:00", "20:00:00");
-
-        pw.write(gson.toJson(availableRepetitions));
         pw.close();
     }
 }

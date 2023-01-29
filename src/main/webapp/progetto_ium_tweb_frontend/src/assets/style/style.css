@@ -114,13 +114,7 @@
   display: none;
 }
 
-.vuecal__time-cell {
-  height: 100px !important;
-}
-
 .vuecal__event {
-  height: 100px !important;
-  top: 100px !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
