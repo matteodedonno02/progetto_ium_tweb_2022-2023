@@ -130,7 +130,6 @@ public class RepetitionServlet extends HttpServlet {
     private void selectRepetitionByEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
         String email = request.getParameter("email");
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmail(email);
         pw.write(gson.toJson(managerDB.getRepetitionsByEmail(email)));
         pw.close();

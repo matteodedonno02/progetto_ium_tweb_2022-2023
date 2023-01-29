@@ -6,6 +6,13 @@
       <li class="breadcrumb-item active" aria-current="page">Gestione corsi</li>
     </ol>
   </nav>
+
+  <div class="row pb-5">
+    <div class="col-5">
+      <input v-model="searchField" type="text" class="form-control p-2" placeholder="Cerca corso">
+    </div>
+  </div>
+
   <div class="row">
     <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
       Aggiungi corso</p>
@@ -24,7 +31,6 @@
       <ul class="list-group">
         <div class="course-card" v-for="course in courses" v-bind:key="course.idCourse">
           <CourseItem v-bind:course="course" @delete-course="removeCourse" />
-
         </div>
       </ul>
     </div>
@@ -43,7 +49,8 @@ export default {
   name: "AdminCourse",
   data() {
     return {
-      courses: null
+      courses: null,
+      searchField: ""
     }
   },
   components: {
@@ -59,9 +66,7 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet?operation=select", {
         method: "GET",
         success: (data) => {
-          setTimeout(() => {
-            self.courses = data
-          }, 2000)
+          self.courses = data
         }
       })
     },
@@ -73,6 +78,25 @@ export default {
     updateCourses(course) {
       this.courses.push(course);
     }
+  },
+  watch: {
+    searchField: function (newSearchField) {
+      if (newSearchField === "") {
+        this.getCourses()
+        return;
+      }
+
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+        method: "GET",
+        data: {
+          operation: "search",
+          searchField: newSearchField
+        }, success(data) {
+          self.courses = data
+        }
+      })
+    },
   },
   mounted() {
     this.getCourses()

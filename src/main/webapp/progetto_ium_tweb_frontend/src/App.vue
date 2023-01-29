@@ -1,7 +1,7 @@
 <template>
   <VerticalBar v-bind:loggedUser="loggedUser" v-bind:page="page" @change-page="changePage" />
   <div class="container">
-    <div class="container-content">
+    <div class="container-content pt-5">
       <div v-if="page === 'home'">
         <HomeView v-bind:loggedUser="loggedUser" />
       </div>
@@ -20,6 +20,9 @@
       <div v-else-if="page === 'admin-teachings'">
         <AdminTeachings />
       </div>
+      <div v-else-if="page === 'admin-repetitions'">
+        <AdminRepetitions />
+      </div>
     </div>
   </div>
 
@@ -37,6 +40,7 @@ import MyRepetitions from './view/MyRepetitions.vue'
 import AdminCourses from './view/AdminCourses.vue'
 import AdminProfessors from './view/AdminProfessors.vue'
 import AdminTeachings from './view/AdminTeachings.vue'
+import AdminRepetitions from './view/AdminRepetitions.vue'
 
 export default {
   name: 'App',
@@ -54,7 +58,8 @@ export default {
     MyRepetitions,
     AdminCourses,
     AdminProfessors,
-    AdminTeachings
+    AdminTeachings,
+    AdminRepetitions
   },
   methods: {
     changePage(page) {

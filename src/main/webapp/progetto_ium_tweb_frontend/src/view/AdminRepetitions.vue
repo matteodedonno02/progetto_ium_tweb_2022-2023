@@ -3,7 +3,7 @@
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">Le mie ripetizioni</li>
+            <li class="breadcrumb-item active" aria-current="page">Tutte le ripetizioni</li>
         </ol>
     </nav>
 
@@ -15,14 +15,12 @@
     </div>
     <div v-else>
         <div v-if="pendingRepetitions.length === 0">
-            Non hai ripetizioni da effettuare
+            Non ci sono ripetizioni da effettuare
         </div>
         <div v-else>
             <div v-for="repetition in pendingRepetitions" v-bind:key="repetition.idRepetition">
                 <div v-if="repetition.state === 0">
-                    <MyRepetitionCard v-bind:repetition="repetition"
-                        @confirm-repetition="moveRepetitionToConfirmedRepetitions"
-                        @delete-repetition="moveRepetitionToDeletedRepetitions" />
+                    <RepetitionCard v-bind:repetition="repetition" />
                 </div>
             </div>
         </div>
@@ -36,31 +34,31 @@
     </div>
     <div v-else>
         <div v-if="confirmedRepetitions.length === 0">
-            Non hai ripetizioni confermate
+            Non ci sono ripetizioni confermate
         </div>
         <div v-else>
             <div v-for="repetition in confirmedRepetitions" v-bind:key="repetition.idRepetition">
                 <div v-if="repetition.state === 1">
-                    <MyRepetitionCard v-bind:repetition="repetition" />
+                    <RepetitionCard v-bind:repetition="repetition" />
                 </div>
             </div>
         </div>
     </div>
 
     <h4 class="pt-5">Ripetizioni cancellate</h4>
-    <div v-if="deletedRepetitions === null">
+    <div v-if="cancelledRepetitions === null">
         <MyRepetitionCardLoading />
         <MyRepetitionCardLoading />
         <MyRepetitionCardLoading />
     </div>
     <div v-else>
-        <div v-if="deletedRepetitions.length === 0">
-            Non hai ripetizioni cancellate
+        <div v-if="cancelledRepetitions.length === 0">
+            Non ci sono ripetizioni cancellate
         </div>
         <div v-else>
-            <div v-for="repetition in deletedRepetitions" v-bind:key="repetition.idRepetition">
+            <div v-for="repetition in cancelledRepetitions" v-bind:key="repetition.idRepetition">
                 <div v-if="repetition.state === 2">
-                    <MyRepetitionCard v-bind:repetition="repetition" />
+                    <RepetitionCard v-bind:repetition="repetition" />
                 </div>
             </div>
         </div>
@@ -69,85 +67,60 @@
 
 <script>
 import $ from 'jquery'
-import MyRepetitionCard from '@/components/MyRepetitionCard.vue'
+import RepetitionCard from '@/components/RepetitionCard.vue'
 import MyRepetitionCardLoading from '@/components/MyRepetitionCardLoading.vue'
 import CustomToast from '@/components/CustomToast.vue'
 
 export default {
-    name: "MyRepetition",
-    props: ["loggedUserEmail"],
+    name: "AdminRepetitions",
     data() {
         return {
-            loggedUserRepetitions: null,
+            repetitions: null,
             pendingRepetitions: null,
             confirmedRepetitions: null,
-            deletedRepetitions: null,
-            todayRepetitions: null,
+            cancelledRepetitions: null
         }
     },
     components: {
-        MyRepetitionCard,
+        RepetitionCard,
         MyRepetitionCardLoading,
         CustomToast
     },
     methods: {
-        getUserRepetitions(email) {
+        getUserRepetitions() {
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
                 method: "GET",
                 data: {
-                    operation: "selectByEmail",
-                    email: email,
+                    operation: "select",
                 },
-                xhrFields: {
-                    withCredentials: true
-                },
-                crossDomain: true,
                 success: (data) => {
-                    setTimeout(() => {
-                        self.loggedUserRepetitions = data
-                        self.loadRepetitionsByState(self.loggedUserRepetitions)
-                    }, 2000)
+                    self.repetitions = data
+                    self.loadRepetitionsByState(data)
                 }
             })
         },
         loadRepetitionsByState(repetitions) {
             this.pendingRepetitions = []
             this.confirmedRepetitions = []
-            this.deletedRepetitions = []
+            this.cancelledRepetitions = []
             repetitions.forEach((repetition) => {
                 switch (repetition.state) {
                     case 0:
                         this.pendingRepetitions.push(repetition)
-                        break;
+                        break
                     case 1:
                         this.confirmedRepetitions.push(repetition)
-                        break;
+                        break
                     case 2:
-                        this.deletedRepetitions.push(repetition)
-                        break;
+                        this.cancelledRepetitions.push(repetition)
+                        break
                 }
             })
-        },
-        moveRepetitionToDeletedRepetitions(repetition) {
-            for (var i = 0; i < this.pendingRepetitions.length; i++)
-                if (this.pendingRepetitions[i] == repetition)
-                    this.pendingRepetitions.splice(i, 1)
-
-            repetition.state = 2
-            this.deletedRepetitions.push(repetition)
-        },
-        moveRepetitionToConfirmedRepetitions(repetition) {
-            for (var i = 0; i < this.pendingRepetitions.length; i++)
-                if (this.pendingRepetitions[i] == repetition)
-                    this.pendingRepetitions.splice(i, 1)
-
-            repetition.state = 1
-            this.confirmedRepetitions.push(repetition)
         }
     },
     mounted() {
-        this.getUserRepetitions(this.loggedUserEmail)
+        this.getUserRepetitions()
     }
 }
 </script>

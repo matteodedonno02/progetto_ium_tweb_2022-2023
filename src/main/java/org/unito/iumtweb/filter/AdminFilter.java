@@ -17,12 +17,12 @@ public class AdminFilter implements Filter {
             return;
         }
 
-        if (servletName.equals("CourseServlet") && operation.equals("newTeaching") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
+        if (servletName.equals("CourseServlet") && (operation.equals("newTeaching") || operation.equals("search")) && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
             servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
             return;
         }
 
-        if (servletName.equals("TeachingServlet") && operation.equals("add") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
+        if (servletName.equals("TeachingServlet") && (operation.equals("add") || operation.equals("search")) && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
             servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
             return;
         }

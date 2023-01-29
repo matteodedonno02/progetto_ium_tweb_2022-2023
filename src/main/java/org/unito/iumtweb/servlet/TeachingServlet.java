@@ -40,6 +40,9 @@ public class TeachingServlet extends HttpServlet {
             case "getIdTeaching":
                 selectTeachingByProfessorAndCourse(request, response);
                 break;
+            case "search":
+                searchTeaching(request, response);
+                break;
             default:
                 PrintWriter pw = response.getWriter();
                 pw.write("{\"error\":\"Invalid operation\"}");
@@ -67,6 +70,12 @@ public class TeachingServlet extends HttpServlet {
                 pw.close();
                 break;
         }
+    }
+
+    private void searchTeaching(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        pw.write(gson.toJson(managerDB.searchTeachings(request.getParameter("searchField"))));
+        pw.close();
     }
 
     private void selectTeachingByCourse(HttpServletRequest request, HttpServletResponse response) throws IOException {
