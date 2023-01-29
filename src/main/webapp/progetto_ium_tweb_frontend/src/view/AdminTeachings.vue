@@ -67,9 +67,7 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet?operation=select", {
         method: "GET",
         success: (data) => {
-          setTimeout(() => {
-            self.teachings = data
-          }, 2000)
+          self.teachings = data
         }
       })
     },

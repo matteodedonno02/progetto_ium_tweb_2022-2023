@@ -1,7 +1,7 @@
 <template>
   <VerticalBar v-bind:loggedUser="loggedUser" v-bind:page="page" @change-page="changePage" />
   <div class="container">
-    <div class="container-content">
+    <div class="container-content pt-5">
       <div v-if="page === 'home'">
         <HomeView v-bind:loggedUser="loggedUser" />
       </div>

@@ -7,7 +7,8 @@
                     <div class="row">
                         <div class="col text-start">
                             <p class="card-text">
-                                Ripetizione con {{ repetition.teaching.professor.name }}
+                                Ripetizione dell'utente <span class="fw-bold">{{ repetition.user.name }}
+                                    {{ repetition.user.surname }}</span> con {{ repetition.teaching.professor.name }}
                                 {{ repetition.teaching.professor.surname }}
                                 il giorno {{ formatDate(repetition.date) }}
                                 alle {{ formatTime(repetition.time) }}
