@@ -10,25 +10,28 @@
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Prof.</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" v-bind:value="professorName" disabled>
+                            <input type="text" class="form-control"
+                                v-bind:value="event.professor.name + ' ' + event.professor.surname" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Corso</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" v-bind:value="courseTitle" disabled>
+                            <input type="text" class="form-control" v-bind:value="event.course.title" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Data</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" v-bind:value="date" disabled>
+                            <input type="date" class="form-control" v-bind:value="fromDateToString(event.start)"
+                                disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Ora</label>
                         <div class="col-sm-10">
-                            <input type="time" class="form-control" v-bind:value="time" disabled>
+                            <input type="time" class="form-control" v-bind:value="event.start.getHours() + ':00'"
+                                disabled>
                         </div>
                     </div>
                 </div>
@@ -44,15 +47,16 @@
 
 <script>
 import $ from 'jquery'
-import { formatTime } from '@/util/DateFormatter';
+import { formatTime, fromDateToString } from '@/util/DateFormatter';
 import { Toast } from 'bootstrap'
 import { changeToastMessage } from '@/util/ChangeToastMessage';
 
 export default {
     name: "NewRepetitionModal",
-    props: ["modalId", "title", "professorName", "courseTitle", "date", "time", "idCourse", "serialNumber", "loggedUser"],
+    props: ["modalId", "title", "event", "loggedUser"],
     methods: {
         formatTime,
+        fromDateToString,
         changeToastMessage,
         openToast() {
             const toastLiveExample = $("#liveToast")
@@ -65,8 +69,8 @@ export default {
                 method: "GET",
                 data: {
                     operation: "getIdTeaching",
-                    serialNumber: self.serialNumber,
-                    idCourse: self.idCourse
+                    serialNumber: self.event.professor.serialNumber,
+                    idCourse: self.event.course.idCourse
                 },
                 success(data) {
                     self.executeOperation(data.idTeaching)
@@ -81,8 +85,8 @@ export default {
                     operation: "add",
                     email: self.loggedUser.email,
                     idTeaching: idTeaching,
-                    date: self.date,
-                    time: formatTime(self.time) + ":00"
+                    date: fromDateToString(self.event.start),
+                    time: self.event.start.getHours() + ':00:00'
                 },
                 success: () => {
                     self.$emit("change-page")

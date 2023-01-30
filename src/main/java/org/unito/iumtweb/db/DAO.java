@@ -967,6 +967,43 @@ public class DAO {
         return repetitions;
     }
 
+    public ArrayList<Repetition> getRepetitionsByEmailAndDate(String email, String date) {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse WHERE u.email = ? AND r.date = ? AND r.state <> 2 ORDER BY date,time");
+
+            ps.setString(1, email);
+            ps.setDate(2, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorName"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
+        return repetitions;
+    }
+
     public ArrayList<Repetition> getRepetitionsByCourseAndDate(int idCourse, String date) {
         openConnection();
 

@@ -150,6 +150,10 @@
   background-color: lightblue;
 }
 
+.occupied {
+  background-color: lightgray;
+}
+
 .col-img {
   background-size: cover;
   background-position: center;
