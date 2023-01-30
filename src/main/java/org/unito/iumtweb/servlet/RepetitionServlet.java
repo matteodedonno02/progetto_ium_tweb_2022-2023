@@ -39,6 +39,8 @@ public class RepetitionServlet extends HttpServlet {
             case "selectByEmail":
                 selectRepetitionByEmail(request, response);
                 break;
+            case "selectByEmailAndDate":
+                selectRepetitionByEmailAndDate(request, response);
             case "selectByCourseAndDate":
                 selectRepetitionByCourseAndDate(request, response);
                 break;
@@ -76,7 +78,7 @@ public class RepetitionServlet extends HttpServlet {
             case 1:
                 Repetition r = managerDB.getRepetition(email, idTeaching, date, time);
                 pw.write(gson.toJson(r));
-                EmailSender.bookedRepetition(r);
+//                EmailSender.bookedRepetition(r);
                 break;
             case 0:
                 pw.write("{\"error\":\"Email or teaching doesn't exist\"}");
@@ -129,9 +131,15 @@ public class RepetitionServlet extends HttpServlet {
 
     private void selectRepetitionByEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
-        String email = request.getParameter("email");
-        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmail(email);
-        pw.write(gson.toJson(managerDB.getRepetitionsByEmail(email)));
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmail(request.getParameter("email"));
+        pw.write(gson.toJson(repetitions));
+        pw.close();
+    }
+
+    private void selectRepetitionByEmailAndDate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmailAndDate(request.getParameter("email"), request.getParameter("date"));
+        pw.write(gson.toJson(repetitions));
         pw.close();
     }
 

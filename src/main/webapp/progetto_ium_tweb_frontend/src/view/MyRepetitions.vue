@@ -104,10 +104,8 @@ export default {
                 },
                 crossDomain: true,
                 success: (data) => {
-                    setTimeout(() => {
-                        self.loggedUserRepetitions = data
-                        self.loadRepetitionsByState(self.loggedUserRepetitions)
-                    }, 2000)
+                    self.loggedUserRepetitions = data
+                    self.loadRepetitionsByState(self.loggedUserRepetitions)
                 }
             })
         },

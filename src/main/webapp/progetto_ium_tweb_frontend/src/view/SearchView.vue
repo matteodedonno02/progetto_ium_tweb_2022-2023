@@ -1,8 +1,6 @@
 <template>
   <CustomToast />
-  <NewRepetitionModal modalId="newRepetition" title="Vuoi prenotare la seguente ripetizione?"
-    :professorName="professorNameForModal" :courseTitle="courseTitleForModal" :date="dateForModal" :time="timeForModal"
-    :idCourse="idCourseForModal" :serialNumber="serialNumberForModal" :loggedUser="loggedUser"
+  <NewRepetitionModal modalId="newRepetition" :title="titleForModal" :event="eventForModal" :loggedUser="loggedUser"
     @change-page="this.$emit('change-page', 'my-repetitions')" />
 
   <nav aria-label="breadcrumb">
@@ -56,12 +54,17 @@ export default {
       selectedProfessor: "default",
       date: null,
       events: [],
-      professorNameForModal: "",
-      courseTitleForModal: "",
-      dateForModal: "",
-      timeForModal: "",
-      serialNumberForModal: "",
-      idCourseForModal: ""
+      eventForModal: {
+        professor: {
+          name: "default",
+          surname: "default",
+        },
+        course: {
+          title: "default",
+        },
+        start: new Date()
+      },
+      titleForModal: "Vuoi prenotare la seguente ripetizione?"
     }
   },
   props: ["loggedUser"],
@@ -70,6 +73,7 @@ export default {
     VueCal,
     NewRepetitionModal,
   },
+  emits: ["change-page"],
   methods: {
     formatDate,
     fromDateToString,
@@ -92,8 +96,8 @@ export default {
                 title: this.getSelectedCourseText(),
                 content: professor.name + " " + professor.surname,
                 class: "materia",
-                serialNumber: professor.serialNumber,
-                idCourse: this.selectedCourse
+                course: this.getCourseByIdCourse(this.selectedCourse),
+                professor: professor
               })
             }
           })
@@ -108,8 +112,8 @@ export default {
                 title: course.title,
                 content: this.getSelectedProfessorText(),
                 class: "materia",
-                serialNumber: this.selectedProfessor,
-                idCourse: course.idCourse
+                course: course,
+                professor: this.getProfessorBySerialNumber(this.selectedProfessor)
               })
             }
           })
@@ -123,12 +127,13 @@ export default {
               title: this.getSelectedCourseText(),
               content: this.getSelectedProfessorText(),
               class: "materia",
-              serialNumber: this.selectedProfessor,
-              idCourse: this.selectedCourse
+              course: this.getCourseByIdCourse(this.selectedCourse),
+              professor: this.getProfessorBySerialNumber(this.selectedProfessor)
             })
           }
         }
       }
+      this.getUserRepetitions()
     },
     getExistingRepetition() {
       if (this.date === null) {
@@ -166,9 +171,17 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
         method: "GET",
         data: {
-          operation: "selectByEmail",
-          email: self.loggedUser.email
+          operation: "selectByEmailAndDate",
+          email: self.loggedUser.email,
+          date: self.date
         },
+        success(data) {
+          self.events.forEach((event) => {
+            if (data.find((r) => formatTime(r.time) === event.start.split(" ")[1]) !== undefined) {
+              event.class = "materia occupied"
+            }
+          })
+        }
       })
     },
     getProfessors() {
@@ -260,15 +273,21 @@ export default {
       return select.options[select.selectedIndex].text
     },
     onEventClick(event, e) {
-      this.professorNameForModal = event.content
-      this.courseTitleForModal = event.title
-      this.dateForModal = fromDateToString(event.start)
-      this.timeForModal = event.start.getHours() + ":00"
-      this.serialNumberForModal = event.serialNumber
-      this.idCourseForModal = event.idCourse
+      if (event.class === "materia occupied") {
+        return;
+      }
+
+      this.eventForModal = event
+
       const modal = new Modal($("#newRepetition"))
       modal.show()
       e.stopPropagation()
+    },
+    getCourseByIdCourse(idCourse) {
+      return this.courses.find((course) => course.idCourse === idCourse)
+    },
+    getProfessorBySerialNumber(serialNumber) {
+      return this.professors.find((professor) => professor.serialNumber === serialNumber)
     }
   },
   mounted() {
