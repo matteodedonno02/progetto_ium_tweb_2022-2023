@@ -114,13 +114,7 @@
   display: none;
 }
 
-.vuecal__time-cell {
-  height: 100px !important;
-}
-
 .vuecal__event {
-  height: 100px !important;
-  top: 100px !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -156,6 +150,10 @@
   background-color: lightblue;
 }
 
+.occupied {
+  background-color: lightgray;
+}
+
 .col-img {
   background-size: cover;
   background-position: center;
@@ -171,6 +169,12 @@
 }
 .professor-item .row {
   height: 120px;
+}
+.professor-item .row .col-10 {
+  padding: 10px;
+}
+.professor-item .row .col-1 {
+  padding: 10px 20px 0 0;
 }
 
 @keyframes shine {

@@ -31,6 +31,9 @@ public class ProfessorServlet extends HttpServlet {
             case "mostRequested":
                 getMostRequestedProfessor(request, response);
                 break;
+            case "search":
+                searchProfessor(request, response);
+                break;
             default:
                 PrintWriter pw = response.getWriter();
                 pw.write("{\"error\":\"Invalid operation\"}");
@@ -72,6 +75,12 @@ public class ProfessorServlet extends HttpServlet {
         } else {
             pw.write(gson.toJson(managerDB.getProfessors()));
         }
+        pw.close();
+    }
+
+    private void searchProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        pw.write(gson.toJson(managerDB.searchProfessor(request.getParameter("searchField"))));
         pw.close();
     }
 

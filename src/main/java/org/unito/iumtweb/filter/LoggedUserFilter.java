@@ -9,6 +9,12 @@ import java.io.IOException;
 public class LoggedUserFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+//        String path = ((HttpServletRequest) servletRequest).getRequestURI().substring(((HttpServletRequest) servletRequest).getContextPath().length());
+//        if (path.equals("/") || path.equals("/index.html")) {
+//            filterChain.doFilter(servletRequest, servletResponse);
+//            return;
+//        }
+
         String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
 

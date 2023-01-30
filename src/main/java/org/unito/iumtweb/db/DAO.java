@@ -36,11 +36,30 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+        return courses;
+    }
+
+    public ArrayList<Course> searchCourses(String searchField) {
+        ArrayList<Course> courses = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try {
+            ps = conn.prepareStatement("SELECT * FROM course c WHERE LOWER(c.title) LIKE ? AND active = 1");
+            ps.setString(1, "%" + searchField.toLowerCase() + "%");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closeStatement(s);
-        closeConnection();
         return courses;
     }
 
@@ -60,11 +79,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return courses;
     }
@@ -86,11 +104,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return mostRequestedCourses;
     }
@@ -110,10 +126,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int updateCourse(int idCourse, String title) {
@@ -132,10 +148,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int deleteCourse(int idCourse) {
@@ -150,10 +166,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public Course getCourseById(int idCourse) {
@@ -169,11 +185,10 @@ public class DAO {
                 c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return c;
     }
 
@@ -191,11 +206,10 @@ public class DAO {
                 c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return c;
     }
 
@@ -215,10 +229,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
+
         return logged;
     }
 
@@ -238,11 +252,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeStatement(s);
-        closeResultSet(rs);
-        closeConnection();
         return users;
     }
 
@@ -266,11 +279,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
+        return res;
     }
 
     public int deleteUser(String email) {
@@ -286,11 +298,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
+        return res;
     }
 
     public int updatePassword(String email, String password) {
@@ -307,12 +318,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
-
+        return res;
     }
 
     public int updateUser(String newEmail, String oldEmail, String name, String surname, boolean role) {
@@ -335,12 +344,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
-
+        return res;
     }
 
     public User getUserByEmail(String email) {
@@ -356,11 +363,10 @@ public class DAO {
                 u = new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return u;
     }
 
@@ -383,10 +389,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public ArrayList<Professor> getProfessors() {
@@ -405,11 +411,36 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
+        return professors;
+    }
+
+    public ArrayList<Professor> searchProfessor(String searchField) {
+        openConnection();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ArrayList<Professor> professors = new ArrayList<Professor>();
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM professor p WHERE (LOWER(CONCAT(p.name,' ', p.surname)) LIKE ? OR LOWER(CONCAT(p.surname,' ', p.name)) LIKE ? OR LOWER(p.serialNumber) LIKE ?) AND p.active = 1; ");
+            ps.setString(1, "%" + searchField.toLowerCase() + "%");
+            ps.setString(2, "%" + searchField.toLowerCase() + "%");
+            ps.setString(3, "%" + searchField.toLowerCase() + "%");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                professors.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
         return professors;
     }
 
@@ -429,11 +460,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return mostRequestedProfessor;
     }
@@ -458,12 +487,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
-
+        return res;
     }
 
     public Professor getProfessorBySerialNumber(String serialNumber) {
@@ -479,11 +506,10 @@ public class DAO {
                 p = new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return p;
     }
 
@@ -498,26 +524,26 @@ public class DAO {
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closePreparedStatement(ps);
-        closeConnection();
     }
 
     public ArrayList<Teaching> getTeachings() {
         ArrayList<Teaching> teachings = new ArrayList<Teaching>();
-        Statement s = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
         openConnection();
 
         try {
-            String query = "SELECT t.idTeaching, t.active as teachingActive, " +
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
                     "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
-                    "FROM teaching t JOIN professor p ON t.serialNumber = p.serialNumber JOIN course c ON t.idCourse = c.idCourse WHERE t.active = 1 AND p.active = 1 AND c.active = 1;";
-
-            s = conn.createStatement();
-            rs = s.executeQuery(query);
+                    "FROM teaching t " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.active = 1 AND p.active = 1 AND c.active = 1");
+            rs = ps.executeQuery();
             while (rs.next())
                 teachings.add(new Teaching(rs.getInt("idTeaching"),
                         new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
@@ -525,11 +551,43 @@ public class DAO {
                         rs.getBoolean("teachingActive")));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closeStatement(s);
-        closeConnection();
+        return teachings;
+    }
+
+    public ArrayList<Teaching> searchTeachings(String searchField) {
+        openConnection();
+
+        ArrayList<Teaching> teachings = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM teaching t " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.active = 1 AND p.active = 1 AND c.active = 1 AND (LOWER(CONCAT(p.name,' ', p.surname)) LIKE ? OR LOWER(CONCAT(p.surname, ' ', p.name)) LIKE ? OR LOWER(c.title) LIKE ?)");
+            ps.setString(1, "%" + searchField.toLowerCase() + "%");
+            ps.setString(2, "%" + searchField.toLowerCase() + "%");
+            ps.setString(3, "%" + searchField.toLowerCase() + "%");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                teachings.add(new Teaching(rs.getInt("idTeaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")),
+                        rs.getBoolean("teachingActive")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
         return teachings;
     }
 
@@ -548,10 +606,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int updateTeaching(int idTeaching, String serialNumber, int idCourse) {
@@ -571,10 +629,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int deleteTeaching(int idTeaching) {
@@ -588,10 +646,10 @@ public class DAO {
         } catch (SQLException e) {
             res = -1;
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeConnection();
         return res;
     }
 
@@ -615,34 +673,64 @@ public class DAO {
                         rs.getBoolean("teachingActive"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return t;
     }
 
-    public Teaching getTeachingByProfessorCourse(String serialNumber, int idCourse) {
+    public Teaching getTeachingByProfessorAndCourse(String serialNumber, int idCourse) {
         Teaching t = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM teaching WHERE serialNumber = ? AND idCourse = ? AND active = 1");
+            ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
+                    "FROM teaching t " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "WHERE p.serialNumber = ? AND c.idCourse = ? AND t.active = 1 AND c.active = 1 AND p.active = 1");
             ps.setString(1, serialNumber);
             ps.setInt(2, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
-                t = new Teaching(rs.getInt("idTeaching"), getProfessorBySerialNumber(rs.getString("serialNumber")), getCourseById(rs.getInt("idCourse")), rs.getBoolean("active"));
+                t = new Teaching(rs.getInt("idTeaching"),
+                        new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")),
+                        new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")),
+                        rs.getBoolean("teachingActive"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return t;
+    }
+
+    public Integer getIdTeachingByProfessorAndCourse(String serialNumber, int idCourse) {
+        Integer idTeaching = null;
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        openConnection();
+        try {
+            ps = conn.prepareStatement("SELECT idTeaching FROM teaching WHERE serialNumber = ? AND idCourse = ? AND active = 1");
+            ps.setString(1, serialNumber);
+            ps.setInt(2, idCourse);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                idTeaching = rs.getInt("idTeaching");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
+        return idTeaching;
     }
 
     public ArrayList<Teaching> getTeachingsByCourse(int idCourse) {
@@ -670,11 +758,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return teachings;
     }
@@ -704,11 +790,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return teachings;
     }
@@ -731,10 +815,10 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
             res = -1;
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeConnection();
         return res;
     }
 
@@ -747,9 +831,9 @@ public class DAO {
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
-                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
                     "t.idTeaching, t.active as teachingActive, " +
-                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
                     "FROM repetition r " +
                     "JOIN user u ON r.email = u.email " +
@@ -760,17 +844,15 @@ public class DAO {
             rs = ps.executeQuery();
             while (rs.next()) {
                 repetitions.add(new Repetition(rs.getInt("idRepetition"),
-                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
-                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorName"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
                         rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return repetitions;
     }
@@ -803,11 +885,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetition;
     }
 
@@ -842,11 +923,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetition;
     }
 
@@ -879,36 +959,161 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return repetitions;
     }
 
-    public ArrayList<Repetition> getRepetitionsFromCourseAndDate(int idCourse, String date) {
+    public ArrayList<Repetition> getRepetitionsByEmailAndDate(String email, String date) {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse WHERE u.email = ? AND r.date = ? AND r.state <> 2 ORDER BY date,time");
+
+            ps.setString(1, email);
+            ps.setDate(2, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorName"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
+        return repetitions;
+    }
+
+    public ArrayList<Repetition> getRepetitionsByCourseAndDate(int idCourse, String date) {
         openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT * FROM repetition r JOIN teaching t ON r.idTeaching = t.idTeaching WHERE t.idCourse = ? AND r.date = ?; ");
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.idCourse = ? AND r.date = ? AND r.state != 2 AND t.active = 1 AND c.active = 1;");
+
             ps.setInt(1, idCourse);
             ps.setDate(2, Date.valueOf(date));
             rs = ps.executeQuery();
             while (rs.next()) {
-//                repetitions.add(new Repetition())
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
+
+        return repetitions;
+    }
+    
+    public ArrayList<Repetition> getRepetitionsByProfessorAndDate(String serialNumber, String date) {
+        openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.serialNumber = ? AND r.date = ? AND r.state != 2 AND t.active = 1 AND c.active = 1;");
+
+            ps.setString(1, serialNumber);
+            ps.setDate(2, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
+        return repetitions;
     }
 
+    public ArrayList<Repetition> getRepetitionsByProfessorCourseAndDate(String serialNumber, int idCourse, String date) {
+        openConnection();
 
+        ArrayList<Repetition> repetitions = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name, u.surname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse " +
+                    "WHERE t.serialNumber = ? AND t.idCourse = ? AND r.date = ? AND r.state != 2 AND t.active = 1 AND c.active = 1;");
 
+            ps.setString(1, serialNumber);
+            ps.setInt(2, idCourse);
+            ps.setDate(3, Date.valueOf(date));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
+        return repetitions;
+    }
 
     public Repetition updateRepetition(int idRepetition, int newState) {
         openConnection();
@@ -923,10 +1128,9 @@ public class DAO {
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closePreparedStatement(ps);
-        closeConnection();
 
         repetition = getRepetitionById(idRepetition);
         return repetition;
@@ -952,33 +1156,6 @@ public class DAO {
         try {
             if (conn != null)
                 conn.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closeStatement(Statement s) {
-        try {
-            if (s != null)
-                s.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closePreparedStatement(PreparedStatement ps) {
-        try {
-            if (ps != null)
-                ps.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closeResultSet(ResultSet rs) {
-        try {
-            if (rs != null)
-                rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

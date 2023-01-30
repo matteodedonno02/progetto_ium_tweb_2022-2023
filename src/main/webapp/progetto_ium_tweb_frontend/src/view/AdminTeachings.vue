@@ -7,6 +7,13 @@
       <li class="breadcrumb-item active" aria-current="page">Gestione insegnamenti</li>
     </ol>
   </nav>
+
+  <div class="row pb-5">
+    <div class="col-5">
+      <input v-model="searchField" type="text" class="form-control p-2" placeholder="Cerca insegnamento">
+    </div>
+  </div>
+
   <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
     Aggiungi insegnamento</p>
   <div v-if="teachings === null">
@@ -43,7 +50,8 @@ export default {
   name: "AdminTeachings",
   data() {
     return {
-      teachings: null
+      teachings: null,
+      searchField: ""
     }
   },
   components: {
@@ -59,9 +67,7 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet?operation=select", {
         method: "GET",
         success: (data) => {
-          setTimeout(() => {
-            self.teachings = data
-          }, 2000)
+          self.teachings = data
         }
       })
     },
@@ -73,6 +79,25 @@ export default {
     updateTeaching(teaching) {
       this.teachings.push(teaching);
     }
+  },
+  watch: {
+    searchField: function (newSearchField) {
+      if (newSearchField === "") {
+        this.getTeachings()
+        return;
+      }
+
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+        method: "GET",
+        data: {
+          operation: "search",
+          searchField: newSearchField
+        }, success(data) {
+          self.teachings = data
+        }
+      })
+    },
   },
   mounted() {
     this.getTeachings()

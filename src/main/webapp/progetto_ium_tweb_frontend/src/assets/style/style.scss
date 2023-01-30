@@ -136,13 +136,11 @@ $accentColor2: #3185FC;
   display: none;
 }
 
-.vuecal__time-cell {
-  height: 100px !important;
-}
+// .vuecal__time-cell {
+//   height: 100px !important;
+// }
 
 .vuecal__event {
-  height: 100px !important;
-  top: 100px !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -185,6 +183,10 @@ $accentColor2: #3185FC;
   background-color: lightblue;
 }
 
+.occupied {
+  background-color: lightgray;
+}
+
 .col-img {
   background-size: cover;
   background-position: center;
@@ -202,6 +204,14 @@ $accentColor2: #3185FC;
 
   .row {
     height: 120px;
+
+    .col-10 {
+      padding: 10px;
+    }
+
+    .col-1 {
+      padding: 10px 20px 0 0;
+    }
   }
 }
 

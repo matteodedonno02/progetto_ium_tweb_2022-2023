@@ -8,6 +8,14 @@
       <li class="breadcrumb-item active" aria-current="page">Gestione professori</li>
     </ol>
   </nav>
+
+  <div class="row pb-5">
+    <div class="col-5">
+      <input v-model="searchField" v-on:change="textFieldChange" type="text" class="form-control p-2"
+        placeholder="Cerca professore">
+    </div>
+  </div>
+
   <div class="row">
     <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
       Aggiungi insegnante</p>
@@ -44,7 +52,8 @@ export default {
   name: "AdminProfessors",
   data() {
     return {
-      professors: null
+      professors: null,
+      searchField: ""
     }
   },
   components: {
@@ -59,9 +68,7 @@ export default {
       $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet?operation=select", {
         method: "GET",
         success: (data) => {
-          setTimeout(() => {
-            self.professors = data
-          }, 2000)
+          self.professors = data
         }
       })
     },
@@ -75,11 +82,29 @@ export default {
       this.professors.sort((a, b) => {
         return a.serialNumber.localeCompare(b.serialNumber)
       })
+    },
+  },
+  watch: {
+    searchField: function (newSearchField) {
+      if (newSearchField === "") {
+        this.getProfessors()
+        return;
+      }
+
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+        method: "GET",
+        data: {
+          operation: "search",
+          searchField: newSearchField
+        }, success(data) {
+          self.professors = data
+        }
+      })
     }
   },
   mounted() {
     this.getProfessors()
-
   }
 }
 </script>

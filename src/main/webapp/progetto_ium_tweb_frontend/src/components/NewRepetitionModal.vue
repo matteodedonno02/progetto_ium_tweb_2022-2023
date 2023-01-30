@@ -11,33 +11,33 @@
                         <label class="col-sm-2 col-form-label">Prof.</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control"
-                                v-bind:value="repetition.teaching.professor.name + ' ' + repetition.teaching.professor.surname"
-                                disabled>
+                                v-bind:value="event.professor.name + ' ' + event.professor.surname" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Corso</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" v-bind:value="repetition.teaching.course.title"
-                                disabled>
+                            <input type="text" class="form-control" v-bind:value="event.course.title" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Data</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" v-bind:value="repetition.date" disabled>
+                            <input type="date" class="form-control" v-bind:value="fromDateToString(event.start)"
+                                disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Ora</label>
                         <div class="col-sm-10">
-                            <input type="time" class="form-control" v-bind:value="formatTime(repetition.time)" disabled>
+                            <input type="time" class="form-control" v-bind:value="event.start.getHours() + ':00'"
+                                disabled>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                    <button v-on:click="executeOperation" type="button" class="btn btn-primary"
+                    <button v-on:click="getIdTeaching" type="button" class="btn btn-primary"
                         data-bs-dismiss="modal">Ok</button>
                 </div>
             </div>
@@ -47,33 +47,49 @@
 
 <script>
 import $ from 'jquery'
-import { formatTime } from '@/util/DateFormatter';
+import { formatTime, fromDateToString } from '@/util/DateFormatter';
 import { Toast } from 'bootstrap'
+import { changeToastMessage } from '@/util/ChangeToastMessage';
 
 export default {
     name: "NewRepetitionModal",
-    props: ["modalId", "title", "repetition", "loggedUser"],
+    props: ["modalId", "title", "event", "loggedUser"],
     methods: {
         formatTime,
+        fromDateToString,
+        changeToastMessage,
         openToast() {
             const toastLiveExample = $("#liveToast")
             const toast = new Toast(toastLiveExample)
             toast.show()
         },
-        executeOperation() {
+        getIdTeaching() {
+            let self = this
+            $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+                method: "GET",
+                data: {
+                    operation: "getIdTeaching",
+                    serialNumber: self.event.professor.serialNumber,
+                    idCourse: self.event.course.idCourse
+                },
+                success(data) {
+                    self.executeOperation(data.idTeaching)
+                }
+            })
+        },
+        executeOperation(idTeaching) {
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
                 method: "POST",
                 data: {
                     operation: "add",
                     email: self.loggedUser.email,
-                    idTeaching: self.repetition.teaching.idTeaching,
-                    date: self.repetition.date,
-                    time: formatTime(self.repetition.time) + ":00"
+                    idTeaching: idTeaching,
+                    date: fromDateToString(self.event.start),
+                    time: self.event.start.getHours() + ':00:00'
                 },
                 success: () => {
-                    this.$emit("reload-available-repetitions")
-                    self.openToast()
+                    self.$emit("change-page")
                 }
             })
         }

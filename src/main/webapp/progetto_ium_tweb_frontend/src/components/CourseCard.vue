@@ -5,9 +5,6 @@
     </div>
     <div class="card-body">
       <h5 class="card-title">{{ title }}</h5>
-      <div v-if="loggedUser !== null">
-        <a href="#" class="btn btn-primary shadow-none border-0">Prenota</a>
-      </div>
     </div>
   </div>
 </template>
