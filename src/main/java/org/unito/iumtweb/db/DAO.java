@@ -37,11 +37,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closeStatement(s);
-        closeConnection();
         return courses;
     }
 
@@ -59,11 +57,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return courses;
     }
 
@@ -83,11 +80,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return courses;
     }
@@ -109,11 +105,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return mostRequestedCourses;
     }
@@ -133,10 +127,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int updateCourse(int idCourse, String title) {
@@ -155,10 +149,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int deleteCourse(int idCourse) {
@@ -173,10 +167,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public Course getCourseById(int idCourse) {
@@ -192,11 +186,10 @@ public class DAO {
                 c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return c;
     }
 
@@ -214,11 +207,10 @@ public class DAO {
                 c = new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return c;
     }
 
@@ -238,10 +230,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
+
         return logged;
     }
 
@@ -261,11 +253,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeStatement(s);
-        closeResultSet(rs);
-        closeConnection();
         return users;
     }
 
@@ -289,11 +280,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
+        return res;
     }
 
     public int deleteUser(String email) {
@@ -309,11 +299,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
+        return res;
     }
 
     public int updatePassword(String email, String password) {
@@ -330,12 +319,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
-
+        return res;
     }
 
     public int updateUser(String newEmail, String oldEmail, String name, String surname, boolean role) {
@@ -358,12 +345,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
-
+        return res;
     }
 
     public User getUserByEmail(String email) {
@@ -379,11 +364,10 @@ public class DAO {
                 u = new User(rs.getString("email"), rs.getString("name"), rs.getString("surname"), rs.getBoolean("role"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return u;
     }
 
@@ -406,10 +390,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public ArrayList<Professor> getProfessors() {
@@ -428,11 +412,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return professors;
     }
 
@@ -444,9 +427,10 @@ public class DAO {
         ArrayList<Professor> professors = new ArrayList<Professor>();
 
         try {
-            ps = conn.prepareStatement("SELECT * FROM professor p WHERE (LOWER(CONCAT(p.name,' ', p.surname)) LIKE ? OR LOWER(p.serialNumber) LIKE ?) AND p.active = 1; ");
+            ps = conn.prepareStatement("SELECT * FROM professor p WHERE (LOWER(CONCAT(p.name,' ', p.surname)) LIKE ? OR LOWER(CONCAT(p.surname,' ', p.name)) LIKE ? OR LOWER(p.serialNumber) LIKE ?) AND p.active = 1; ");
             ps.setString(1, "%" + searchField.toLowerCase() + "%");
             ps.setString(2, "%" + searchField.toLowerCase() + "%");
+            ps.setString(3, "%" + searchField.toLowerCase() + "%");
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -454,11 +438,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return professors;
     }
 
@@ -478,11 +461,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return mostRequestedProfessor;
     }
@@ -507,12 +488,10 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
 
-
+        return res;
     }
 
     public Professor getProfessorBySerialNumber(String serialNumber) {
@@ -528,11 +507,10 @@ public class DAO {
                 p = new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return p;
     }
 
@@ -547,10 +525,9 @@ public class DAO {
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closePreparedStatement(ps);
-        closeConnection();
     }
 
     public ArrayList<Teaching> getTeachings() {
@@ -575,11 +552,10 @@ public class DAO {
                         rs.getBoolean("teachingActive")));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return teachings;
     }
 
@@ -596,9 +572,10 @@ public class DAO {
                     "FROM teaching t " +
                     "JOIN professor p ON t.serialNumber = p.serialNumber " +
                     "JOIN course c ON t.idCourse = c.idCourse " +
-                    "WHERE t.active = 1 AND p.active = 1 AND c.active = 1 AND (LOWER(CONCAT(p.name,' ', p.surname)) LIKE ? OR LOWER(c.title) LIKE ?)");
+                    "WHERE t.active = 1 AND p.active = 1 AND c.active = 1 AND (LOWER(CONCAT(p.name,' ', p.surname)) LIKE ? OR LOWER(CONCAT(p.surname, ' ', p.name)) LIKE ? OR LOWER(c.title) LIKE ?)");
             ps.setString(1, "%" + searchField.toLowerCase() + "%");
             ps.setString(2, "%" + searchField.toLowerCase() + "%");
+            ps.setString(3, "%" + searchField.toLowerCase() + "%");
             rs = ps.executeQuery();
             while (rs.next()) {
                 teachings.add(new Teaching(rs.getInt("idTeaching"),
@@ -608,11 +585,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return teachings;
     }
@@ -632,10 +607,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int updateTeaching(int idTeaching, String serialNumber, int idCourse) {
@@ -655,10 +630,10 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closePreparedStatement(ps);
             closeConnection();
-            return res;
         }
+
+        return res;
     }
 
     public int deleteTeaching(int idTeaching) {
@@ -672,10 +647,10 @@ public class DAO {
         } catch (SQLException e) {
             res = -1;
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeConnection();
         return res;
     }
 
@@ -699,11 +674,10 @@ public class DAO {
                         rs.getBoolean("teachingActive"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return t;
     }
 
@@ -730,11 +704,10 @@ public class DAO {
                         rs.getBoolean("teachingActive"));
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return t;
     }
 
@@ -754,11 +727,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeResultSet(rs);
-        closeConnection();
         return idTeaching;
     }
 
@@ -787,11 +759,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return teachings;
     }
@@ -821,11 +791,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return teachings;
     }
@@ -848,10 +816,10 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
             res = -1;
+        } finally {
+            closeConnection();
         }
 
-        closePreparedStatement(ps);
-        closeConnection();
         return res;
     }
 
@@ -883,11 +851,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return repetitions;
     }
@@ -920,11 +886,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetition;
     }
 
@@ -959,11 +924,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetition;
     }
 
@@ -996,11 +960,9 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
 
         return repetitions;
     }
@@ -1035,11 +997,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetitions;
     }
 
@@ -1073,11 +1034,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetitions;
     }
 
@@ -1112,11 +1072,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
 
-        closeResultSet(rs);
-        closePreparedStatement(ps);
-        closeConnection();
         return repetitions;
     }
 
@@ -1133,10 +1092,9 @@ public class DAO {
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
-
-        closePreparedStatement(ps);
-        closeConnection();
 
         repetition = getRepetitionById(idRepetition);
         return repetition;
@@ -1162,33 +1120,6 @@ public class DAO {
         try {
             if (conn != null)
                 conn.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closeStatement(Statement s) {
-        try {
-            if (s != null)
-                s.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closePreparedStatement(PreparedStatement ps) {
-        try {
-            if (ps != null)
-                ps.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closeResultSet(ResultSet rs) {
-        try {
-            if (rs != null)
-                rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
