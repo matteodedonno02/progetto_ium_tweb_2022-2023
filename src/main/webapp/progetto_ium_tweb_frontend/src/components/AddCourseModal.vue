@@ -66,10 +66,6 @@ export default {
           title: self.titleCourse,
           iconUrl: self.iconUrl
         },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
         success(data) {
           if (data.error !== undefined) {
             self.openToast("Corso già presente")

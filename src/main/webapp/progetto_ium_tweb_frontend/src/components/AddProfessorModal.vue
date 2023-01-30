@@ -80,10 +80,6 @@ export default {
           name: self.name,
           surname: self.surname
         },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
         success(data) {
           if (data.error !== undefined) {
             self.openToast("Professore già presente")

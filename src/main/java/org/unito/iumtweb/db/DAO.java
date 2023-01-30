@@ -15,7 +15,6 @@ public class DAO {
     private final String dbPassword;
     private Connection conn;
 
-    //TODO: rendere title di course unique nel db , e forse anche l'insieme di idCourse serialNUmber e active in teaching unique, in caso contrario sistemare i catch e la servlet
     public DAO(String dbUrl, String dbUsername, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbUsername = dbUsername;
@@ -98,7 +97,7 @@ public class DAO {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4;");
+            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching WHERE  c.active = 1 GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4;");
             rs = ps.executeQuery();
             while (rs.next()) {
                 mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
@@ -179,7 +178,7 @@ public class DAO {
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM course WHERE idCourse = ?");
+            ps = conn.prepareStatement("SELECT * FROM course WHERE idCourse = ? AND active = 1");
             ps.setInt(1, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
@@ -200,7 +199,7 @@ public class DAO {
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM course WHERE title = ?");
+            ps = conn.prepareStatement("SELECT * FROM course WHERE title = ? AND active = 1");
             ps.setString(1, title);
             rs = ps.executeQuery();
             if (rs.next())
@@ -244,7 +243,7 @@ public class DAO {
         openConnection();
 
         try {
-            String query = "SELECT * FROM user";
+            String query = "SELECT * FROM user WHERE active = 1 ";
 
             s = conn.createStatement();
             rs = s.executeQuery(query);
@@ -330,7 +329,7 @@ public class DAO {
         PreparedStatement ps = null;
         int res = 1;
         try {
-            String query = "UPDATE user SET email = ?,name = ?, surname = ?, role = ? WHERE email = ?";
+            String query = "UPDATE user SET email = ?,name = ?, surname = ?, role = ? WHERE email = ? AND active = 1";
             ps = conn.prepareStatement(query);
             ps.setString(1, newEmail);
             ps.setString(2, name);
@@ -357,7 +356,7 @@ public class DAO {
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM user WHERE email = ?");
+            ps = conn.prepareStatement("SELECT * FROM user WHERE email = ? AND active = 1 ");
             ps.setString(1, email);
             rs = ps.executeQuery();
             if (rs.next())
@@ -454,7 +453,7 @@ public class DAO {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, p.serialNumber, p.name, p.surname, p.imageUrl, p.active FROM professor p JOIN teaching t ON p.serialNumber = t.serialNumber LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY p.serialNumber ORDER BY nRepetition DESC LIMIT 4;");
+            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, p.serialNumber, p.name, p.surname, p.imageUrl, p.active FROM professor p JOIN teaching t ON p.serialNumber = t.serialNumber LEFT JOIN repetition r ON t.idTeaching = r.idTeaching AND p.active = 1 GROUP BY p.serialNumber ORDER BY nRepetition DESC LIMIT 4;");
             rs = ps.executeQuery();
             while (rs.next()) {
                 mostRequestedProfessor.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active")));
@@ -474,7 +473,7 @@ public class DAO {
         PreparedStatement ps = null;
 
         try {
-            ps = conn.prepareStatement("UPDATE professor SET serialNumber = ?, name = ?, surname = ? WHERE serialNumber = ?");
+            ps = conn.prepareStatement("UPDATE professor SET serialNumber = ?, name = ?, surname = ? WHERE serialNumber = ? AND active = 1 ");
             ps.setString(1, newSerialNumber);
             ps.setString(2, name);
             ps.setString(3, surname);
@@ -500,7 +499,7 @@ public class DAO {
         ResultSet rs = null;
         openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM professor WHERE serialNumber = ?");
+            ps = conn.prepareStatement("SELECT * FROM professor WHERE serialNumber = ? AND active = 1 ");
             ps.setString(1, serialNumber);
             rs = ps.executeQuery();
             if (rs.next())
@@ -618,7 +617,7 @@ public class DAO {
         PreparedStatement ps = null;
         int res = 1;
         try {
-            ps = conn.prepareStatement("UPDATE teaching SET serialNumber = ?, idCourse = ? WHERE idTeaching = ?");
+            ps = conn.prepareStatement("UPDATE teaching SET serialNumber = ?, idCourse = ? WHERE idTeaching = ? AND active = 1 ");
             ps.setString(1, serialNumber);
             ps.setInt(2, idCourse);
             ps.setInt(3, idTeaching);
@@ -664,7 +663,7 @@ public class DAO {
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
                     "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
                     "FROM teaching t JOIN course c ON t.idCourse = c.idCourse JOIN professor p ON t.serialNumber = p.serialNumber " +
-                    "WHERE idTeaching = ?;");
+                    "WHERE idTeaching = ? AND t.active = 1;");
             ps.setInt(1, idTeaching);
             rs = ps.executeQuery();
             if (rs.next())
@@ -1040,7 +1039,7 @@ public class DAO {
 
         return repetitions;
     }
-
+    
     public ArrayList<Repetition> getRepetitionsByProfessorAndDate(String serialNumber, String date) {
         openConnection();
 

@@ -49,10 +49,6 @@ export default {
                     idRepetition: self.repetition.idRepetition,
                     newState: self.newState
                 },
-                xhrFields: {
-                    withCredentials: true
-                },
-                crossDomain: true,
                 success() {
                     if (self.newState === "1") {
                         changeToastMessage("Prenotazione confermata con successo!")

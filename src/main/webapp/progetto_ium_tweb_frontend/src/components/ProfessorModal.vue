@@ -45,10 +45,6 @@ export default {
           operation: "delete",
           serialNumber: self.professor.serialNumber
         },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
         success() {
           self.$emit("delete-professor")
 

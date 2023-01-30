@@ -99,10 +99,6 @@ export default {
                     operation: "selectByEmail",
                     email: email,
                 },
-                xhrFields: {
-                    withCredentials: true
-                },
-                crossDomain: true,
                 success: (data) => {
                     self.loggedUserRepetitions = data
                     self.loadRepetitionsByState(self.loggedUserRepetitions)
