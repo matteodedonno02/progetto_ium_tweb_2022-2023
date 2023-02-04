@@ -188,6 +188,10 @@
   height: 100vh;
 }
 
+.nav-link {
+  cursor: pointer;
+}
+
 @keyframes shine {
   to {
     background-position-x: -200%;

@@ -34,6 +34,10 @@ public class UserServlet extends HttpServlet {
             case "getFromSession":
                 getLoggedUserFromSession(request, response);
                 break;
+
+            case "logout":
+                destroySession(request, response);
+                break;
             default:
                 PrintWriter pw = response.getWriter();
                 pw.write("{\"error\":\"Invalid operation\"}");
@@ -80,6 +84,10 @@ public class UserServlet extends HttpServlet {
         User loggedUser = (User) request.getSession().getAttribute("loggedUser");
         pw.write(gson.toJson(loggedUser));
         pw.close();
+    }
+
+    private void destroySession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.getSession().invalidate();
     }
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {

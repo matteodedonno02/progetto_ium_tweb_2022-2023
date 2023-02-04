@@ -1,7 +1,7 @@
 <template>
   <LoginPage v-if="loggedUser === null" @set-logged-user="setLoggedUser" />
   <div v-else>
-    <VerticalBar v-bind:loggedUser="loggedUser" v-bind:page="page" @change-page="changePage" />
+    <VerticalBar v-bind:loggedUser="loggedUser" v-bind:page="page" @change-page="changePage" @log-out="logOut" />
     <div class="container">
       <div class="container-content pt-5">
         <div v-if="page === 'home'">
@@ -83,6 +83,18 @@ export default {
     },
     setLoggedUser(loggedUser) {
       this.loggedUser = loggedUser
+    },
+    logOut() {
+      let self = this
+      $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
+        method: "GET",
+        data: {
+          operation: "logout"
+        },
+        success() {
+          self.loggedUser = null
+        }
+      })
     }
   },
   mounted() {
