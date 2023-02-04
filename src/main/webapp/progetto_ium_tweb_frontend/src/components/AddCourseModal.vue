@@ -8,12 +8,17 @@
             aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="row">
-            Titolo del corso:
-            <input type="text" class="form-control" v-model="titleCourse" required="true" />
+          <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Titolo</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" v-model="titleCourse" required="true" />
+            </div>
           </div>
-          <div class="row">
-            Icona del corso: <input class="form-control" @change="handleFile" type="file" required="true" />
+          <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Icona</label>
+            <div class="col-sm-10">
+              <input class="form-control" @change="handleFile" type="file" required="true" />
+            </div>
           </div>
         </div>
         <div class="modal-footer">
