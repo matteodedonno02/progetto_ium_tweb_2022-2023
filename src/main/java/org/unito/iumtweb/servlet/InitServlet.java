@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.unito.iumtweb.db.DAO;
+import org.unito.iumtweb.util.EmailSender;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,10 +27,13 @@ public class InitServlet extends HttpServlet {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         getServletContext().setAttribute("gson", gson);
 
+        EmailSender emailSender = new EmailSender(getServletContext().getInitParameter("mailgunApiKey"));
+        getServletContext().setAttribute("emailSender", emailSender);
+
 
         Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "dnndcjczm",
-                "api_key", "498245257748997",
+                "api_key", getServletContext().getInitParameter("cloudinaryApiKey"),
                 "api_secret", "5bPvh0K_Lvov3G2eGzgkMxutcJY"));
         getServletContext().setAttribute("cloudinary", cloudinary);
     }
