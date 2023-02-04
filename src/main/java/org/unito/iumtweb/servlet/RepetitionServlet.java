@@ -78,7 +78,10 @@ public class RepetitionServlet extends HttpServlet {
             case 1:
                 Repetition r = managerDB.getRepetition(email, idTeaching, date, time);
                 pw.write(gson.toJson(r));
-//                EmailSender.bookedRepetition(r);
+                Thread t = new Thread(() -> {
+                    EmailSender.bookedRepetition(r);
+                });
+                t.start();
                 break;
             case 0:
                 pw.write("{\"error\":\"Email or teaching doesn't exist\"}");

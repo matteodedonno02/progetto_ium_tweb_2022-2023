@@ -8,7 +8,7 @@
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item ">
 
@@ -68,6 +68,14 @@
             </a>
           </li>
         </ul>
+        <ul class="navbar-nav">
+          <li>
+            <a v-on:click="this.$emit('log-out')" class="nav-link d-flex flex-column align-items-center">
+              <MdiLogoutIcon />
+              Log Out
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -81,6 +89,7 @@ import BookAlertIcon from 'vue-material-design-icons/BookAlert.vue'
 import BookOpenVariant from 'vue-material-design-icons/BookOpenVariant.vue'
 import AccountDetails from 'vue-material-design-icons/AccountDetails.vue'
 import AccountTie from 'vue-material-design-icons/AccountTie.vue'
+import MdiLogoutIcon from 'vue-material-design-icons/Logout.vue'
 
 export default {
   name: "VerticalBar",
@@ -91,7 +100,8 @@ export default {
     BookAlertIcon,
     BookOpenVariant,
     AccountDetails,
-    AccountTie
+    AccountTie,
+    MdiLogoutIcon
   },
   props: ["page", "loggedUser"]
 }

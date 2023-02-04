@@ -13,13 +13,13 @@
             <input type="text" class="form-control" v-model="titleCourse" required="true" />
           </div>
           <div class="row">
-            Immagine del corso: <input class="form-control" v-model="iconUrl" type="text" required="true" />
+            Icona del corso: <input class="form-control" @change="handleFile" type="file" required="true" />
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" v-on:click="clearInput"
             data-bs-dismiss="modal">Annulla</button>
-          <button v-on:click="executeOperation" :disabled="titleCourse.length <= 0 || iconUrl.length <= 0" type="button"
+          <button v-on:click="executeOperation" :disabled="titleCourse.length <= 0 || file === null" type="button"
             class="btn btn-primary" data-bs-dismiss="modal">Aggiungi
           </button>
         </div>
@@ -42,11 +42,14 @@ export default {
     return {
       titleCourse: '',
       iconUrl: '',
+      file: null
     };
   },
   methods: {
     changeToastMessage,
-
+    handleFile(e) {
+      this.file = e.target.files[0]
+    },
     openToast(toastMessage) {
       const toastLiveExample = $("#liveToast")
       const toast = new Toast(toastLiveExample)
@@ -55,16 +58,25 @@ export default {
     },
     clearInput() {
       this.titleCourse = ''
-      this.iconUrl = ''
+      this.file = null
     },
     executeOperation() {
+      let self = this
+      let reader = new FileReader()
+      reader.readAsDataURL(this.file)
+      reader.onload = () => {
+        self.file = reader.result
+        self.executeCall()
+      }
+    },
+    executeCall() {
       let self = this
       $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
         method: "POST",
         data: {
           operation: "add",
           title: self.titleCourse,
-          iconUrl: self.iconUrl
+          file: self.file
         },
         success(data) {
           if (data.error !== undefined) {
@@ -74,11 +86,10 @@ export default {
             self.$emit("new-course", data)
             self.openToast("Corso aggiunto con successo")
           }
+
+          self.clearInput();
         }
       })
-
-      self.clearInput();
-
     }
   }
 }

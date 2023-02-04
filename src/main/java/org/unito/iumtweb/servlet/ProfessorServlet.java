@@ -1,5 +1,6 @@
 package org.unito.iumtweb.servlet;
 
+import com.cloudinary.Cloudinary;
 import com.google.gson.Gson;
 import org.unito.iumtweb.db.DAO;
 import org.unito.iumtweb.model.Professor;
@@ -9,16 +10,20 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "ProfessorServlet", value = "/ProfessorServlet")
 public class ProfessorServlet extends HttpServlet {
     private DAO managerDB;
     private Gson gson;
+    private Cloudinary cloudinary;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
         gson = (Gson) getServletContext().getAttribute("gson");
+        cloudinary = (Cloudinary) getServletContext().getAttribute("cloudinary");
     }
 
     @Override
@@ -90,10 +95,12 @@ public class ProfessorServlet extends HttpServlet {
         pw.close();
     }
 
-    private void addProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void addProfessor(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         PrintWriter pw = response.getWriter();
+
         String serialNumber = request.getParameter("serialNumber");
-        int res = managerDB.addProfessor(serialNumber, request.getParameter("name"), request.getParameter("surname"), request.getParameter("imageUrl"));
+        Map<String, String> img = cloudinary.uploader().upload(request.getParameter("file"), null);
+        int res = managerDB.addProfessor(serialNumber, request.getParameter("name"), request.getParameter("surname"), img.get("secure_url").replace("upload/", "upload/c_scale,w_400/"));
         switch (res) {
             case 1:
                 pw.write(gson.toJson(managerDB.getProfessorBySerialNumber(serialNumber)));

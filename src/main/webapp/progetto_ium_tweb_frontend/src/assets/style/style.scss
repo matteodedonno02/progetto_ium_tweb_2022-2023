@@ -215,6 +215,22 @@ $accentColor2: #3185FC;
   }
 }
 
+.modal-image {
+  object-fit: cover;
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+}
+
+.login-container {
+  height: 100vh;
+}
+
+.nav-link {
+  cursor: pointer;
+}
+
+
 @keyframes shine {
   to {
     background-position-x: -200%;
