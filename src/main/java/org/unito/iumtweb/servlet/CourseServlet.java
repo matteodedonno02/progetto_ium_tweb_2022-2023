@@ -1,5 +1,6 @@
 package org.unito.iumtweb.servlet;
 
+import com.cloudinary.Cloudinary;
 import com.google.gson.Gson;
 import org.unito.iumtweb.db.DAO;
 import org.unito.iumtweb.model.Course;
@@ -10,17 +11,20 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 @WebServlet(name = "CourseServlet", value = "/CourseServlet")
 public class CourseServlet extends HttpServlet {
 
     private DAO managerDB;
     private Gson gson;
+    private Cloudinary cloudinary;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
         gson = (Gson) getServletContext().getAttribute("gson");
+        cloudinary = (Cloudinary) getServletContext().getAttribute("cloudinary");
     }
 
     @Override
@@ -108,7 +112,8 @@ public class CourseServlet extends HttpServlet {
     private void addCourse(HttpServletRequest request, HttpServletResponse
             response) throws IOException {
         PrintWriter pw = response.getWriter();
-        int res = managerDB.addCourse(request.getParameter("title"), request.getParameter("iconUrl"));
+        Map<String, String> img = cloudinary.uploader().upload(request.getParameter("file"), null);
+        int res = managerDB.addCourse(request.getParameter("title"), img.get("secure_url").replace("upload/", "upload/c_scale,w_400/"));
         switch (res) {
             case 1:
                 pw.write(gson.toJson(managerDB.getCourseByTitle(request.getParameter("title"))));

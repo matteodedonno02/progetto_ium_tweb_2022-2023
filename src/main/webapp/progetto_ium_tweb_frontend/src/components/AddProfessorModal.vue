@@ -19,7 +19,7 @@
             Cognome: <input class="form-control" v-model="surname" type="text" required="true" />
           </div>
           <div class="row">
-            Immagine del professore: <input class="form-control" v-model="imageUrl" type="text" required="true" />
+            Immagine del professore: <input class="form-control" @change="handleFile" type="file" required="true" />
           </div>
 
 
@@ -28,7 +28,7 @@
           <button type="button" class="btn btn-secondary" v-on:click="clearInput"
             data-bs-dismiss="modal">Annulla</button>
           <button v-on:click="executeOperation" type="button"
-            :disabled="serialNumber.length != 6 || name.length <= 0 || surname.length <= 0 || imageUrl.length <= 0"
+            :disabled="serialNumber.length != 6 || name.length <= 0 || surname.length <= 0 || file === null"
             class="btn btn-primary" data-bs-dismiss="modal">Aggiungi</button>
         </div>
       </div>
@@ -48,14 +48,17 @@ export default {
   data() {
     return {
       serialNumber: '',
-      imageUrl: '',
+      imageUrl: 'uygfuwhsduibfoisdhfbsdnflnk',
       name: '',
-      surname: ''
+      surname: '',
+      file: null,
     };
   },
   methods: {
     changeToastMessage,
-
+    handleFile(e) {
+      this.file = e.target.files[0]
+    },
     openToast(toastMessage) {
       const toastLiveExample = $("#liveToast")
       const toast = new Toast(toastLiveExample)
@@ -64,26 +67,31 @@ export default {
     },
     clearInput() {
       this.serialNumber = ''
-      this.imageUrl = ''
       this.name = ''
       this.surname = ''
+      this.file = null
     },
     executeOperation() {
-
       let self = this
+      let reader = new FileReader()
+      reader.readAsDataURL(this.file)
+      reader.onload = () => {
+        self.file = reader.result
+        self.executeCall()
+      }
+    },
+    executeCall() {
+      let self = this
+      console.log(this.serialNumber, this.name, this.surname, this.file)
       $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
         method: "POST",
         data: {
           operation: "add",
           serialNumber: self.serialNumber,
-          imageUrl: self.imageUrl,
           name: self.name,
-          surname: self.surname
+          surname: self.surname,
+          file: self.file
         },
-        xhrFields: {
-          withCredentials: true
-        },
-        crossDomain: true,
         success(data) {
           if (data.error !== undefined) {
             self.openToast("Professore già presente")
@@ -92,14 +100,10 @@ export default {
             self.$emit("new-professor", data)
             self.openToast("Professore inserito con successo")
           }
+          self.clearInput();
         }
       })
-
-      self.clearInput();
-
-
     }
-
   }
 }
 </script>

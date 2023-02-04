@@ -205,6 +205,7 @@ export default {
         },
         success: (data) => {
           self.courses = data
+          self.getProfessors()
         }
       })
     },
@@ -291,7 +292,6 @@ export default {
     }
   },
   mounted() {
-    this.getProfessors()
     this.getCourses()
   }
 }

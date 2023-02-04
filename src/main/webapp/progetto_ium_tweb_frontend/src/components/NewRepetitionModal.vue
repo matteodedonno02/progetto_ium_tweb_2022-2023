@@ -7,6 +7,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="d-flex justify-content-center pb-3">
+                        <img :src="event.professor.imageUrl" class="modal-image" alt="Professor image">
+                    </div>
+
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Prof.</label>
                         <div class="col-sm-10">
