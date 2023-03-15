@@ -81,8 +81,7 @@ export default {
             loggedUserRepetitions: null,
             pendingRepetitions: null,
             confirmedRepetitions: null,
-            deletedRepetitions: null,
-            todayRepetitions: null,
+            deletedRepetitions: null
         }
     },
     components: {
