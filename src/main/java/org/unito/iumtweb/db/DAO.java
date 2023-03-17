@@ -1,21 +1,16 @@
 package org.unito.iumtweb.db;
 
 import org.unito.iumtweb.model.*;
-import org.unito.iumtweb.util.DateAndTimeManipulator;
 
 import java.sql.*;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 public class DAO {
     private final String dbUrl;
     private final String dbUsername;
     private final String dbPassword;
-    private Connection conn;
 
-    //TODO: rendere title di course unique nel db , e forse anche l'insieme di idCourse serialNUmber e active in teaching unique, in caso contrario sistemare i catch e la servlet
     public DAO(String dbUrl, String dbUsername, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbUsername = dbUsername;
@@ -27,7 +22,7 @@ public class DAO {
         ArrayList<Course> courses = new ArrayList<>();
         Statement s = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
             String query = "SELECT * FROM course where active = 1";
             s = conn.createStatement();
@@ -38,7 +33,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
         return courses;
     }
@@ -47,7 +42,7 @@ public class DAO {
         ArrayList<Course> courses = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
             ps = conn.prepareStatement("SELECT * FROM course c WHERE LOWER(c.title) LIKE ? AND active = 1");
             ps.setString(1, "%" + searchField.toLowerCase() + "%");
@@ -58,14 +53,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return courses;
     }
 
     public ArrayList<Course> getCoursesBySerialNumberNeg(String serialNumber) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Course> courses = new ArrayList<>();
         PreparedStatement ps = null;
@@ -81,7 +76,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
 
@@ -90,7 +85,7 @@ public class DAO {
 
 
     public ArrayList<Course> getMostRequestedCourses() {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Course> mostRequestedCourses = new ArrayList<Course>();
 
@@ -98,7 +93,7 @@ public class DAO {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4;");
+            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, c.idCourse, c.title, c.iconUrl, c.active FROM course c JOIN teaching t ON c.idCourse = t.idCourse LEFT JOIN repetition r ON t.idTeaching = r.idTeaching WHERE  c.active = 1 GROUP BY c.idCourse ORDER BY nRepetition DESC LIMIT 4;");
             rs = ps.executeQuery();
             while (rs.next()) {
                 mostRequestedCourses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
@@ -106,14 +101,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return mostRequestedCourses;
     }
 
     public int addCourse(String title, String iconUrl) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -127,14 +122,14 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int updateCourse(int idCourse, String title) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -149,14 +144,14 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int deleteCourse(int idCourse) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -167,7 +162,7 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
@@ -177,9 +172,9 @@ public class DAO {
         Course c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM course WHERE idCourse = ?");
+            ps = conn.prepareStatement("SELECT * FROM course WHERE idCourse = ? AND active = 1");
             ps.setInt(1, idCourse);
             rs = ps.executeQuery();
             if (rs.next())
@@ -187,7 +182,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return c;
@@ -198,9 +193,9 @@ public class DAO {
         Course c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM course WHERE title = ?");
+            ps = conn.prepareStatement("SELECT * FROM course WHERE title = ? AND active = 1");
             ps.setString(1, title);
             rs = ps.executeQuery();
             if (rs.next())
@@ -208,14 +203,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return c;
     }
 
     public User login(String email, String password) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
         User logged = null;
@@ -231,7 +226,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return logged;
@@ -241,10 +236,10 @@ public class DAO {
         ArrayList<User> users = new ArrayList<>();
         Statement s = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
 
         try {
-            String query = "SELECT * FROM user";
+            String query = "SELECT * FROM user WHERE active = 1 ";
 
             s = conn.createStatement();
             rs = s.executeQuery(query);
@@ -254,14 +249,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return users;
     }
 
     public int addUser(String email, String name, String surname, String password) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
 
@@ -280,14 +275,14 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int deleteUser(String email) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -299,14 +294,14 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int updatePassword(String email, String password) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -319,18 +314,18 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int updateUser(String newEmail, String oldEmail, String name, String surname, boolean role) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
-            String query = "UPDATE user SET email = ?,name = ?, surname = ?, role = ? WHERE email = ?";
+            String query = "UPDATE user SET email = ?,name = ?, surname = ?, role = ? WHERE email = ? AND active = 1";
             ps = conn.prepareStatement(query);
             ps.setString(1, newEmail);
             ps.setString(2, name);
@@ -345,7 +340,7 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
@@ -355,9 +350,9 @@ public class DAO {
         User u = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM user WHERE email = ?");
+            ps = conn.prepareStatement("SELECT * FROM user WHERE email = ? AND active = 1 ");
             ps.setString(1, email);
             rs = ps.executeQuery();
             if (rs.next())
@@ -365,14 +360,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return u;
     }
 
     public int addProfessor(String serialNumber, String name, String surname, String imageUrl) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         int res = 1;
@@ -390,14 +385,14 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public ArrayList<Professor> getProfessors() {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -413,14 +408,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return professors;
     }
 
     public ArrayList<Professor> searchProfessor(String searchField) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -439,14 +434,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return professors;
     }
 
     public ArrayList<Professor> getMostRequestedProfessor() {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Professor> mostRequestedProfessor = new ArrayList<Professor>();
 
@@ -454,7 +449,7 @@ public class DAO {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, p.serialNumber, p.name, p.surname, p.imageUrl, p.active FROM professor p JOIN teaching t ON p.serialNumber = t.serialNumber LEFT JOIN repetition r ON t.idTeaching = r.idTeaching GROUP BY p.serialNumber ORDER BY nRepetition DESC LIMIT 4;");
+            ps = conn.prepareStatement("SELECT COUNT(r.idRepetition) as nRepetition, p.serialNumber, p.name, p.surname, p.imageUrl, p.active FROM professor p JOIN teaching t ON p.serialNumber = t.serialNumber LEFT JOIN repetition r ON t.idTeaching = r.idTeaching AND p.active = 1 GROUP BY p.serialNumber ORDER BY nRepetition DESC LIMIT 4;");
             rs = ps.executeQuery();
             while (rs.next()) {
                 mostRequestedProfessor.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active")));
@@ -462,19 +457,19 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return mostRequestedProfessor;
     }
 
     public int updateProfessor(String oldSerialNumber, String newSerialNumber, String name, String surname) {
-        openConnection();
+        Connection conn = openConnection();
         int res = 1;
         PreparedStatement ps = null;
 
         try {
-            ps = conn.prepareStatement("UPDATE professor SET serialNumber = ?, name = ?, surname = ? WHERE serialNumber = ?");
+            ps = conn.prepareStatement("UPDATE professor SET serialNumber = ?, name = ?, surname = ? WHERE serialNumber = ? AND active = 1 ");
             ps.setString(1, newSerialNumber);
             ps.setString(2, name);
             ps.setString(3, surname);
@@ -488,7 +483,7 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
@@ -498,9 +493,9 @@ public class DAO {
         Professor p = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
-            ps = conn.prepareStatement("SELECT * FROM professor WHERE serialNumber = ?");
+            ps = conn.prepareStatement("SELECT * FROM professor WHERE serialNumber = ? AND active = 1 ");
             ps.setString(1, serialNumber);
             rs = ps.executeQuery();
             if (rs.next())
@@ -508,14 +503,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return p;
     }
 
     public void deleteProfessor(String serialNumber) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
 
@@ -526,7 +521,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
     }
 
@@ -534,7 +529,7 @@ public class DAO {
         ArrayList<Teaching> teachings = new ArrayList<Teaching>();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
 
         try {
             ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
@@ -553,14 +548,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return teachings;
     }
 
     public ArrayList<Teaching> searchTeachings(String searchField) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Teaching> teachings = new ArrayList<>();
         PreparedStatement ps = null;
@@ -586,14 +581,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return teachings;
     }
 
     public int addTeaching(String serialNumber, int idCourse) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -607,18 +602,18 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int updateTeaching(int idTeaching, String serialNumber, int idCourse) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
-            ps = conn.prepareStatement("UPDATE teaching SET serialNumber = ?, idCourse = ? WHERE idTeaching = ?");
+            ps = conn.prepareStatement("UPDATE teaching SET serialNumber = ?, idCourse = ? WHERE idTeaching = ? AND active = 1 ");
             ps.setString(1, serialNumber);
             ps.setInt(2, idCourse);
             ps.setInt(3, idTeaching);
@@ -630,14 +625,14 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public int deleteTeaching(int idTeaching) {
-        openConnection();
+        Connection conn = openConnection();
         PreparedStatement ps = null;
         int res = 1;
         try {
@@ -648,7 +643,7 @@ public class DAO {
             res = -1;
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
@@ -658,13 +653,13 @@ public class DAO {
         Teaching t = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
             ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
                     "p.serialNumber, p.name, p.surname, p.imageUrl, p.active as professorActive " +
                     "FROM teaching t JOIN course c ON t.idCourse = c.idCourse JOIN professor p ON t.serialNumber = p.serialNumber " +
-                    "WHERE idTeaching = ?;");
+                    "WHERE idTeaching = ? AND t.active = 1;");
             ps.setInt(1, idTeaching);
             rs = ps.executeQuery();
             if (rs.next())
@@ -675,7 +670,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return t;
@@ -685,7 +680,7 @@ public class DAO {
         Teaching t = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
             ps = conn.prepareStatement("SELECT t.idTeaching, t.active as teachingActive, " +
                     "c.idCourse, c.title, c.iconUrl, c.active as courseActive, " +
@@ -705,7 +700,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return t;
@@ -716,7 +711,7 @@ public class DAO {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        openConnection();
+        Connection conn = openConnection();
         try {
             ps = conn.prepareStatement("SELECT idTeaching FROM teaching WHERE serialNumber = ? AND idCourse = ? AND active = 1");
             ps.setString(1, serialNumber);
@@ -728,14 +723,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return idTeaching;
     }
 
     public ArrayList<Teaching> getTeachingsByCourse(int idCourse) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Teaching> teachings = new ArrayList<Teaching>();
 
@@ -760,14 +755,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return teachings;
     }
 
     public ArrayList<Teaching> getTeachingsByProfessor(String serialNumber) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Teaching> teachings = new ArrayList<Teaching>();
 
@@ -792,14 +787,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return teachings;
     }
 
     public int addRepetition(String email, int idTeaching, String date, String time) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         int res = 1;
@@ -817,14 +812,14 @@ public class DAO {
             e.printStackTrace();
             res = -1;
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return res;
     }
 
     public ArrayList<Repetition> getRepetitions() {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
 
@@ -852,14 +847,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetitions;
     }
 
     public Repetition getRepetitionById(int idRepetition) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -887,14 +882,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetition;
     }
 
     public Repetition getRepetition(String email, int idTeaching, String date, String time) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -925,14 +920,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetition;
     }
 
     public ArrayList<Repetition> getRepetitionsByEmail(String email) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
 
@@ -961,14 +956,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetitions;
     }
 
     public ArrayList<Repetition> getRepetitionsByEmailAndDate(String email, String date) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
 
@@ -998,14 +993,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetitions;
     }
 
     public ArrayList<Repetition> getRepetitionsByCourseAndDate(int idCourse, String date) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
@@ -1035,14 +1030,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetitions;
     }
 
     public ArrayList<Repetition> getRepetitionsByProfessorAndDate(String serialNumber, String date) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
@@ -1072,14 +1067,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetitions;
     }
 
     public ArrayList<Repetition> getRepetitionsByProfessorCourseAndDate(String serialNumber, int idCourse, String date) {
-        openConnection();
+        Connection conn = openConnection();
 
         ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
@@ -1110,14 +1105,14 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         return repetitions;
     }
 
     public Repetition updateRepetition(int idRepetition, int newState) {
-        openConnection();
+        Connection conn = openConnection();
 
         PreparedStatement ps = null;
         Repetition repetition = null;
@@ -1130,7 +1125,7 @@ public class DAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(conn);
         }
 
         repetition = getRepetitionById(idRepetition);
@@ -1145,15 +1140,15 @@ public class DAO {
         }
     }
 
-    private void openConnection() {
+    private Connection openConnection() {
         try {
-            conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            return DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void closeConnection() {
+    private void closeConnection(Connection conn) {
         try {
             if (conn != null)
                 conn.close();
