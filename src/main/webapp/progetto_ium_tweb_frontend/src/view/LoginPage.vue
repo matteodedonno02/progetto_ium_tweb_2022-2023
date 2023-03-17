@@ -41,8 +41,8 @@ export default {
                 method: "POST",
                 data: {
                     operation: "login",
-                    email: "matteodedonno02@gmail.com",
-                    password: "matteo"
+                    email: self.email,
+                    password: self.password
                 },
                 xhrFields: {
                     withCredentials: true

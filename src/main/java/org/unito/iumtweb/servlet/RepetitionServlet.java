@@ -22,11 +22,13 @@ import java.util.Map;
 public class RepetitionServlet extends HttpServlet {
     private DAO managerDB;
     private Gson gson;
+    private EmailSender emailSender;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
         gson = (Gson) getServletContext().getAttribute("gson");
+        emailSender = (EmailSender) getServletContext().getAttribute("emailSender");
     }
 
     @Override
@@ -79,7 +81,7 @@ public class RepetitionServlet extends HttpServlet {
                 Repetition r = managerDB.getRepetition(email, idTeaching, date, time);
                 pw.write(gson.toJson(r));
                 Thread t = new Thread(() -> {
-                    EmailSender.bookedRepetition(r);
+                    emailSender.bookedRepetition(r);
                 });
                 t.start();
                 break;
