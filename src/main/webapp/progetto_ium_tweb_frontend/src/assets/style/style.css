@@ -4,6 +4,29 @@
   margin: 0;
 }
 
+.custom-placeholder {
+  padding: 0 !important;
+  left: 10px;
+  bottom: 7px;
+  background: none;
+  transition: all 200ms;
+  width: fit-content;
+}
+
+.group:focus-within label {
+  bottom: 30px;
+  background: white;
+}
+
+.focus-label {
+  bottom: 30px;
+  background: white;
+}
+
+.custom-button {
+  width: 50%;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -185,7 +208,7 @@
 }
 
 .login-container {
-  height: 100vh;
+  height: 100svh;
 }
 
 .nav-link {
