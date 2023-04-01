@@ -253,6 +253,14 @@ $accentColor2: #3185FC;
   cursor: pointer;
 }
 
+.vuecal__arrow--prev-visible {
+  visibility: inherit !important;
+}
+
+.vuecal__arrow--prev {
+  visibility: hidden;
+}
+
 
 @keyframes shine {
   to {

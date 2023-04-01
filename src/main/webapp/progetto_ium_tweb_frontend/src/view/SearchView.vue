@@ -28,8 +28,8 @@
     </div>
   </div>
 
-  <vue-cal v-on:view-change="dateChanged" :events="events" :on-event-click="onEventClick" :timeCellHeight="100"
-    locale="it" active-view="day" :time-from="15 * 60" :time-to="19 * 60" hide-weekends
+  <vue-cal :selected-date="minDate" v-on:view-change="dateChanged" :events="events" :on-event-click="onEventClick"
+    :timeCellHeight="100" locale="it" active-view="day" :time-from="15 * 60" :time-to="19 * 60" hide-weekends
     :disable-views="['years', 'year', 'month', 'week']" />
 </template>
 
@@ -264,6 +264,13 @@ export default {
       if (this.selectedCourse !== "default") {
         this.getExistingRepetition()
       }
+
+      const tempDate = new Date(startDate.setHours(0, 0, 0, 0))
+      const tempDate2 = new Date(this.minDate.setHours(0, 0, 0, 0))
+
+      tempDate.getTime() !== tempDate2.getTime() ?
+        $(".vuecal__arrow--prev").addClass("vuecal__arrow--prev-visible") :
+        $(".vuecal__arrow--prev").removeClass("vuecal__arrow--prev-visible")
     },
     getSelectedCourseText() {
       const select = document.getElementById("selectCourses")
@@ -289,6 +296,19 @@ export default {
     },
     getProfessorBySerialNumber(serialNumber) {
       return this.professors.find((professor) => professor.serialNumber === serialNumber)
+    }
+  },
+  computed: {
+    minDate() {
+      const currentDate = new Date()
+
+      if (currentDate.toLocaleDateString("it-IT", { weekday: 'long' }) === "sabato") {
+        return currentDate.addDays(2)
+      } else if (currentDate.toLocaleDateString("it-IT", { weekday: 'long' }) === "domenica") {
+        return currentDate.addDays(3)
+      }
+
+      return currentDate
     }
   },
   mounted() {
