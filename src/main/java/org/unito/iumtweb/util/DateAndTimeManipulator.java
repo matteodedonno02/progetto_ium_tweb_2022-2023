@@ -1,9 +1,12 @@
 package org.unito.iumtweb.util;
 
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class DateAndTimeManipulator {
     /**
@@ -16,6 +19,14 @@ public class DateAndTimeManipulator {
         return LocalDate.of(Integer.valueOf(date.split("-")[0]), Integer.valueOf(date.split("-")[1]), Integer.valueOf(date.split("-")[2]));
     }
 
+    public static java.sql.Date fromStringToSqlDate(String date) {
+        return new java.sql.Date(Integer.valueOf(date.split("-")[0]), Integer.valueOf(date.split("-")[1]), Integer.valueOf(date.split("-")[2]));
+    }
+    
+    public static java.sql.Time fromIntToSqlTime(int time) {
+        return new java.sql.Time(time, 00, 00);
+    }
+
     /**
      * Return LocalDate object from String date
      *
@@ -25,6 +36,7 @@ public class DateAndTimeManipulator {
     public static LocalTime fromStringToLocalTime(String time) {
         return LocalTime.of(Integer.valueOf(time.split(":")[0]), Integer.valueOf(time.split(":")[1]), Integer.valueOf(time.split(":")[2]));
     }
+
 
     public static String fromLocalDateToString(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

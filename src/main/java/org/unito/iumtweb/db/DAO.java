@@ -729,6 +729,60 @@ public class DAO {
         return idTeaching;
     }
 
+    public ArrayList<Course> getCoursesByProfessor(String serialNumber) {
+        Connection conn = openConnection();
+
+        ArrayList<Course> courses = new ArrayList<Course>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM course c " +
+                    "WHERE c.idCourse IN " +
+                    "(SELECT t.idCourse FROM teaching t WHERE t.idCourse = c.idCourse AND t.serialNumber = ? AND t.active = true) " +
+                    "AND c.active = true; ");
+            ps.setString(1, serialNumber);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                courses.add(new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+
+        return courses;
+    }
+
+    public ArrayList<Professor> getProfessorsByCourse(int idCourse) {
+        Connection conn = openConnection();
+
+        ArrayList<Professor> professors = new ArrayList<Professor>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement("SELECT * FROM professor p " +
+                    "WHERE p.serialNumber IN " +
+                    "(SELECT t.serialNUmber FROM teaching t WHERE t.serialNumber = p.serialNumber AND t.idCourse = ? AND t.active = true) " +
+                    "AND p.active = true; ");
+            ps.setInt(1, idCourse);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                professors.add(new Professor(rs.getString("serialNumber"), rs.getString("name"), rs.getString("surname"), rs.getString("imageUrl"), rs.getBoolean("active")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+
+        return professors;
+    }
+
     public ArrayList<Teaching> getTeachingsByCourse(int idCourse) {
         Connection conn = openConnection();
 
@@ -926,6 +980,42 @@ public class DAO {
         return repetition;
     }
 
+    public ArrayList<Repetition> getRepetitionsByEmailFromToday(String email) {
+        Connection conn = openConnection();
+
+        ArrayList<Repetition> repetitions = new ArrayList<Repetition>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
+                    "u.email, u.name as userName, u.surname as userSurname, u.role, u.active as userActive, " +
+                    "t.idTeaching, t.active as teachingActive, " +
+                    "p.serialNumber, p.name as professorName, p.surname as professorSurname, p.imageUrl, p.active as professorActive, " +
+                    "c.idCourse, c.title, c.iconUrl, c.active as courseActive " +
+                    "FROM repetition r " +
+                    "JOIN user u ON r.email = u.email " +
+                    "JOIN teaching t ON r.idTeaching = t.idTeaching " +
+                    "JOIN professor p ON t.serialNumber = p.serialNumber " +
+                    "JOIN course c ON t.idCourse = c.idCourse WHERE u.email = ? AND r.date = CURRENT_DATE() ORDER BY date,time");
+
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                repetitions.add(new Repetition(rs.getInt("idRepetition"),
+                        new User(rs.getString("email"), rs.getString("userName"), rs.getString("userSurname"), rs.getBoolean("role"), rs.getBoolean("userActive")),
+                        new Teaching(rs.getInt("idTeaching"), new Professor(rs.getString("serialNumber"), rs.getString("professorName"), rs.getString("professorSurname"), rs.getString("imageUrl"), rs.getBoolean("professorActive")), new Course(rs.getInt("idCourse"), rs.getString("title"), rs.getString("iconUrl"), rs.getBoolean("courseActive")), rs.getBoolean("teachingActive")),
+                        rs.getInt("state"), rs.getDate("date"), rs.getTime("time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+
+        return repetitions;
+    }
+
     public ArrayList<Repetition> getRepetitionsByEmail(String email) {
         Connection conn = openConnection();
 
@@ -1005,6 +1095,7 @@ public class DAO {
         ArrayList<Repetition> repetitions = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
+
         try {
             ps = conn.prepareStatement("SELECT r.idRepetition, r.state, r.date, r.time, " +
                     "u.email, u.name, u.surname, u.role, u.active as userActive, " +
