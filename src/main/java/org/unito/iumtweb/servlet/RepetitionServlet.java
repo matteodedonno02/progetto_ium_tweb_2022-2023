@@ -118,7 +118,7 @@ public class RepetitionServlet extends HttpServlet {
             existingRepetitions = managerDB.getRepetitionsByCourseAndDate(idCourse, date);
             for(int i = 15; i <= 18;i ++) {
                 for (Professor professor : managerDB.getProfessorsByCourse(idCourse)) {
-                    if (!professorIsBusy(existingRepetitions, professor.getSerialNumber(), String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), idCourse, professor.getSerialNumber())) {
+                    if (!professorIsBusy(professor.getSerialNumber(), date, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), idCourse, professor.getSerialNumber())) {
                         Teaching t = managerDB.getTeachingByProfessorAndCourse(professor.getSerialNumber(), idCourse);
                         newRepetitions.add(new Repetition(t, DateAndTimeManipulator.fromStringToSqlDate(date), DateAndTimeManipulator.fromIntToSqlTime(i)));
                     }
@@ -128,7 +128,7 @@ public class RepetitionServlet extends HttpServlet {
             existingRepetitions = managerDB.getRepetitionsByProfessorAndDate(serialNumber, date);
             for(int i = 15; i <= 18; i ++) {
                 for(Course course : managerDB.getCoursesByProfessor(serialNumber)) {
-                    if(!professorIsBusy(existingRepetitions, serialNumber, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), course.getIdCourse(), serialNumber)) {
+                    if(!professorIsBusy(serialNumber, date, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), course.getIdCourse(), serialNumber)) {
                         Teaching t = managerDB.getTeachingByProfessorAndCourse(serialNumber, course.getIdCourse());
                         newRepetitions.add(new Repetition(t, DateAndTimeManipulator.fromStringToSqlDate(date), DateAndTimeManipulator.fromIntToSqlTime(i)));
                     }
@@ -137,7 +137,7 @@ public class RepetitionServlet extends HttpServlet {
         } else if(idCourse != -1 && !serialNumber.equals("")) {
             existingRepetitions = managerDB.getRepetitionsByProfessorCourseAndDate(serialNumber, idCourse, date);
             for(int i = 15; i <= 18; i ++) {
-                if(!professorIsBusy(existingRepetitions, serialNumber, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), idCourse, serialNumber)) {
+                if(!professorIsBusy(serialNumber, date, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), idCourse, serialNumber)) {
                     Teaching t = managerDB.getTeachingByProfessorAndCourse(serialNumber, idCourse);
                     newRepetitions.add(new Repetition(t, DateAndTimeManipulator.fromStringToSqlDate(date), DateAndTimeManipulator.fromIntToSqlTime(i)));
                 }
@@ -160,7 +160,9 @@ public class RepetitionServlet extends HttpServlet {
         });
     }
 
-    private boolean professorIsBusy(ArrayList<Repetition> existingRepetitions, String serialNumber, String time) {
+    private boolean professorIsBusy(String serialNumber, String date, String time) {
+        ArrayList<Repetition> existingRepetitions = managerDB.getRepetitionsByProfessorAndDate(serialNumber, date);
+
         return existingRepetitions.stream().filter((repetition) -> {
             return repetition.getTeaching().getProfessor().getSerialNumber().equals(serialNumber)
                     && repetition.getTime().toString().split(":")[0].equals(time);

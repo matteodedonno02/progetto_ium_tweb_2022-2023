@@ -35,7 +35,7 @@
 
 <script>
 import $ from 'jquery'
-import { formatDate, fromDateToString, formatTime } from '../util/DateFormatter'
+import { formatDate, fromDateToString, formatTime, sumHours } from '../util/DateFormatter'
 import CustomToast from '../components/CustomToast.vue'
 import NewRepetitionModal from '../components/NewRepetitionModal.vue'
 import VueCal from 'vue-cal'
@@ -77,6 +77,7 @@ export default {
   methods: {
     formatDate,
     fromDateToString,
+    sumHours,
     repetitionExists(list, time, serialNumber, idCourse) {
       return list.some((repetition) => {
         return formatTime(repetition.time) === time + ":00"
@@ -84,85 +85,31 @@ export default {
           && repetition.teaching.course.idCourse === idCourse
       })
     },
-    generateNewRepetitions(existingRepetition) {
+    generateNewRepetitions() {
       this.events = []
-      if (this.selectedCourse !== "default" && this.selectedProfessor === "default") {
-        for (let i = 15; i <= 18; i++) {
-          this.professors.forEach((professor) => {
-            if (!this.repetitionExists(existingRepetition, i, professor.serialNumber, this.selectedCourse)) {
-              this.events.push({
-                start: this.date + " " + i + ":00",
-                end: this.date + " " + parseInt((i + 1)) + ":00",
-                title: this.getSelectedCourseText(),
-                content: professor.name + " " + professor.surname,
-                class: "materia",
-                course: this.getCourseByIdCourse(this.selectedCourse),
-                professor: professor
-              })
-            }
-          })
-        }
-      } else if (this.selectedCourse === "default" && this.selectedProfessor !== "default") {
-        for (let i = 15; i <= 18; i++) {
-          this.courses.forEach((course) => {
-            if (!this.repetitionExists(existingRepetition, i, this.selectedProfessor, course.idCourse)) {
-              this.events.push({
-                start: this.date + " " + i + ":00",
-                end: this.date + " " + parseInt((i + 1)) + ":00",
-                title: course.title,
-                content: this.getSelectedProfessorText(),
-                class: "materia",
-                course: course,
-                professor: this.getProfessorBySerialNumber(this.selectedProfessor)
-              })
-            }
-          })
-        }
-      } else if (this.selectedCourse !== "default" && this.selectedProfessor !== "default") {
-        for (let i = 15; i <= 18; i++) {
-          if (!this.repetitionExists(existingRepetition, i, this.selectedProfessor, this.selectedCourse)) {
-            this.events.push({
-              start: this.date + " " + i + ":00",
-              end: this.date + " " + parseInt((i + 1)) + ":00",
-              title: this.getSelectedCourseText(),
-              content: this.getSelectedProfessorText(),
-              class: "materia",
-              course: this.getCourseByIdCourse(this.selectedCourse),
-              professor: this.getProfessorBySerialNumber(this.selectedProfessor)
-            })
-          }
-        }
-      }
-      this.getUserRepetitions()
-    },
-    getExistingRepetition() {
-      if (this.date === null) {
-        this.date = fromDateToString(new Date())
-      }
-
-      let operation = ""
-      if (this.selectedProfessor === "default" && this.selectedCourse !== "default") {
-        operation = "selectByCourseAndDate"
-      } else if (this.selectedProfessor !== "default" && this.selectedCourse === "default") {
-        operation = "selectByProfessorAndDate"
-      } else if (this.selectedProfessor !== "default" && this.selectedCourse !== "default") {
-        operation = "selectByProfessorCourseAndDate"
-      } else {
-        this.events = []
-        return;
-      }
-
       let self = this
       $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
-        method: "GET",
+        method: "POST",
         data: {
-          operation: operation,
-          idCourse: self.selectedCourse,
-          serialNumber: self.selectedProfessor,
+          operation: "newRepetitions",
+          idCourse: self.selectedCourse === "default" ? "-1" : self.selectedCourse,
+          serialNumber: self.selectedProfessor === "default" ? "" : self.selectedProfessor,
           date: self.date
         },
         success(data) {
-          self.generateNewRepetitions(data)
+          data.forEach((repetition) => {
+            self.events.push({
+              start: self.date + " " + formatTime(repetition.time),
+              end: self.date + " " + sumHours(formatTime(repetition.time)),
+              title: repetition.teaching.course.title,
+              content: repetition.teaching.professor.name + " " + repetition.teaching.professor.surname,
+              class: "materia",
+              course: repetition.teaching.course,
+              professor: repetition.teaching.professor
+            })
+          })
+
+          self.getUserRepetitions()
         }
       })
     },
@@ -178,6 +125,7 @@ export default {
         success(data) {
           self.events.forEach((event) => {
             if (data.find((r) => formatTime(r.time) === event.start.split(" ")[1]) !== undefined) {
+              console.log("yeah")
               event.class = "materia occupied"
             }
           })
@@ -205,7 +153,6 @@ export default {
         },
         success: (data) => {
           self.courses = data
-          self.getProfessors()
         }
       })
     },
@@ -214,7 +161,7 @@ export default {
       const idCourse = e.target.value
       if (idCourse === "default") {
         self.getProfessors()
-        self.getExistingRepetition()
+        self.generateNewRepetitions()
         return;
       }
 
@@ -230,7 +177,7 @@ export default {
             self.professors.push(teaching.professor)
           })
 
-          self.getExistingRepetition()
+          self.generateNewRepetitions()
         }
       })
     },
@@ -239,7 +186,7 @@ export default {
       const serialNumber = e.target.value
       if (serialNumber === "default") {
         self.getCourses()
-        self.getExistingRepetition()
+        self.generateNewRepetitions()
         return;
       }
 
@@ -255,14 +202,14 @@ export default {
             self.courses.push(teaching.course)
           })
 
-          self.getExistingRepetition()
+          self.generateNewRepetitions()
         }
       })
     },
     dateChanged({ startDate }) {
       this.date = fromDateToString(startDate)
       if (this.selectedCourse !== "default") {
-        this.getExistingRepetition()
+        this.generateNewRepetitions()
       }
 
       const tempDate = new Date(startDate.setHours(0, 0, 0, 0))
@@ -271,14 +218,8 @@ export default {
       tempDate.getTime() !== tempDate2.getTime() ?
         $(".vuecal__arrow--prev").addClass("vuecal__arrow--prev-visible") :
         $(".vuecal__arrow--prev").removeClass("vuecal__arrow--prev-visible")
-    },
-    getSelectedCourseText() {
-      const select = document.getElementById("selectCourses")
-      return select.options[select.selectedIndex].text
-    },
-    getSelectedProfessorText() {
-      const select = document.getElementById("selectProfessors")
-      return select.options[select.selectedIndex].text
+
+      this.generateNewRepetitions()
     },
     onEventClick(event, e) {
       if (event.class === "materia occupied") {
@@ -313,6 +254,8 @@ export default {
   },
   mounted() {
     this.getCourses()
+    this.getProfessors()
+    this.date = fromDateToString(this.minDate)
   }
 }
 </script>
