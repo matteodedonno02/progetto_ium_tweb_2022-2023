@@ -8,18 +8,30 @@
             aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="row">
-            Matricola: <input class="form-control" v-model="serialNumber" type="text" minlength="6" maxlength="6"
-              required="true" />
+          <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Matricola</label>
+            <div class="col-sm-10">
+              <input class="form-control" v-model="serialNumber" type="text" minlength="6" maxlength="6"
+                required="true" />
+            </div>
           </div>
-          <div class="row">
-            Nome: <input class="form-control" v-model="name" type="text" required="true" />
+          <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Nome</label>
+            <div class="col-sm-10">
+              <input class="form-control" v-model="name" type="text" required="true" />
+            </div>
           </div>
-          <div class="row">
-            Cognome: <input class="form-control" v-model="surname" type="text" required="true" />
+          <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Cognome</label>
+            <div class="col-sm-10">
+              <input class="form-control" v-model="surname" type="text" required="true" />
+            </div>
           </div>
-          <div class="row">
-            Immagine del professore: <input class="form-control" @change="handleFile" type="file" required="true" />
+          <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">Immagine</label>
+            <div class="col-sm-10">
+              <input class="form-control" @change="handleFile" type="file" required="true" />
+            </div>
           </div>
 
 

@@ -3,7 +3,10 @@ package org.unito.iumtweb.servlet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.unito.iumtweb.db.DAO;
+import org.unito.iumtweb.model.Course;
+import org.unito.iumtweb.model.Professor;
 import org.unito.iumtweb.model.Repetition;
+import org.unito.iumtweb.model.Teaching;
 import org.unito.iumtweb.util.DateAndTimeManipulator;
 import org.unito.iumtweb.util.EmailSender;
 
@@ -12,21 +15,21 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "RepetitionServlet", value = "/RepetitionServlet")
 public class RepetitionServlet extends HttpServlet {
     private DAO managerDB;
     private Gson gson;
+    private EmailSender emailSender;
 
     @Override
     public void init() throws ServletException {
         managerDB = (DAO) getServletContext().getAttribute("managerDB");
         gson = (Gson) getServletContext().getAttribute("gson");
+        emailSender = (EmailSender) getServletContext().getAttribute("emailSender");
     }
 
     @Override
@@ -38,6 +41,9 @@ public class RepetitionServlet extends HttpServlet {
                 break;
             case "selectByEmail":
                 selectRepetitionByEmail(request, response);
+                break;
+            case "selectByEmailFromToday":
+                selectRepetitionsByEmailFromToday(request, response);
                 break;
             case "selectByEmailAndDate":
                 selectRepetitionByEmailAndDate(request, response);
@@ -63,6 +69,9 @@ public class RepetitionServlet extends HttpServlet {
             case "edit":
                 updateRepetition(request, response);
                 break;
+            case "newRepetitions":
+                generateNewRepetitions(request, response);
+                break;
         }
     }
 
@@ -79,7 +88,7 @@ public class RepetitionServlet extends HttpServlet {
                 Repetition r = managerDB.getRepetition(email, idTeaching, date, time);
                 pw.write(gson.toJson(r));
                 Thread t = new Thread(() -> {
-                    EmailSender.bookedRepetition(r);
+                    emailSender.bookedRepetition(r);
                 });
                 t.start();
                 break;
@@ -92,6 +101,72 @@ public class RepetitionServlet extends HttpServlet {
         }
 
         pw.close();
+    }
+
+
+
+    public void generateNewRepetitions(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int idCourse = Integer.valueOf(request.getParameter("idCourse"));
+        String serialNumber = request.getParameter("serialNumber");
+        String date = request.getParameter("date");
+
+        PrintWriter pw = response.getWriter();
+        ArrayList<Repetition> existingRepetitions;
+        ArrayList<Repetition> newRepetitions = new ArrayList<Repetition>();
+
+        if(idCourse != -1 && serialNumber.equals("")) {
+            existingRepetitions = managerDB.getRepetitionsByCourseAndDate(idCourse, date);
+            for(int i = 15; i <= 18;i ++) {
+                for (Professor professor : managerDB.getProfessorsByCourse(idCourse)) {
+                    if (!professorIsBusy(professor.getSerialNumber(), date, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), idCourse, professor.getSerialNumber())) {
+                        Teaching t = managerDB.getTeachingByProfessorAndCourse(professor.getSerialNumber(), idCourse);
+                        newRepetitions.add(new Repetition(t, DateAndTimeManipulator.fromStringToSqlDate(date), DateAndTimeManipulator.fromIntToSqlTime(i)));
+                    }
+                }
+            }
+        } else if (idCourse == -1 && !serialNumber.equals("")) {
+            existingRepetitions = managerDB.getRepetitionsByProfessorAndDate(serialNumber, date);
+            for(int i = 15; i <= 18; i ++) {
+                for(Course course : managerDB.getCoursesByProfessor(serialNumber)) {
+                    if(!professorIsBusy(serialNumber, date, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), course.getIdCourse(), serialNumber)) {
+                        Teaching t = managerDB.getTeachingByProfessorAndCourse(serialNumber, course.getIdCourse());
+                        newRepetitions.add(new Repetition(t, DateAndTimeManipulator.fromStringToSqlDate(date), DateAndTimeManipulator.fromIntToSqlTime(i)));
+                    }
+                }
+            }
+        } else if(idCourse != -1 && !serialNumber.equals("")) {
+            existingRepetitions = managerDB.getRepetitionsByProfessorCourseAndDate(serialNumber, idCourse, date);
+            for(int i = 15; i <= 18; i ++) {
+                if(!professorIsBusy(serialNumber, date, String.valueOf(i)) && !repetitionExists(existingRepetitions, String.valueOf(i), idCourse, serialNumber)) {
+                    Teaching t = managerDB.getTeachingByProfessorAndCourse(serialNumber, idCourse);
+                    newRepetitions.add(new Repetition(t, DateAndTimeManipulator.fromStringToSqlDate(date), DateAndTimeManipulator.fromIntToSqlTime(i)));
+                }
+            }
+        } else if(idCourse == -1 && serialNumber.equals("")) {
+            pw.write("[]");
+            pw.close();
+            return;
+        }
+
+        pw.write(gson.toJson(newRepetitions));
+        pw.close();
+    }
+
+    private boolean repetitionExists(ArrayList<Repetition> existingRepetitions, String time, int idCourse, String serialNumber) {
+        return existingRepetitions.stream().anyMatch((repetition) -> {
+            return repetition.getTeaching().getProfessor().getSerialNumber().equals(serialNumber)
+                    && repetition.getTeaching().getCourse().getIdCourse() == idCourse
+                    && repetition.getTime().toString().split(":")[0].equals(time);
+        });
+    }
+
+    private boolean professorIsBusy(String serialNumber, String date, String time) {
+        ArrayList<Repetition> existingRepetitions = managerDB.getRepetitionsByProfessorAndDate(serialNumber, date);
+
+        return existingRepetitions.stream().filter((repetition) -> {
+            return repetition.getTeaching().getProfessor().getSerialNumber().equals(serialNumber)
+                    && repetition.getTime().toString().split(":")[0].equals(time);
+        }).collect(Collectors.toList()).size() == 1;
     }
 
     private void selectRepetitionByCourseAndDate(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -129,6 +204,13 @@ public class RepetitionServlet extends HttpServlet {
             pw.write(gson.toJson(managerDB.getRepetitions()));
         }
 
+        pw.close();
+    }
+
+    private void selectRepetitionsByEmailFromToday(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        ArrayList<Repetition> repetitions = managerDB.getRepetitionsByEmailFromToday(request.getParameter("email"));
+        pw.write(gson.toJson(repetitions));
         pw.close();
     }
 

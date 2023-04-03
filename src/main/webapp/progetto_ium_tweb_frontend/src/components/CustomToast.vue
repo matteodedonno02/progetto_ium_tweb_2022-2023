@@ -1,5 +1,6 @@
 <template>
-    <div id="liveToast" class="m-2 toast align-items-center text-bg-primary border-0 position-absolute bottom-0 end-0"
+    <div id="liveToast"
+        :class="type === 'error' ? 'error-toast m-2 toast align-items-center text-bg-primary border-0 position-absolute bottom-0 end-0' : 'm-2 toast align-items-center text-bg-primary border-0 position-absolute bottom-0 end-0'"
         role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
             <div class="toast-body">
@@ -13,5 +14,6 @@
 <script>
 export default {
     name: "CustomToast",
+    props: ["type"]
 }
 </script>
