@@ -1,20 +1,23 @@
 <template>
     <div class="container login-container d-flex justify-content-center align-items-center">
+        <CustomToast type="error" />
         <div class="w-25">
             <h3>Login</h3>
             <p>Effettua l'accesso per continuare</p>
             <div class="group position-relative">
                 <label for="inputEmail" class="custom-placeholder col-sm-2 col-form-label position-absolute">Email</label>
-                <div class="">
+                <div class="d-flex align-items-center border rounded">
+                    <mdiEmailOutline class="p-1" />
                     <input v-on:change="animate" v-on:onfocus="animations" v-model="email" type="text"
-                        class="form-control shadow-none" id="inputEmail">
+                        class="form-control shadow-none border-0" id="inputEmail">
                 </div>
             </div>
-            <div class="group position-relative pt-3">
+            <div class="group position-relative pt-4">
                 <label for="inputPassword"
                     class="custom-placeholder col-sm-2 col-form-label position-absolute">Password</label>
-                <div class="">
-                    <input v-model="password" type="password" class="form-control shadow-none" id="inputPassword">
+                <div class="d-flex align-items-center border rounded">
+                    <mdiLockOutline class="p-1" />
+                    <input v-model="password" type="password" class="form-control shadow-none border-0" id="inputPassword">
                 </div>
             </div>
             <div class="pt-3 d-flex justify-content-center">
@@ -29,11 +32,19 @@
 <script>
 import $ from 'jquery'
 import mdiArrowRightCircleOutline from "vue-material-design-icons/ArrowRightCircleOutline.vue"
+import mdiEmailOutline from "vue-material-design-icons/EmailOutline.vue"
+import mdiLockOutline from "vue-material-design-icons/LockOutline.vue"
+import CustomToast from "../components/CustomToast.vue"
+import { changeToastMessage } from "../util/ChangeToastMessage"
+import { Toast } from "bootstrap"
 
 export default {
     name: "LoginPage",
     components: {
-        mdiArrowRightCircleOutline
+        mdiArrowRightCircleOutline,
+        CustomToast,
+        mdiEmailOutline,
+        mdiLockOutline
     },
     props: ["loggedUser"],
     data() {
@@ -43,6 +54,13 @@ export default {
         }
     },
     methods: {
+        changeToastMessage,
+        openToast(toastMessage) {
+            const toastLiveExample = $("#liveToast")
+            const toast = new Toast(toastLiveExample)
+            this.changeToastMessage(toastMessage)
+            toast.show()
+        },
         login() {
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
@@ -57,7 +75,13 @@ export default {
                 },
                 crossDomain: true,
                 success: (data) => {
-                    self.$emit("set-logged-user", data)
+                    if (data.error !== undefined) {
+                        self.changeToastMessage(data.error === "Wrong password" ? "Password errata" : "Email non trovata")
+                        self.openToast()
+                    }
+                    else {
+                        self.$emit("set-logged-user", data)
+                    }
                 }
             })
         },

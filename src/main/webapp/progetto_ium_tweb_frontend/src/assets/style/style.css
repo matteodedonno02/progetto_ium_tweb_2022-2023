@@ -4,9 +4,13 @@
   margin: 0;
 }
 
+.error-toast {
+  background-color: red !important;
+}
+
 .custom-placeholder {
   padding: 0 !important;
-  left: 10px;
+  left: 43px;
   bottom: 7px;
   background: none;
   transition: all 200ms;
