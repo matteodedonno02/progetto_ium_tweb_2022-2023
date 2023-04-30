@@ -20,7 +20,7 @@ public class DateAndTimeManipulator {
     }
 
     public static java.sql.Date fromStringToSqlDate(String date) {
-        return new java.sql.Date(Integer.valueOf(date.split("-")[0]), Integer.valueOf(date.split("-")[1]), Integer.valueOf(date.split("-")[2]));
+        return java.sql.Date.valueOf(date);
     }
     
     public static java.sql.Time fromIntToSqlTime(int time) {

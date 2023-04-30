@@ -208,9 +208,6 @@ export default {
     },
     dateChanged({ startDate }) {
       this.date = fromDateToString(startDate)
-      if (this.selectedCourse !== "default") {
-        this.generateNewRepetitions()
-      }
 
       const tempDate = new Date(startDate.setHours(0, 0, 0, 0))
       const tempDate2 = new Date(this.minDate.setHours(0, 0, 0, 0))

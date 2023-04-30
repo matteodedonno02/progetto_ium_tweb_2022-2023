@@ -2,13 +2,30 @@
     <div class="container login-container d-flex justify-content-center align-items-center">
         <CustomToast type="error" />
         <div class="w-25">
-            <h3>Login</h3>
-            <p>Effettua l'accesso per continuare</p>
+            <h3>Registrazione</h3>
+            <p>Registrati per usufruire del servizio</p>
             <div class="group position-relative">
+                <label for="inputName" class="custom-placeholder col-sm-2 col-form-label position-absolute">Nome</label>
+                <div class="d-flex align-items-center border rounded">
+                    <mdiAccount class="p-1" />
+                    <input v-on:change="animate" v-on:onfocus="animations" v-model="name" type="text"
+                        class="form-control shadow-none border-0" id="inputName">
+                </div>
+            </div>
+            <div class="group position-relative pt-4">
+                <label for="inputSurname"
+                    class="custom-placeholder col-sm-2 col-form-label position-absolute">Cognome</label>
+                <div class="d-flex align-items-center border rounded">
+                    <mdiAccount class="p-1" />
+                    <input v-on:change="animate" v-on:onfocus="animations" v-model="surname" type="text"
+                        class="form-control shadow-none border-0" id="inputSurname">
+                </div>
+            </div>
+            <div class="group position-relative pt-4">
                 <label for="inputEmail" class="custom-placeholder col-sm-2 col-form-label position-absolute">Email</label>
                 <div class="d-flex align-items-center border rounded">
                     <mdiEmailOutline class="p-1" />
-                    <input v-on:change="animate" v-on:onfocus="animations" v-model="email" type="text"
+                    <input v-on:change="animate" v-on:onfocus="animations" v-model="email" type="email"
                         class="form-control shadow-none border-0" id="inputEmail">
                 </div>
             </div>
@@ -21,19 +38,14 @@
                 </div>
             </div>
             <div class="pt-3 d-flex justify-content-center">
-                <button v-on:click="login" type="button" class="custom-button btn btn-primary rounded-pill">
-                    <mdiArrowRightCircleOutline /> Login
+                <button v-on:click="register" type="button" class="custom-button btn btn-primary rounded-pill">
+                    <mdiArrowRightCircleOutline /> Registrati
                 </button>
             </div>
             <div class="pt-3 d-flex justify-content-center">
                 <a class="link-opacity-100-hove pointer" v-on:click="() => {
-                    this.$emit('change-page', 'registration')
-                }">Non hai un account? Registrati</a>
-            </div>
-            <div class="pt-3 d-flex justify-content-center">
-                <a class="link-opacity-100-hove pointer" v-on:click="() => {
-                    this.$emit('change-page', 'home')
-                }">Continua come ospite</a>
+                    this.$emit('change-page', 'login')
+                }">Hai già un account? Effettua il login</a>
             </div>
         </div>
     </div>
@@ -44,6 +56,7 @@ import $ from 'jquery'
 import mdiArrowRightCircleOutline from "vue-material-design-icons/ArrowRightCircleOutline.vue"
 import mdiEmailOutline from "vue-material-design-icons/EmailOutline.vue"
 import mdiLockOutline from "vue-material-design-icons/LockOutline.vue"
+import mdiAccount from "vue-material-design-icons/Account.vue"
 import CustomToast from "../components/CustomToast.vue"
 import { changeToastMessage } from "../util/ChangeToastMessage"
 import { Toast } from "bootstrap"
@@ -54,13 +67,16 @@ export default {
         mdiArrowRightCircleOutline,
         CustomToast,
         mdiEmailOutline,
-        mdiLockOutline
+        mdiLockOutline,
+        mdiAccount
     },
     props: ["loggedUser"],
     data() {
         return {
+            name: "",
+            surname: "",
             email: "",
-            password: ""
+            password: "",
         }
     },
     methods: {
@@ -71,12 +87,14 @@ export default {
             this.changeToastMessage(toastMessage)
             toast.show()
         },
-        login() {
+        register() {
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
                 method: "POST",
                 data: {
-                    operation: "login",
+                    operation: "add",
+                    name: self.name,
+                    surname: self.surname,
                     email: self.email,
                     password: self.password
                 },
@@ -86,17 +104,33 @@ export default {
                 crossDomain: true,
                 success: (data) => {
                     if (data.error !== undefined) {
-                        self.changeToastMessage(data.error === "Wrong password" ? "Password errata" : "Email non trovata")
+                        self.changeToastMessage("Esiste già un account con l'email specificata")
                         self.openToast()
                     }
                     else {
-                        self.$emit("set-logged-user", data)
+                        self.changeToastMessage("Account creato con successo!")
+                        self.openToast()
+                        self.$emit("change-page", "login")
                     }
                 }
             })
         },
     },
     watch: {
+        name(newName) {
+            if (newName === "") {
+                $("label[for='inputName']").removeClass("focus-label")
+            } else {
+                $("label[for='inputName']").addClass("focus-label")
+            }
+        },
+        surname(newSurname) {
+            if (newSurname === "") {
+                $("label[for='inputSurname']").removeClass("focus-label")
+            } else {
+                $("label[for='inputSurname']").addClass("focus-label")
+            }
+        },
         email(newEmail) {
             if (newEmail === "") {
                 $("label[for='inputEmail']").removeClass("focus-label")

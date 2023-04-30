@@ -1,5 +1,6 @@
 <template>
-  <LoginPage v-if="loggedUser === null" @set-logged-user="setLoggedUser" />
+  <LoginPage v-if="page === 'login' && loggedUser === null" @set-logged-user="setLoggedUser" @change-page="changePage" />
+  <RegistrationPage v-else-if="page === 'registration' && loggedUser === null" @change-page="changePage" />
   <div v-else>
     <VerticalBar v-bind:loggedUser="loggedUser" v-bind:page="page" @change-page="changePage" @log-out="logOut" />
     <div class="container">
@@ -41,12 +42,13 @@ import AdminProfessors from './view/AdminProfessors.vue'
 import AdminTeachings from './view/AdminTeachings.vue'
 import AdminRepetitions from './view/AdminRepetitions.vue'
 import LoginPage from './view/LoginPage.vue'
+import RegistrationPage from './view/RegistrationPage.vue'
 
 export default {
   name: 'App',
   data() {
     return {
-      page: "home",
+      page: "login",
       loggedUser: null,
       userRepetitions: [],
     }
@@ -60,7 +62,8 @@ export default {
     AdminProfessors,
     AdminTeachings,
     AdminRepetitions,
-    LoginPage
+    LoginPage,
+    RegistrationPage
   },
   methods: {
     changePage(page) {
@@ -82,6 +85,7 @@ export default {
     },
     setLoggedUser(loggedUser) {
       this.loggedUser = loggedUser
+      this.changePage("home")
     },
     logOut() {
       let self = this
@@ -92,6 +96,7 @@ export default {
         },
         success() {
           self.loggedUser = null
+          self.changePage("login")
         }
       })
     }

@@ -1,6 +1,7 @@
 package org.unito.iumtweb.filter;
 
 import org.unito.iumtweb.model.User;
+import org.unito.iumtweb.util.FilterProperties;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -9,26 +10,11 @@ import java.io.IOException;
 public class LoggedUserFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-//        String path = ((HttpServletRequest) servletRequest).getRequestURI().substring(((HttpServletRequest) servletRequest).getContextPath().length());
-//        if (path.equals("/") || path.equals("/index.html")) {
-//            filterChain.doFilter(servletRequest, servletResponse);
-//            return;
-//        }
-
+        FilterProperties loggedUserFilterProperties = (FilterProperties) servletRequest.getServletContext().getAttribute("loggedUserFilterProperties");
         String servletName = ((HttpServletRequest) servletRequest).getHttpServletMapping().getServletName();
         String operation = servletRequest.getParameter("operation");
 
-        if (servletName.equals("ProfessorServlet") && operation.equals("mostRequested")) {
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        }
-
-        if (servletName.equals("CourseServlet") && operation.equals("mostRequested")) {
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        }
-
-        if (servletName.equals("UserServlet") && (operation.equals("login") || operation.equals("register") || operation.equals("getFromSession"))) {
+        if(loggedUserFilterProperties.propertyExists(servletName, operation)) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
