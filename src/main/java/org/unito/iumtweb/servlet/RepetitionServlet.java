@@ -15,8 +15,8 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "RepetitionServlet", value = "/RepetitionServlet")
