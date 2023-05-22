@@ -1,5 +1,4 @@
 <template>
-
   <CustomToast />
 
   <AddProfessorModal v-bind:modalId="'addModal'" @new-professor="updateProfessors" />
@@ -16,10 +15,11 @@
     </div>
   </div>
 
-  <div class="row">
-    <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
-      Aggiungi insegnante</p>
-  </div>
+  <button data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'"
+    class="admin-button custom-button btn btn-primary rounded-pill mb-3">
+    Aggiungi insegnante
+  </button>
+
   <div v-if="professors === null">
     <LoadingRow />
     <LoadingRow />

@@ -13,10 +13,13 @@
     </div>
   </div>
 
-  <div class="row">
-    <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
-      Aggiungi corso</p>
-  </div>
+
+
+  <button data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'"
+    class="admin-button custom-button btn btn-primary rounded-pill mb-3">
+    Aggiungi corso
+  </button>
+
   <div v-if="courses === null">
     <LoadingRow />
     <LoadingRow />

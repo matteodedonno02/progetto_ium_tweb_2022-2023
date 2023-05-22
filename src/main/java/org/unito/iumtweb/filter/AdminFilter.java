@@ -19,21 +19,6 @@ public class AdminFilter implements Filter {
             return;
         }
 
-//        if (servletName.equals("RepetitionServlet") && operation.equals("select") && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
-//            servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
-//            return;
-//        }
-//
-//        if (servletName.equals("CourseServlet") && (operation.equals("newTeaching") || operation.equals("search")) && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
-//            servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
-//            return;
-//        }
-//
-//        if (servletName.equals("TeachingServlet") && (operation.equals("add") || operation.equals("search")) && !checkIfUserIsAdmin((HttpServletRequest) servletRequest)) {
-//            servletResponse.getWriter().write("{\"error\": \"Operation not permitted\"}");
-//            return;
-//        }
-
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

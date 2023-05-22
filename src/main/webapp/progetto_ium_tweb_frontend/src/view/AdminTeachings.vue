@@ -14,8 +14,11 @@
     </div>
   </div>
 
-  <p data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'">
-    Aggiungi insegnamento</p>
+  <button data-bs-toggle="modal" v-bind:data-bs-target="'#addModal'"
+    class="admin-button custom-button btn btn-primary rounded-pill mb-3">
+    Aggiungi insegnamento
+  </button>
+
   <div v-if="teachings === null">
     <LoadingRow />
     <LoadingRow />
@@ -34,8 +37,6 @@
       </ul>
     </div>
   </div>
-
-
 </template>
 
 <script>

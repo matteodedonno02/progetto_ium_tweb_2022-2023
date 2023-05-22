@@ -7,7 +7,7 @@
             <div class="group position-relative">
                 <label for="inputName" class="custom-placeholder col-sm-2 col-form-label position-absolute">Nome</label>
                 <div class="d-flex align-items-center border rounded">
-                    <mdiAccount class="p-1" />
+                    <mdiAccount class="custom-icon p-1" />
                     <input v-on:change="animate" v-on:onfocus="animations" v-model="name" type="text"
                         class="form-control shadow-none border-0" id="inputName">
                 </div>
@@ -16,7 +16,7 @@
                 <label for="inputSurname"
                     class="custom-placeholder col-sm-2 col-form-label position-absolute">Cognome</label>
                 <div class="d-flex align-items-center border rounded">
-                    <mdiAccount class="p-1" />
+                    <mdiAccount class="custom-icon p-1" />
                     <input v-on:change="animate" v-on:onfocus="animations" v-model="surname" type="text"
                         class="form-control shadow-none border-0" id="inputSurname">
                 </div>
@@ -24,7 +24,7 @@
             <div class="group position-relative pt-4">
                 <label for="inputEmail" class="custom-placeholder col-sm-2 col-form-label position-absolute">Email</label>
                 <div class="d-flex align-items-center border rounded">
-                    <mdiEmailOutline class="p-1" />
+                    <mdiEmailOutline class="custom-icon p-1" />
                     <input v-on:change="animate" v-on:onfocus="animations" v-model="email" type="email"
                         class="form-control shadow-none border-0" id="inputEmail">
                 </div>
@@ -33,7 +33,7 @@
                 <label for="inputPassword"
                     class="custom-placeholder col-sm-2 col-form-label position-absolute">Password</label>
                 <div class="d-flex align-items-center border rounded">
-                    <mdiLockOutline class="p-1" />
+                    <mdiLockOutline class="custom-icon p-1" />
                     <input v-model="password" type="password" class="form-control shadow-none border-0" id="inputPassword">
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 </button>
             </div>
             <div class="pt-3 d-flex justify-content-center">
-                <a class="link-opacity-100-hove pointer" v-on:click="() => {
+                <a class="custom-link link-opacity-100-hove pointer" v-on:click="() => {
                     this.$emit('change-page', 'login')
                 }">Hai già un account? Effettua il login</a>
             </div>

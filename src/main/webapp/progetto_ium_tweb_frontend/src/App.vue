@@ -79,6 +79,7 @@ export default {
         success: (data) => {
           if (data !== null) {
             self.loggedUser = data
+            self.changePage("home")
           }
         }
       })

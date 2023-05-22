@@ -85,6 +85,17 @@ export default {
           && repetition.teaching.course.idCourse === idCourse
       })
     },
+    pushRepetition(repetition) {
+      this.events.push({
+        start: this.date + " " + formatTime(repetition.time),
+        end: this.date + " " + sumHours(formatTime(repetition.time)),
+        title: repetition.teaching.course.title,
+        content: repetition.teaching.professor.name + " " + repetition.teaching.professor.surname,
+        class: "materia",
+        course: repetition.teaching.course,
+        professor: repetition.teaching.professor
+      })
+    },
     generateNewRepetitions() {
       this.events = []
       let self = this
@@ -97,16 +108,20 @@ export default {
           date: self.date
         },
         success(data) {
+          let currentDate = new Date()
+          let currentHour = currentDate.getHours()
+          currentDate.setHours(0, 0, 0, 0)
+
           data.forEach((repetition) => {
-            self.events.push({
-              start: self.date + " " + formatTime(repetition.time),
-              end: self.date + " " + sumHours(formatTime(repetition.time)),
-              title: repetition.teaching.course.title,
-              content: repetition.teaching.professor.name + " " + repetition.teaching.professor.surname,
-              class: "materia",
-              course: repetition.teaching.course,
-              professor: repetition.teaching.professor
-            })
+            let repetitionHour = formatTime(repetition.time).split(":")[0]
+            let repetitionDate = new Date(repetition.date)
+            repetitionDate.setHours(0, 0, 0, 0)
+
+            if (repetitionHour > currentHour && currentDate.getTime() === repetitionDate.getTime()) {
+              self.pushRepetition(repetition)
+            } else if (currentDate.getTime() !== repetitionDate.getTime()) {
+              self.pushRepetition(repetition)
+            }
           })
 
           self.getUserRepetitions()
@@ -125,7 +140,6 @@ export default {
         success(data) {
           self.events.forEach((event) => {
             if (data.find((r) => formatTime(r.time) === event.start.split(" ")[1]) !== undefined) {
-              console.log("yeah")
               event.class = "materia occupied"
             }
           })
