@@ -1,6 +1,7 @@
 $backgroundColor: #E4DFDA;
 $accentColor: #ED4845;
 $accentColor2: #3185FC;
+$accentColor2Hover: #2971D6;
 
 * {
   box-sizing: border-box;
@@ -63,6 +64,10 @@ $accentColor2: #3185FC;
 
 .custom-button {
   width: 50%;
+}
+
+.modal-button {
+  width: fit-content;
 }
 
 .pointer {
@@ -245,11 +250,23 @@ $accentColor2: #3185FC;
 }
 
 .materia {
-  background-color: lightblue;
+  background-color: $accentColor2;
+  color: white;
+  cursor: pointer;
+  transition: all 400ms;
+
+  &:hover {
+    background-color: $accentColor2Hover;
+  }
 }
 
 .occupied {
   background-color: lightgray;
+  color: black;
+
+  &:hover {
+    background-color: lightgray;
+  }
 }
 
 

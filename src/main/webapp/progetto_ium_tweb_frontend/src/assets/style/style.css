@@ -60,6 +60,10 @@
   width: 50%;
 }
 
+.modal-button {
+  width: fit-content;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -210,10 +214,20 @@
 }
 
 .materia {
-  background-color: lightblue;
+  background-color: #3185FC;
+  color: white;
+  cursor: pointer;
+  transition: all 400ms;
+}
+.materia:hover {
+  background-color: #2971D6;
 }
 
 .occupied {
+  background-color: lightgray;
+  color: black;
+}
+.occupied:hover {
   background-color: lightgray;
 }
 
