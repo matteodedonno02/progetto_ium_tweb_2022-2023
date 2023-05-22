@@ -21,9 +21,39 @@ $accentColor2: #3185FC;
   width: fit-content;
 }
 
+.custom-icon {
+  transition: all 200ms;
+}
+
+.custom-link {
+  color: black;
+  transition: all 200ms;
+
+  &:hover {
+    color: $accentColor2
+  }
+}
+
+.border {
+  transition: all 200ms;
+}
+
+.group:focus-within .border {
+  border: 1px solid $accentColor !important;
+}
+
+.group:focus-within .custom-icon {
+  color: $accentColor;
+}
+
 .group:focus-within label {
   bottom: 30px;
   background: white;
+  color: $accentColor;
+}
+
+.custom-input {
+  border: 1px solid $accentColor;
 }
 
 .focus-label {
@@ -39,11 +69,9 @@ $accentColor2: #3185FC;
   cursor: pointer;
 }
 
-.material-design-icon {
-  color: var(--bs-nav-link-color);
-
+.nav-item {
   .active {
-    color: var(--bs-navbar-active-color) !important;
+    color: $accentColor !important;
   }
 }
 
@@ -56,12 +84,18 @@ $accentColor2: #3185FC;
 .btn:hover {
   box-shadow: none !important;
   outline: 0;
+  background: $accentColor;
 }
 
 .btn-primary {
-  background: $accentColor2;
+  background: $accentColor;
+  border: none;
 
   &:hover {
+    background: $accentColor;
+  }
+
+  &:focus {
     background: $accentColor;
   }
 }
@@ -72,6 +106,10 @@ $accentColor2: #3185FC;
 
 .trash-icon {
   padding-right: 35px;
+}
+
+.admin-button {
+  width: 200px;
 }
 
 .cards {
@@ -105,18 +143,18 @@ $accentColor2: #3185FC;
     padding: 10px;
 
     .card {
+      border-radius: 15px;
+      background: $accentColor2;
+      border: none;
+      color: white;
       padding: 10px !important;
       width: 18rem;
-      height: 8rem;
+      height: fit-content;
     }
 
-    .row {
-      display: flex;
-      justify-content: center;
-
-      img {
-        width: 68px;
-      }
+    img {
+      filter: brightness(0) invert(1);
+      width: 68px;
     }
   }
 
@@ -212,6 +250,16 @@ $accentColor2: #3185FC;
 
 .occupied {
   background-color: lightgray;
+}
+
+
+
+.col-img-2 {
+  background-size: cover;
+  background-position: center;
+  width: 150px !important;
+  height: 150px !important;
+  border-radius: 50%;
 }
 
 .col-img {

@@ -1,5 +1,4 @@
 <template>
-
   <ProfessorModal @delete-professor="this.$emit('delete-professor', this.professor)"
     v-bind:modalId="'modalDelete' + professor.serialNumber" title="Desideri cancellare il seguente insegnante ?"
     v-bind:professor="professor" />

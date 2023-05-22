@@ -6,7 +6,7 @@
   </nav>
 
 
-  <h2>Corsi più richiesti!</h2>
+  <h2 class="pb-2">Corsi più richiesti!</h2>
 
   <div v-if="mostRequestedCourse.length === 0" class="cards">
     <LoadingCard class="course-card" />
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <h2 class="pt-5">Docenti più richiesti!</h2>
+  <h2 class="pt-3 pb-2">Docenti più richiesti!</h2>
 
   <div v-if="mostRequestedCourse.length === 0" class="cards">
     <LoadingCard class="course-card" />

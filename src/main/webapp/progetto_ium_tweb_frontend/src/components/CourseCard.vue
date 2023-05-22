@@ -1,11 +1,7 @@
 <template>
-  <div class="card">
-    <div class="row">
-      <img v-bind:src="iconUrl" class="card-img-top" alt="Course Card">
-    </div>
-    <div class="card-body">
-      <h5 class="card-title">{{ title }}</h5>
-    </div>
+  <div class="card d-flex justify-content-center align-items-center">
+    <img v-bind:src="iconUrl" class="card-img-top pt-3" alt="Course Card">
+    <h5 class="card-title pt-3 pb-1">{{ title }}</h5>
   </div>
 </template>
 
