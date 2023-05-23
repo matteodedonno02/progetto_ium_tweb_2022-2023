@@ -9,6 +9,12 @@
     </ol>
   </nav>
 
+  <div class="d-flex pb-3">
+    <input v-model="dateFilter" type="date" class="form-control shadow-none me-4" />
+    <input v-model="professorTextField" type="text" class="form-control shadow-none me-4" placeholder="Insegnante" />
+    <input v-model="courseTextField" type="text" class="form-control shadow-none" placeholder="Corso" />
+  </div>
+
   <div class="accordion" id="accordionExample">
     <div class="accordion-item">
       <h2 class="accordion-header">
@@ -25,7 +31,7 @@
             <MyRepetitionCardLoading />
           </div>
           <div v-else>
-            <div v-if="pendingRepetitions.length === 0">
+            <div v-if="pendingRepetitions.length === 0" class="opaque-text">
               Non hai ripetizioni da effettuare
             </div>
             <div v-else>
@@ -56,7 +62,7 @@
             <MyRepetitionCardLoading />
           </div>
           <div v-else>
-            <div v-if="confirmedRepetitions.length === 0">
+            <div v-if="confirmedRepetitions.length === 0" class="opaque-text">
               Non hai ripetizioni confermate
             </div>
             <div v-else>
@@ -85,7 +91,7 @@
             <MyRepetitionCardLoading />
           </div>
           <div v-else>
-            <div v-if="deletedRepetitions.length === 0">
+            <div v-if="deletedRepetitions.length === 0" class="opaque-text">
               Non hai ripetizioni cancellate
             </div>
             <div v-else>
@@ -125,8 +131,10 @@ export default {
       confirmedRepetitions: null,
       deletedRepetitions: null,
       todayRepetitions: null,
-      viewType: "list",
       events: [],
+      professorTextField: "",
+      courseTextField: "",
+      dateFilter: ""
     };
   },
   components: {
@@ -203,6 +211,49 @@ export default {
       repetition.state = 1;
       this.confirmedRepetitions.push(repetition);
     },
+    showRepetitionsByFilter() {
+      if (this.dateFilter === "" && this.professorTextField === "" && this.courseTextField === "") {
+        this.loadRepetitionsByState(this.loggedUserRepetitions)
+      }
+
+      let filterRepetitions = this.loggedUserRepetitions
+      if (this.dateFilter !== "") {
+        filterRepetitions = filterRepetitions.filter((repetition) => {
+          console.log(repetition.date, this.dateFilter)
+          return repetition.date === this.dateFilter
+        })
+      }
+
+      if (this.professorTextField !== "") {
+        filterRepetitions = filterRepetitions.filter((repetition) => {
+          const nameAndSurname = repetition.teaching.professor.name + repetition.teaching.professor.surname
+          const surnameAndName = repetition.teaching.professor.surname + repetition.teaching.professor.name
+          return nameAndSurname.toLowerCase().includes(this.professorTextField.toLowerCase().replace(/\s/g, ""))
+            || surnameAndName.toLowerCase().includes(this.professorTextField.toLowerCase().replace(/\s/g, ""))
+        })
+      }
+
+      if (this.courseTextField !== "") {
+        filterRepetitions = filterRepetitions.filter((repetition) => {
+          console.log(repetition)
+          const courseName = repetition.teaching.course.title.replace(/\s/g, "")
+          return courseName.toLowerCase().includes(this.courseTextField.replace(/\s/g, "").toLowerCase())
+        })
+      }
+
+      this.loadRepetitionsByState(filterRepetitions)
+    }
+  },
+  watch: {
+    dateFilter: function () {
+      this.showRepetitionsByFilter()
+    },
+    courseTextField: function () {
+      this.showRepetitionsByFilter()
+    },
+    professorTextField: function () {
+      this.showRepetitionsByFilter()
+    }
   },
   mounted() {
     this.getUserRepetitions(this.loggedUserEmail);

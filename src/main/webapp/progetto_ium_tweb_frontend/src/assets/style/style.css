@@ -89,10 +89,40 @@
   border: none;
 }
 .btn-primary:hover {
-  background: #ED4845;
+  background: rgba(237, 72, 69, 0.8549019608);
 }
 .btn-primary:focus {
-  background: #ED4845;
+  background: rgba(237, 72, 69, 0.8549019608);
+}
+.btn-primary:disabled {
+  background: rgba(237, 72, 69, 0.8549019608);
+}
+
+.form-control,
+.form-select {
+  box-shadow: none !important;
+}
+.form-control:focus,
+.form-select:focus {
+  border: 1px solid #ced4da;
+}
+
+.accordion-button {
+  box-shadow: none !important;
+  transition: all 200ms;
+}
+
+.opaque-text {
+  color: #6C757D !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background: rgba(49, 133, 252, 0.8980392157);
+  color: white;
+  transition: all 200ms;
+}
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0) invert(1) !important;
 }
 
 .my-repetition-card {
@@ -220,7 +250,7 @@
   transition: all 400ms;
 }
 .materia:hover {
-  background-color: #2971D6;
+  background-color: rgba(49, 133, 252, 0.8980392157);
 }
 
 .occupied {
@@ -275,6 +305,9 @@
 
 .nav-link {
   cursor: pointer;
+}
+.nav-link:hover {
+  color: rgba(237, 72, 69, 0.8549019608);
 }
 
 .vuecal__arrow--prev-visible {

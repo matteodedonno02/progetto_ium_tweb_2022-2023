@@ -13,14 +13,14 @@
           {{ teaching.course.title }}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-          <button v-on:click="executeOperation" type="button" class="btn btn-primary"
+          <button type="button" class="modal-button btn btn-primary rounded-pill mb-3"
+            data-bs-dismiss="modal">Chiudi</button>
+          <button v-on:click="executeOperation" type="button" class="modal-button btn btn-primary rounded-pill mb-3"
             data-bs-dismiss="modal">Ok</button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>

@@ -37,16 +37,15 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" v-on:click="clearInput"
+          <button type="button" class="modal-button btn btn-primary rounded-pill mb-3" v-on:click="clearInput"
             data-bs-dismiss="modal">Annulla</button>
           <button v-on:click="executeOperation" type="button"
             :disabled="serialNumber.length != 6 || name.length <= 0 || surname.length <= 0 || file === null"
-            class="btn btn-primary" data-bs-dismiss="modal">Aggiungi</button>
+            class="modal-button btn btn-primary rounded-pill mb-3" data-bs-dismiss="modal">Aggiungi</button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>

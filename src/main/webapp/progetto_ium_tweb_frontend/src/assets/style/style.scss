@@ -1,7 +1,9 @@
 $backgroundColor: #E4DFDA;
 $accentColor: #ED4845;
+$accentColorHover: #ed4845da;
 $accentColor2: #3185FC;
-$accentColor2Hover: #2971D6;
+$accentColor2Hover: #3185fce5;
+$opaqueText: #6C757D;
 
 * {
   box-sizing: border-box;
@@ -97,11 +99,43 @@ $accentColor2Hover: #2971D6;
   border: none;
 
   &:hover {
-    background: $accentColor;
+    background: $accentColorHover;
   }
 
   &:focus {
-    background: $accentColor;
+    background: $accentColorHover;
+  }
+
+  &:disabled {
+    background: $accentColorHover;
+  }
+}
+
+.form-control,
+.form-select {
+  box-shadow: none !important;
+
+  &:focus {
+    border: 1px solid #ced4da;
+  }
+}
+
+.accordion-button {
+  box-shadow: none !important;
+  transition: all 200ms;
+}
+
+.opaque-text {
+  color: $opaqueText !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background: $accentColor2Hover;
+  color: white;
+  transition: all 200ms;
+
+  &::after {
+    filter: brightness(0) invert(1) !important;
   }
 }
 
@@ -320,6 +354,10 @@ $accentColor2Hover: #2971D6;
 
 .nav-link {
   cursor: pointer;
+
+  &:hover {
+    color: $accentColorHover;
+  }
 }
 
 .vuecal__arrow--prev-visible {

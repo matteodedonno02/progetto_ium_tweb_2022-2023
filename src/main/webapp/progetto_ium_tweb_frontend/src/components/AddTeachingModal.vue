@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Aggiungi un nuovo insegnante</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Aggiungi un nuovo insegnamento</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" v-on:click="clearInput"
             aria-label="Close"></button>
         </div>
@@ -11,8 +11,7 @@
           <div class="row pb-5">
 
             <div class="col">
-              <select v-model="selectedProfessor" v-on:change="professorChange" class="form-select"
-                aria-label="Default select example">
+              <select v-model="selectedProfessor" class="form-select" aria-label="Default select example">
                 <option value="default">Seleziona professore</option>
                 <option v-for="professor in professors" :value="professor.serialNumber" :key="professor.serialNumber">{{
                   professor.name
@@ -28,20 +27,16 @@
               </select>
             </div>
           </div>
-
-
-
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" v-on:click="clearInput"
+          <button type="button" class="modal-button btn btn-primary rounded-pill mb-3" v-on:click="clearInput"
             data-bs-dismiss="modal">Annulla</button>
           <button v-on:click="executeOperation" :disabled="selectedCourse === 'default'" type="button"
-            class="btn btn-primary" data-bs-dismiss="modal">Aggiungi</button>
+            class="modal-button btn btn-primary rounded-pill mb-3" data-bs-dismiss="modal">Aggiungi</button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -123,7 +118,6 @@ export default {
         }
       })
     },
-
     professorChange() {
       let self = this
 
