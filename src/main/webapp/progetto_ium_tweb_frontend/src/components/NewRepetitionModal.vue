@@ -27,22 +27,24 @@
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Data</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" v-bind:value="fromDateToString(event.start)"
-                                disabled>
+                            <input type="date" class="form-control" v-bind:value="fromDateToString(event.start)" disabled>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Ora</label>
                         <div class="col-sm-10">
-                            <input type="time" class="form-control" v-bind:value="event.start.getHours() + ':00'"
-                                disabled>
+                            <input type="time" class="form-control" v-bind:value="event.start.getHours() + ':00'" disabled>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                    <button v-on:click="getIdTeaching" type="button" class="btn btn-primary"
-                        data-bs-dismiss="modal">Ok</button>
+                    <button data-bs-dismiss="modal" class="modal-button btn btn-primary rounded-pill mb-3">
+                        Chiudi
+                    </button>
+                    <button v-on:click="getIdTeaching" data-bs-dismiss="modal"
+                        class="modal-button btn btn-primary rounded-pill mb-3">
+                        Conferma
+                    </button>
                 </div>
             </div>
         </div>

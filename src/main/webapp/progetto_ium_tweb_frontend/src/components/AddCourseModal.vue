@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Crea un nuovo corso</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Aggiungi un nuovo corso</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" v-on:click="clearInput"
             aria-label="Close"></button>
         </div>
@@ -22,16 +22,16 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" v-on:click="clearInput"
-            data-bs-dismiss="modal">Annulla</button>
+          <button v-on:click="clearInput" data-bs-dismiss="modal" class="modal-button btn btn-primary rounded-pill mb-3">
+            Annulla
+          </button>
           <button v-on:click="executeOperation" :disabled="titleCourse.length <= 0 || file === null" type="button"
-            class="btn btn-primary" data-bs-dismiss="modal">Aggiungi
+            class="modal-button btn btn-primary rounded-pill mb-3" data-bs-dismiss="modal">Aggiungi
           </button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>

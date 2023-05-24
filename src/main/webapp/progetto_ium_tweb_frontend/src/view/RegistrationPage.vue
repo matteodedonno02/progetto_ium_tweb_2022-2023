@@ -87,7 +87,29 @@ export default {
             this.changeToastMessage(toastMessage)
             toast.show()
         },
+        isEmail() {
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(this.email);
+        },
+        checkInputs() {
+            if (this.name === "" || this.surname === "" || this.email === "" || this.password === "") {
+                this.openToast("Uno o più campi vuoti!")
+                return false;
+            }
+
+            if (!this.isEmail()) {
+                this.openToast("Campo email non valido!")
+                return false;
+            }
+
+            return true;
+        },
         register() {
+            if (!this.checkInputs()) {
+                return
+            }
+
+
             let self = this
             $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
                 method: "POST",
@@ -145,6 +167,13 @@ export default {
                 $("label[for='inputPassword']").addClass("focus-label")
             }
         }
+    },
+    mounted() {
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                this.register()
+            }
+        })
     }
 }
 </script>

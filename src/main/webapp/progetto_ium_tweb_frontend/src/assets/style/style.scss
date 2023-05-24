@@ -1,6 +1,9 @@
 $backgroundColor: #E4DFDA;
 $accentColor: #ED4845;
+$accentColorHover: #ed4845da;
 $accentColor2: #3185FC;
+$accentColor2Hover: #3185fce5;
+$opaqueText: #6C757D;
 
 * {
   box-sizing: border-box;
@@ -9,7 +12,7 @@ $accentColor2: #3185FC;
 }
 
 .error-toast {
-  background-color: red !important;
+  background-color: $accentColor !important;
 }
 
 .custom-placeholder {
@@ -65,6 +68,10 @@ $accentColor2: #3185FC;
   width: 50%;
 }
 
+.modal-button {
+  width: fit-content;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -92,16 +99,52 @@ $accentColor2: #3185FC;
   border: none;
 
   &:hover {
-    background: $accentColor;
+    background: $accentColorHover;
   }
 
   &:focus {
-    background: $accentColor;
+    background: $accentColorHover;
+  }
+
+  &:disabled {
+    background: $accentColorHover;
+  }
+}
+
+.form-control,
+.form-select {
+  box-shadow: none !important;
+
+  &:focus {
+    border: 1px solid #ced4da;
+  }
+}
+
+.accordion-button {
+  box-shadow: none !important;
+  transition: all 200ms;
+}
+
+.opaque-text {
+  color: $opaqueText !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background: $accentColor2Hover;
+  color: white;
+  transition: all 200ms;
+
+  &::after {
+    filter: brightness(0) invert(1) !important;
   }
 }
 
 .my-repetition-card {
   width: 100%;
+
+  .row {
+    margin-left: 0px;
+  }
 }
 
 .trash-icon {
@@ -157,6 +200,7 @@ $accentColor2: #3185FC;
       width: 68px;
     }
   }
+
 
   .is-loading {
     padding: 10px;
@@ -245,11 +289,23 @@ $accentColor2: #3185FC;
 }
 
 .materia {
-  background-color: lightblue;
+  background-color: $accentColor2;
+  color: white;
+  cursor: pointer;
+  transition: all 400ms;
+
+  &:hover {
+    background-color: $accentColor2Hover;
+  }
 }
 
 .occupied {
   background-color: lightgray;
+  color: black;
+
+  &:hover {
+    background-color: lightgray;
+  }
 }
 
 
@@ -303,6 +359,10 @@ $accentColor2: #3185FC;
 
 .nav-link {
   cursor: pointer;
+
+  &:hover {
+    color: $accentColorHover;
+  }
 }
 
 .vuecal__arrow--prev-visible {
