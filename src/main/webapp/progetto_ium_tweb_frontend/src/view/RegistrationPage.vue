@@ -167,6 +167,13 @@ export default {
                 $("label[for='inputPassword']").addClass("focus-label")
             }
         }
+    },
+    mounted() {
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                this.register()
+            }
+        })
     }
 }
 </script>

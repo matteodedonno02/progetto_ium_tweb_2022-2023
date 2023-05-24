@@ -141,6 +141,10 @@ $opaqueText: #6C757D;
 
 .my-repetition-card {
   width: 100%;
+
+  .row {
+    margin-left: 0px;
+  }
 }
 
 .trash-icon {
@@ -196,6 +200,7 @@ $opaqueText: #6C757D;
       width: 68px;
     }
   }
+
 
   .is-loading {
     padding: 10px;
