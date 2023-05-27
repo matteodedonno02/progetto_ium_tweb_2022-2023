@@ -89,12 +89,13 @@ export default {
       this.changePage("home")
     },
     logOut() {
+      let self = this
       $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
         method: "GET",
         data: {
           operation: "logout"
         },
-        success() {
+        success: () => {
           self.loggedUser = null
           self.changePage("login")
         }

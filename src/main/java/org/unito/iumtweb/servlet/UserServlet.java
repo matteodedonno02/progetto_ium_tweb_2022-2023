@@ -87,7 +87,10 @@ public class UserServlet extends HttpServlet {
     }
 
     private void destroySession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
         request.getSession().invalidate();
+        pw.write("{\"message\": \"Logout success\"}");
+        pw.close();
     }
 
     private void selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
