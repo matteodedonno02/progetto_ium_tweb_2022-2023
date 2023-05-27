@@ -102,6 +102,7 @@ export default {
         },
         success: (data) => {
           self.professors = data
+          self.getCourses()
         }
       })
     },
@@ -114,7 +115,7 @@ export default {
         },
         success: (data) => {
           self.courses = data
-          this.getCourses()
+          console.log(self.courses)
         }
       })
     },
