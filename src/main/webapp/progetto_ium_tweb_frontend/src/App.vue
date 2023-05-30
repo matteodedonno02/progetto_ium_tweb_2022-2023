@@ -79,6 +79,11 @@ export default {
         success: (data) => {
           if (data !== null) {
             self.loggedUser = data
+            if (self.loggedUser.role) {
+              self.changePage("admin-repetitions")
+              return
+            }
+
             self.changePage("home")
           }
         }
@@ -86,6 +91,11 @@ export default {
     },
     setLoggedUser(loggedUser) {
       this.loggedUser = loggedUser
+      if (this.loggedUser.role) {
+        this.changePage("admin-repetitions")
+        return
+      }
+
       this.changePage("home")
     },
     logOut() {
