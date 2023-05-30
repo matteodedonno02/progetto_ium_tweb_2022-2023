@@ -9,9 +9,8 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" v-if="loggedUser !== null && !loggedUser.role">
           <li class="nav-item ">
-
             <a class="nav-link"
               :class="page === 'home' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'home')">
@@ -19,7 +18,7 @@
               Home
             </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item">
+          <li class="nav-item">
             <a class="nav-link"
               :class="page === 'search' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'search')">
@@ -27,7 +26,7 @@
               Cerca
             </a>
           </li>
-          <li v-if="loggedUser !== null" class="nav-item">
+          <li class="nav-item">
             <a class="nav-link"
               :class="page === 'my-repetitions' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'my-repetitions')">
@@ -35,31 +34,9 @@
               Le mie ripetizioni
             </a>
           </li>
-          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
-            <a class="nav-link"
-              :class="page === 'admin-courses' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
-              v-on:click="this.$emit('change-page', 'admin-courses')">
-              <BookOpenVariant />
-              Gestione corsi
-            </a>
-          </li>
-          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
-            <a class="nav-link"
-              :class="page === 'admin-professors' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
-              v-on:click="this.$emit('change-page', 'admin-professors')">
-              <AccountTie />
-              Gestione professori
-            </a>
-          </li>
-          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
-            <a class="nav-link"
-              :class="page === 'admin-teachings' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
-              v-on:click="this.$emit('change-page', 'admin-teachings')">
-              <AccountDetails />
-              Gestione insegnamenti
-            </a>
-          </li>
-          <li v-if="loggedUser !== null && loggedUser.role" class="nav-item">
+        </ul>
+        <ul class="navbar-nav" v-if="loggedUser !== null && loggedUser.role">
+          <li class="nav-item">
             <a class="nav-link"
               :class="page === 'admin-repetitions' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
               v-on:click="this.$emit('change-page', 'admin-repetitions')">
@@ -67,12 +44,41 @@
               Tutte le ripetizioni
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link"
+              :class="page === 'admin-courses' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'admin-courses')">
+              <BookOpenVariant />
+              Gestione corsi
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
+              :class="page === 'admin-professors' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'admin-professors')">
+              <AccountTie />
+              Gestione professori
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
+              :class="page === 'admin-teachings' ? 'active d-flex flex-column align-items-center' : 'd-flex flex-column align-items-center'"
+              v-on:click="this.$emit('change-page', 'admin-teachings')">
+              <AccountDetails />
+              Gestione insegnamenti
+            </a>
+          </li>
         </ul>
         <ul class="navbar-nav">
           <li>
             <a v-on:click="this.$emit('log-out')" class="nav-link d-flex flex-column align-items-center">
               <MdiLogoutIcon />
-              Log Out
+              <span v-if="loggedUser === null">
+                Ritorna al login
+              </span>
+              <span v-else>
+                Log Out
+              </span>
             </a>
           </li>
         </ul>
