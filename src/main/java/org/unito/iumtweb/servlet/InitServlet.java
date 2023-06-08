@@ -30,7 +30,6 @@ public class InitServlet extends HttpServlet {
         loggedUserFilterProperties.add("ProfessorServlet", new String[]{"mostRequested"});
         loggedUserFilterProperties.add("CourseServlet", new String[]{"mostRequested"});
         loggedUserFilterProperties.add("UserServlet", new String[]{"login", "add", "getFromSession"});
-        loggedUserFilterProperties.add("UserServlet", new String[]{"recoveryPassword"});
         getServletContext().setAttribute("loggedUserFilterProperties", loggedUserFilterProperties);
 
         DAO managerDB = new DAO(dbUrl, dbUsername, dbPassword);

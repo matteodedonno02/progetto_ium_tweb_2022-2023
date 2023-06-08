@@ -53,26 +53,6 @@ public class EmailSender {
         }
     }
 
-    public static void recoveryEmails(String OTP, String to) {
-        Session session = getSession();
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("unitoripetizione@gmail.com"));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(to)
-            );
-            message.setSubject("Email di recupero password");
-
-            message.setText("Ecco a te il codice segreto per impostare una nuova password! " + OTP);
-
-            Transport.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void confirmedRepetition(Repetition r) {
         sendMessage(r, 1);
     }
