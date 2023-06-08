@@ -42,4 +42,13 @@ public class DateAndTimeManipulator {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return date.format(formatter);
     }
+    
+    public static String formatLocalDate(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return date.format(formatter);
+    }
+
+    public static String formatTime(String time) {
+        return time.substring(0, time.lastIndexOf(":"));
+    }
 }

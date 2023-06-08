@@ -234,6 +234,13 @@ public class RepetitionServlet extends HttpServlet {
         int newState = Integer.valueOf(request.getParameter("newState"));
 
         Repetition repetition = managerDB.updateRepetition(idRepetition, newState);
+
+        if(newState == 1) {
+            EmailSender.confirmedRepetition(repetition);
+        } else if(newState == 2) {
+            EmailSender.deletedRepetition(repetition);
+        }
+
         if (repetition != null) {
             pw.write(gson.toJson(managerDB.getRepetitionById(idRepetition)));
         } else {

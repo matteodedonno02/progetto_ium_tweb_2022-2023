@@ -38,7 +38,7 @@ public class InitServlet extends HttpServlet {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         getServletContext().setAttribute("gson", gson);
 
-        EmailSender emailSender = new EmailSender(getServletContext().getInitParameter("mailgunApiKey"));
+        EmailSender emailSender = new EmailSender();
         getServletContext().setAttribute("emailSender", emailSender);
 
 

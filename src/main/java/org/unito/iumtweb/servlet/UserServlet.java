@@ -11,6 +11,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "UserServlet", value = "/UserServlet")
 public class UserServlet extends HttpServlet {
@@ -111,19 +112,30 @@ public class UserServlet extends HttpServlet {
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
+        String name = request.getParameter("name");
+        String surname = request.getParameter("surname");
         String email = request.getParameter("email");
-        int res = managerDB.addUser(email, request.getParameter("name"), request.getParameter("surname"), request.getParameter("password"));
-        switch (res) {
-            case 1:
-                pw.write(gson.toJson(managerDB.getUserByEmail(email)));
-                break;
-            case 0:
-                pw.write("{\"error\":\"Email already exists\"}");
-                break;
-            case -1:
-                pw.write("{\"error\":\"Server error\"}");
-                break;
+        String password = request.getParameter("password");
+
+        if(name.equals("") || surname.equals("") || email.equals("") || password.equals("")) {
+            pw.write("{\"error\":\"Empty fields\"}");
+        } else if(!isEmail(email)) {
+            pw.write("{\"error\":\"Email not valid\"}");
+        } else {
+            int res = managerDB.addUser(email, name, surname, password);
+            switch (res) {
+                case 1:
+                    pw.write(gson.toJson(managerDB.getUserByEmail(email)));
+                    break;
+                case 0:
+                    pw.write("{\"error\":\"Email already exists\"}");
+                    break;
+                case -1:
+                    pw.write("{\"error\":\"Server error\"}");
+                    break;
+            }
         }
+        
         pw.close();
     }
 
@@ -152,13 +164,26 @@ public class UserServlet extends HttpServlet {
         int res = managerDB.updatePassword(request.getParameter("email"), request.getParameter("password"));
     }
 
+    private boolean isEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        return Pattern.compile(emailRegex).matcher(email).matches();
+    }
+
     public void loginUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         User user = managerDB.login(email, password);
 
-        if (user != null) {
+        if(email.equals("") || password.equals("")) {
+            pw.write("{\"error\":\"Empty fields\"}");
+        } else if(!isEmail(email)) {
+            pw.write("{\"error\":\"Email not valid\"}");
+        } else if (user != null) {
             String json = gson.toJson(user);
 
             response.addHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; SameSite=None;");
