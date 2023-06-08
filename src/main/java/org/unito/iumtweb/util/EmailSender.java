@@ -1,32 +1,87 @@
 package org.unito.iumtweb.util;
 
-import com.mailgun.api.v3.*;
-import com.mailgun.client.*;
-import com.mailgun.model.message.Message;
+
 import org.unito.iumtweb.model.Repetition;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 public class EmailSender {
-    private String api_key;
-    private final String BASE_URL = "https://api.mailgun.net/v3/sandboxb2b2987128494c56a1b317a59ba2d671.mailgun.org/messages";
-    private final String DOMAIN_NAME = "sandboxb2b2987128494c56a1b317a59ba2d671";
-    public EmailSender(String api_key) {
-        this.api_key = api_key;
+    private static Session getSession() {
+        final String username = "unitoripetizione@gmail.com";
+        final String password = "jcsdorelzwfdzbgx";
+
+        Properties prop = new Properties();
+        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        return session;
     }
 
-    public void bookedRepetition(Repetition r) {
-        MailgunMessagesApi mailgunMessagesApi = MailgunClient.config(api_key)
-                .createApi(MailgunMessagesApi.class);
+    private static void sendMessage(Repetition r, int type) {
+        Session session = getSession();
 
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("unitoripetizione@gmail.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(r.getUser().getEmail())
+            );
+            message.setSubject("Ripetizione " + (type > 0 ? (type > 1 ? "eliminata" : "confermata") : "prenotata") + " con successo");
 
-        Message message = Message.builder()
-                .from("Excited User mailgun@sandboxb2b2987128494c56a1b317a59ba2d671.org")
-                .to(r.getUser().getEmail())
-                .subject("Hello")
-                .text("Testing out some Mailgun awesomeness!")
-                .build();
+            String title = r.getTeaching().getCourse().getTitle();
+            String professor = r.getTeaching().getProfessor().getName() + " " + r.getTeaching().getProfessor().getSurname();
+            String date = DateAndTimeManipulator.formatLocalDate(r.getDate().toLocalDate());
+            String time = DateAndTimeManipulator.formatTime(r.getTime().toString());
+            message.setText("La ripetizione di " + title + " con il/la professore/ssa " + professor + " del giorno " + date + " alle ore " + time + " è stata " + (type > 0 ? (type > 1 ? "eliminata" : "confermata") : "prenotata") + " con successo!");
 
-        System.out.println(mailgunMessagesApi.sendMessage(DOMAIN_NAME, message).getMessage());
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void recoveryEmails(String OTP, String to) {
+        Session session = getSession();
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("unitoripetizione@gmail.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(to)
+            );
+            message.setSubject("Email di recupero password");
+
+            message.setText("Ecco a te il codice segreto per impostare una nuova password! " + OTP);
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void confirmedRepetition(Repetition r) {
+        sendMessage(r, 1);
+    }
+
+    public static void deletedRepetition(Repetition r) {
+        sendMessage(r, 2);
+    }
+
+    public static void bookedRepetition(Repetition r) {
+        sendMessage(r, 0);
     }
 }

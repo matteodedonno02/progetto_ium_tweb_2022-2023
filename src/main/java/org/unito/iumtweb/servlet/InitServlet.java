@@ -30,6 +30,7 @@ public class InitServlet extends HttpServlet {
         loggedUserFilterProperties.add("ProfessorServlet", new String[]{"mostRequested"});
         loggedUserFilterProperties.add("CourseServlet", new String[]{"mostRequested"});
         loggedUserFilterProperties.add("UserServlet", new String[]{"login", "add", "getFromSession"});
+        loggedUserFilterProperties.add("UserServlet", new String[]{"recoveryPassword"});
         getServletContext().setAttribute("loggedUserFilterProperties", loggedUserFilterProperties);
 
         DAO managerDB = new DAO(dbUrl, dbUsername, dbPassword);
@@ -38,7 +39,7 @@ public class InitServlet extends HttpServlet {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         getServletContext().setAttribute("gson", gson);
 
-        EmailSender emailSender = new EmailSender(getServletContext().getInitParameter("mailgunApiKey"));
+        EmailSender emailSender = new EmailSender();
         getServletContext().setAttribute("emailSender", emailSender);
 
 

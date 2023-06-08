@@ -7,7 +7,8 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/': {
-        target: 'http://134.209.18.52:8080/progetto_ium_tweb_2022_2023_war_exploded',
+        // target: 'http://134.209.18.52:8080/progetto_ium_tweb_2022_2023_war_exploded',
+        target: 'http://localhost:8080/progetto_ium_tweb_2022_2023_war_exploded',
         pathRewrite: { '^/': '' },
         ws: false
       }
