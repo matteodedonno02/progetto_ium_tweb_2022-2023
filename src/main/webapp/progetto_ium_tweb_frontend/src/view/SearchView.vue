@@ -99,7 +99,7 @@ export default {
     generateNewRepetitions() {
       this.events = []
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+      $.ajax("RepetitionServlet", {
         method: "POST",
         data: {
           operation: "newRepetitions",
@@ -130,7 +130,7 @@ export default {
     },
     getUserRepetitions() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+      $.ajax("RepetitionServlet", {
         method: "GET",
         data: {
           operation: "selectByEmailAndDate",
@@ -148,7 +148,7 @@ export default {
     },
     getProfessors() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+      $.ajax("ProfessorServlet", {
         method: "GET",
         data: {
           operation: "select"
@@ -160,7 +160,7 @@ export default {
     },
     getCourses() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+      $.ajax("CourseServlet", {
         method: "GET",
         data: {
           operation: "select"
@@ -179,7 +179,7 @@ export default {
         return;
       }
 
-      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+      $.ajax("TeachingServlet", {
         method: "GET",
         data: {
           operation: "selectByCourse",
@@ -204,7 +204,7 @@ export default {
         return;
       }
 
-      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+      $.ajax("TeachingServlet", {
         method: "GET",
         data: {
           operation: "selectByProfessor",

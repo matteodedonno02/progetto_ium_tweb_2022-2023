@@ -77,7 +77,7 @@ export default {
     },
     executeOperation() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+      $.ajax("TeachingServlet", {
         method: "POST",
         data: {
           operation: "add",
@@ -95,7 +95,7 @@ export default {
     },
     getProfessors() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+      $.ajax("ProfessorServlet", {
         method: "GET",
         data: {
           operation: "select"
@@ -108,7 +108,7 @@ export default {
     },
     getCourses() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+      $.ajax("CourseServlet", {
         method: "GET",
         data: {
           operation: "select"
@@ -127,7 +127,7 @@ export default {
         return;
       }
 
-      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+      $.ajax("CourseServlet", {
         method: "GET",
         data: {
           operation: "newTeaching",

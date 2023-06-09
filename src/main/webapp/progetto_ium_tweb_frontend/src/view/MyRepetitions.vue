@@ -148,7 +148,7 @@ export default {
     sumHours,
     getUserRepetitions(email) {
       let self = this;
-      $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+      $.ajax("RepetitionServlet", {
         method: "GET",
         data: {
           operation: "selectByEmail",

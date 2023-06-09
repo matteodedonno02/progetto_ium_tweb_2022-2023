@@ -30,7 +30,8 @@
           <div class="mb-3 row">
             <label class="col-sm-2 col-form-label">Immagine</label>
             <div class="col-sm-10">
-              <input class="form-control" @change="handleFile" type="file" required="true" />
+              <input id="input-file" class="form-control" @change="handleFile" type="file" required="true"
+                accept="image/*" />
             </div>
           </div>
 
@@ -81,6 +82,7 @@ export default {
       this.name = ''
       this.surname = ''
       this.file = null
+      $("#input-file").val("")
     },
     executeOperation() {
       let self = this
@@ -94,7 +96,7 @@ export default {
     executeCall() {
       let self = this
       console.log(this.serialNumber, this.name, this.surname, this.file)
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+      $.ajax("ProfessorServlet", {
         method: "POST",
         data: {
           operation: "add",

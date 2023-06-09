@@ -111,7 +111,7 @@ export default {
 
 
             let self = this
-            $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
+            $.ajax("UserServlet", {
                 method: "POST",
                 data: {
                     operation: "add",
