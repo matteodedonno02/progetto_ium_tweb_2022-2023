@@ -67,7 +67,7 @@ public class DAO {
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement("SELECT * FROM course c WHERE c.active = 1 AND NOT EXISTS(SELECT idCourse FROM teaching WHERE serialNumber=? AND c.idCourse=idCourse); ");
+            ps = conn.prepareStatement("SELECT * FROM course c WHERE c.active = 1 AND c.idCourse NOT IN(SELECT idCourse FROM teaching WHERE serialNumber=? AND c.idCourse=idCourse); ");
             ps.setString(1, serialNumber);
             rs = ps.executeQuery();
             while (rs.next()) {

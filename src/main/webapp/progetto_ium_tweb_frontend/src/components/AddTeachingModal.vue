@@ -11,7 +11,8 @@
           <div class="row pb-5">
 
             <div class="col">
-              <select v-model="selectedProfessor" class="form-select" aria-label="Default select example">
+              <select v-model="selectedProfessor" v-on:change="professorChange" class="form-select"
+                aria-label="Default select example">
                 <option value="default">Seleziona professore</option>
                 <option v-for="professor in professors" :value="professor.serialNumber" :key="professor.serialNumber">{{
                   professor.name
@@ -57,7 +58,6 @@ export default {
   },
   methods: {
     changeToastMessage,
-
     openToast(toastMessage) {
       const toastLiveExample = $("#liveToast")
       const toast = new Toast(toastLiveExample)
@@ -65,15 +65,18 @@ export default {
       toast.show()
     },
     clearInput() {
-      if (this.selectedProfessor !== 'default') {
-        this.selectedProfessor = 'default'
-        this.getProfessors()
+      // if (this.selectedProfessor !== 'default') {
+      //   this.selectedProfessor = 'default'
+      //   this.getProfessors()
 
-        if (this.selectedCourse !== 'default') {
-          this.selectedCourse = 'default'
-          this.getCourses()
-        }
-      }
+      //   if (this.selectedCourse !== 'default') {
+      //     this.selectedCourse = 'default'
+      //   }
+      // }
+
+      this.selectedProfessor = 'default'
+      this.getProfessors()
+      this.selectedCourse = 'default'
     },
     executeOperation() {
       let self = this
@@ -90,7 +93,7 @@ export default {
         }
       })
 
-      self.clearInput();
+      this.clearInput();
     },
     getProfessors() {
       let self = this
@@ -101,30 +104,16 @@ export default {
         },
         success: (data) => {
           self.professors = data
-          self.getCourses()
-        }
-      })
-    },
-    getCourses() {
-      let self = this
-      $.ajax("CourseServlet", {
-        method: "GET",
-        data: {
-          operation: "select"
-        },
-        success: (data) => {
-          self.courses = data
         }
       })
     },
     professorChange() {
-      let self = this
-
       if (this.selectedProfessor === "default") {
-        self.getCourses()
+        this.clearInput()
         return;
       }
 
+      let self = this
       $.ajax("CourseServlet", {
         method: "GET",
         data: {

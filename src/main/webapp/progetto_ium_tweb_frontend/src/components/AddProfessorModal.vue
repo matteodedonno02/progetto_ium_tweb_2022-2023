@@ -30,7 +30,8 @@
           <div class="mb-3 row">
             <label class="col-sm-2 col-form-label">Immagine</label>
             <div class="col-sm-10">
-              <input class="form-control" @change="handleFile" type="file" required="true" accept="image/*" />
+              <input id="input-file" class="form-control" @change="handleFile" type="file" required="true"
+                accept="image/*" />
             </div>
           </div>
         </div>
@@ -79,6 +80,7 @@ export default {
       this.name = ''
       this.surname = ''
       this.file = null
+      $("#input-file").val("")
     },
     executeOperation() {
       let self = this
