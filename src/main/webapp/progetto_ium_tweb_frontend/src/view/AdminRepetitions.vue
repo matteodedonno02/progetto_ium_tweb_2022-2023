@@ -170,7 +170,6 @@ export default {
             let filterRepetitions = this.repetitions
             if (this.dateFilter !== "") {
                 filterRepetitions = filterRepetitions.filter((repetition) => {
-                    console.log(repetition.date, this.dateFilter)
                     return repetition.date === this.dateFilter
                 })
             }

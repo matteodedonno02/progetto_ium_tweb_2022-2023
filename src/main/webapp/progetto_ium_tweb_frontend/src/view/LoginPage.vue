@@ -106,8 +106,7 @@ export default {
                 crossDomain: true,
                 success: (data) => {
                     if (data.error !== undefined) {
-                        self.changeToastMessage(data.error === "Wrong password" ? "Password errata" : "Email non trovata")
-                        self.openToast()
+                        self.openToast(data.error === "Wrong password" ? "Password errata" : "Email non trovata")
                     }
                     else {
                         self.$emit("set-logged-user", data)

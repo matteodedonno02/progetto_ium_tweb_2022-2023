@@ -30,12 +30,9 @@
           <div class="mb-3 row">
             <label class="col-sm-2 col-form-label">Immagine</label>
             <div class="col-sm-10">
-              <input id="input-file" class="form-control" @change="handleFile" type="file" required="true"
-                accept="image/*" />
+              <input class="form-control" @change="handleFile" type="file" required="true" accept="image/*" />
             </div>
           </div>
-
-
         </div>
         <div class="modal-footer">
           <button type="button" class="modal-button btn btn-primary rounded-pill mb-3" v-on:click="clearInput"
@@ -74,7 +71,7 @@ export default {
     openToast(toastMessage) {
       const toastLiveExample = $("#liveToast")
       const toast = new Toast(toastLiveExample)
-      this.changeToastMessage(toastMessage);
+      this.changeToastMessage(toastMessage)
       toast.show()
     },
     clearInput() {
@@ -82,7 +79,6 @@ export default {
       this.name = ''
       this.surname = ''
       this.file = null
-      $("#input-file").val("")
     },
     executeOperation() {
       let self = this
@@ -95,7 +91,6 @@ export default {
     },
     executeCall() {
       let self = this
-      console.log(this.serialNumber, this.name, this.surname, this.file)
       $.ajax("ProfessorServlet", {
         method: "POST",
         data: {
@@ -113,7 +108,7 @@ export default {
             self.$emit("new-professor", data)
             self.openToast("Professore inserito con successo")
           }
-          self.clearInput();
+          self.clearInput()
         }
       })
     }

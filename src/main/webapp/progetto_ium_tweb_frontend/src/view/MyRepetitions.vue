@@ -219,7 +219,6 @@ export default {
       let filterRepetitions = this.loggedUserRepetitions
       if (this.dateFilter !== "") {
         filterRepetitions = filterRepetitions.filter((repetition) => {
-          console.log(repetition.date, this.dateFilter)
           return repetition.date === this.dateFilter
         })
       }
@@ -235,7 +234,6 @@ export default {
 
       if (this.courseTextField !== "") {
         filterRepetitions = filterRepetitions.filter((repetition) => {
-          console.log(repetition)
           const courseName = repetition.teaching.course.title.replace(/\s/g, "")
           return courseName.toLowerCase().includes(this.courseTextField.replace(/\s/g, "").toLowerCase())
         })

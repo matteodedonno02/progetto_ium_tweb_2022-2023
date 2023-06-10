@@ -85,7 +85,6 @@ export default {
           idCourse: self.selectedCourse
         },
         success(data) {
-          console.log(data)
           self.$emit("new-teaching", data)
           self.openToast("Insegnamento inserito con successo")
         }
@@ -115,7 +114,6 @@ export default {
         },
         success: (data) => {
           self.courses = data
-          console.log(self.courses)
         }
       })
     },
