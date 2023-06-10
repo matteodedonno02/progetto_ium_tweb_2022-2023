@@ -71,7 +71,7 @@ export default {
         },
         getIdTeaching() {
             let self = this
-            $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+            $.ajax("TeachingServlet", {
                 method: "GET",
                 data: {
                     operation: "getIdTeaching",
@@ -85,7 +85,7 @@ export default {
         },
         executeOperation(idTeaching) {
             let self = this
-            $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+            $.ajax("RepetitionServlet", {
                 method: "POST",
                 data: {
                     operation: "add",

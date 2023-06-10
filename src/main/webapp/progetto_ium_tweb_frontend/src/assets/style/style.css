@@ -131,6 +131,9 @@
 .my-repetition-card .row {
   margin-left: 0px;
 }
+.my-repetition-card .text-start {
+  padding-left: 0px;
+}
 
 .trash-icon {
   padding-right: 35px;

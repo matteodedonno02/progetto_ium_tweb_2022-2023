@@ -65,7 +65,7 @@ export default {
   methods: {
     getProfessors() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet?operation=select", {
+      $.ajax("ProfessorServlet?operation=select", {
         method: "GET",
         success: (data) => {
           self.professors = data
@@ -92,7 +92,7 @@ export default {
       }
 
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+      $.ajax("ProfessorServlet", {
         method: "GET",
         data: {
           operation: "search",

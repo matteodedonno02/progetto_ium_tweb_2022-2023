@@ -6,9 +6,8 @@
 </template>
 
 <script>
-
 export default {
   name: "CourseCard",
-  props: ["loggedUser", "iconUrl", "title"],
+  props: ["iconUrl", "title"],
 }
 </script>

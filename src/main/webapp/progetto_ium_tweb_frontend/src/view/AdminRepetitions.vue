@@ -133,7 +133,7 @@ export default {
     methods: {
         getUserRepetitions() {
             let self = this
-            $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+            $.ajax("RepetitionServlet", {
                 method: "GET",
                 data: {
                     operation: "select",
@@ -170,7 +170,6 @@ export default {
             let filterRepetitions = this.repetitions
             if (this.dateFilter !== "") {
                 filterRepetitions = filterRepetitions.filter((repetition) => {
-                    console.log(repetition.date, this.dateFilter)
                     return repetition.date === this.dateFilter
                 })
             }

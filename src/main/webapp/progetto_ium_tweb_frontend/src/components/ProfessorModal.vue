@@ -39,7 +39,7 @@ export default {
     },
     executeOperation() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+      $.ajax("ProfessorServlet", {
         method: "POST",
         data: {
           operation: "delete",

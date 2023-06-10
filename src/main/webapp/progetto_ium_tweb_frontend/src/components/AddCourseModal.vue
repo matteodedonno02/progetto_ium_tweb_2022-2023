@@ -17,7 +17,8 @@
           <div class="mb-3 row">
             <label class="col-sm-2 col-form-label">Icona</label>
             <div class="col-sm-10">
-              <input class="form-control" @change="handleFile" type="file" required="true" />
+              <input id="input-file" class="form-control" @change="handleFile" type="file" required="true"
+                accept="image/*" />
             </div>
           </div>
         </div>
@@ -47,6 +48,7 @@ export default {
     return {
       titleCourse: '',
       iconUrl: '',
+      inputFile: null,
       file: null
     };
   },
@@ -64,6 +66,7 @@ export default {
     clearInput() {
       this.titleCourse = ''
       this.file = null
+      $("#input-file").val("")
     },
     executeOperation() {
       let self = this
@@ -76,7 +79,7 @@ export default {
     },
     executeCall() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+      $.ajax("CourseServlet", {
         method: "POST",
         data: {
           operation: "add",
@@ -92,7 +95,7 @@ export default {
             self.openToast("Corso aggiunto con successo")
           }
 
-          self.clearInput();
+          self.clearInput()
         }
       })
     }

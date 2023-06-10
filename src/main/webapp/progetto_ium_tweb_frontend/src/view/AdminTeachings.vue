@@ -65,7 +65,7 @@ export default {
   methods: {
     getTeachings() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet?operation=select", {
+      $.ajax("TeachingServlet?operation=select", {
         method: "GET",
         success: (data) => {
           self.teachings = data
@@ -89,7 +89,7 @@ export default {
       }
 
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+      $.ajax("TeachingServlet", {
         method: "GET",
         data: {
           operation: "search",

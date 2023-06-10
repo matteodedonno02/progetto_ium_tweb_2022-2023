@@ -87,6 +87,12 @@ export default {
             this.changeToastMessage(toastMessage)
             toast.show()
         },
+        clearInput() {
+            this.name = ""
+            this.surname = ""
+            this.email = ""
+            this.password = ""
+        },
         isEmail() {
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailPattern.test(this.email);
@@ -94,24 +100,23 @@ export default {
         checkInputs() {
             if (this.name === "" || this.surname === "" || this.email === "" || this.password === "") {
                 this.openToast("Uno o più campi vuoti!")
-                return false;
+                return false
             }
 
             if (!this.isEmail()) {
                 this.openToast("Campo email non valido!")
-                return false;
+                return false
             }
 
-            return true;
+            return true
         },
         register() {
             if (!this.checkInputs()) {
                 return
             }
 
-
             let self = this
-            $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
+            $.ajax("UserServlet", {
                 method: "POST",
                 data: {
                     operation: "add",
@@ -120,19 +125,13 @@ export default {
                     email: self.email,
                     password: self.password
                 },
-                xhrFields: {
-                    withCredentials: true
-                },
-                crossDomain: true,
                 success: (data) => {
                     if (data.error !== undefined) {
-                        self.changeToastMessage("Esiste già un account con l'email specificata")
-                        self.openToast()
+                        self.openToast("Esiste già un account con l'email specificata")
                     }
                     else {
-                        self.changeToastMessage("Account creato con successo!")
-                        self.openToast()
                         self.$emit("change-page", "login")
+                        self.clearInput()
                     }
                 }
             })

@@ -77,7 +77,7 @@ export default {
     },
     executeOperation() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "TeachingServlet", {
+      $.ajax("TeachingServlet", {
         method: "POST",
         data: {
           operation: "add",
@@ -85,7 +85,6 @@ export default {
           idCourse: self.selectedCourse
         },
         success(data) {
-          console.log(data)
           self.$emit("new-teaching", data)
           self.openToast("Insegnamento inserito con successo")
         }
@@ -95,7 +94,7 @@ export default {
     },
     getProfessors() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "ProfessorServlet", {
+      $.ajax("ProfessorServlet", {
         method: "GET",
         data: {
           operation: "select"
@@ -108,14 +107,13 @@ export default {
     },
     getCourses() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+      $.ajax("CourseServlet", {
         method: "GET",
         data: {
           operation: "select"
         },
         success: (data) => {
           self.courses = data
-          console.log(self.courses)
         }
       })
     },
@@ -127,7 +125,7 @@ export default {
         return;
       }
 
-      $.ajax(process.env.VUE_APP_BASE_URL + "CourseServlet", {
+      $.ajax("CourseServlet", {
         method: "GET",
         data: {
           operation: "newTeaching",

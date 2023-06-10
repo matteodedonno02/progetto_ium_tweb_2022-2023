@@ -71,7 +71,7 @@ export default {
     },
     getUserFromSession() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
+      $.ajax("UserServlet", {
         method: "POST",
         data: {
           operation: "getFromSession"
@@ -100,7 +100,7 @@ export default {
     },
     logOut() {
       let self = this
-      $.ajax(process.env.VUE_APP_BASE_URL + "UserServlet", {
+      $.ajax("UserServlet", {
         method: "GET",
         data: {
           operation: "logout"

@@ -44,7 +44,7 @@ export default {
         },
         executeOperation() {
             let self = this
-            $.ajax(process.env.VUE_APP_BASE_URL + "RepetitionServlet", {
+            $.ajax("RepetitionServlet", {
                 method: "POST",
                 data: {
                     operation: "edit",
